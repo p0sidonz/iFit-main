@@ -1,0 +1,122 @@
+<template>
+  <div>
+    <!-- <b-card-code title="Update your status...">
+      <div class="form-label-group">
+        <b-form-textarea
+          v-model="addnewPostx"
+          id="textarea"
+          rows="3"
+          placeholder="You Mirin brah?"
+        />
+        <label for="label-textarea">You Mirin brah? </label>
+        <b-button
+          v-ripple.400="'rgba(40, 199, 111, 0.15)'"
+          variant="flat-success"
+          class="btn-icon"
+        >
+          <feather-icon icon="CameraIcon" />
+        </b-button>
+        <div class="demo-inline-spacing">
+          <b-col md="15">
+            <b-button
+              v-ripple.40="'rgba(255, 255, 255, 0.15)'"
+              block
+              variant="primary"
+              @click="addnewPost(addnewPostx)"
+            >
+              Post
+            </b-button>
+          </b-col>
+        </div>
+      </div>
+    </b-card-code> -->
+    <b-row>
+      <b-col cols="12">
+        <b-card-group class="mb-0">
+          <b-card
+            v-for="data in Fitness_Posts"
+            :key="data.id"
+            img-top
+            no-body
+          >
+
+
+            <!-- <b-card-header class="font-small-2 mr-25 mb-0">
+        <b-dropdown variant="link" no-caret right toggle-class="p-0">
+          <template #button-content>
+            <feather-icon
+              icon="MoreVerticalIcon"
+              size="18"
+              class="text-body cursor-pointer"
+            />
+          </template>
+          <b-dropdown-item href="#">
+            <feather-icon
+              icon="EditIcon"
+              size="18"
+              class="text-body cursor-pointer"
+            />
+            Edit
+          </b-dropdown-item>
+          <b-dropdown-item href="#" @click="deletePostModal(data.id)">
+            <feather-icon
+              icon="XIcon"
+              size="18"
+              class="text-body cursor-pointer"
+            />
+            Delete
+          </b-dropdown-item>
+        </b-dropdown>
+      </b-card-header> -->
+
+            <b-embed
+              v-if="data.postVid"
+              type="iframe"
+              :src="data.postVid"
+              allowfullscreen
+              class="rounded mb-50"
+            />
+            <!--/ post video -->
+
+            <!-- likes comments  share-->
+
+            <!--/ likes comments  share-->
+
+            <!-- comments -->
+
+            <!-- <div
+        v-for="commentx in data.comments"
+        :key="commentx.id"
+        class="d-flex align-items-start mb-1"
+      >
+               <b-avatar
+          :src="commentx.owner.avatar"
+          size="34"
+          class="mt-25 mr-75"
+        />
+        <div class="profile-user-info w-100">
+          <div class="d-flex align-items-center justify-content-between">
+            <h6 class="mb-0">{{ commentx.owner.username }}</h6>
+          </div>
+          <small>{{ commentx.text }}</small>
+        </div>
+      </div> -->
+            <!--/ comments -->
+
+            <!--/ comment box -->
+
+            <div id="sensor"></div>
+            <!-- comment box -->
+          </b-card>
+        </b-card-group>
+      </b-col>
+    </b-row>
+
+    <!-- load more  -->
+    <b-col @click="fetchMore()" cols="12" order="4">
+        <profile-bottom />
+      </b-col>
+    <!--/ load more  -->
+    <router-view />
+  </div>
+</template>

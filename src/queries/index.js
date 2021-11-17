@@ -33,6 +33,7 @@ export const GET_POST_BY_ID = gql`
     Fitness_Posts_by_pk(id: $postId) {
       id
       content
+      photo
       created_at
       youLiked
       author {
