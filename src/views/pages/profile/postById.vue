@@ -240,6 +240,10 @@ export default {
     BEmbed,
   },
 
+
+
+
+
   apollo: {
     Fitness_Posts_by_pk: {
       query: GET_POST_BY_ID,

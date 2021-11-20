@@ -1,122 +1,86 @@
-<template>
-  <div>
-    <!-- <b-card-code title="Update your status...">
-      <div class="form-label-group">
-        <b-form-textarea
-          v-model="addnewPostx"
-          id="textarea"
-          rows="3"
-          placeholder="You Mirin brah?"
-        />
-        <label for="label-textarea">You Mirin brah? </label>
-        <b-button
-          v-ripple.400="'rgba(40, 199, 111, 0.15)'"
-          variant="flat-success"
-          class="btn-icon"
-        >
-          <feather-icon icon="CameraIcon" />
-        </b-button>
-        <div class="demo-inline-spacing">
-          <b-col md="15">
-            <b-button
-              v-ripple.40="'rgba(255, 255, 255, 0.15)'"
-              block
-              variant="primary"
-              @click="addnewPost(addnewPostx)"
-            >
-              Post
-            </b-button>
-          </b-col>
-        </div>
-      </div>
-    </b-card-code> -->
-    <b-row>
-      <b-col cols="12">
-        <b-card-group class="mb-0">
-          <b-card
-            v-for="data in Fitness_Posts"
-            :key="data.id"
-            img-top
-            no-body
-          >
-
-
-            <!-- <b-card-header class="font-small-2 mr-25 mb-0">
-        <b-dropdown variant="link" no-caret right toggle-class="p-0">
-          <template #button-content>
-            <feather-icon
-              icon="MoreVerticalIcon"
-              size="18"
-              class="text-body cursor-pointer"
-            />
-          </template>
-          <b-dropdown-item href="#">
-            <feather-icon
-              icon="EditIcon"
-              size="18"
-              class="text-body cursor-pointer"
-            />
-            Edit
-          </b-dropdown-item>
-          <b-dropdown-item href="#" @click="deletePostModal(data.id)">
-            <feather-icon
-              icon="XIcon"
-              size="18"
-              class="text-body cursor-pointer"
-            />
-            Delete
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-card-header> -->
-
-            <b-embed
-              v-if="data.postVid"
-              type="iframe"
-              :src="data.postVid"
-              allowfullscreen
-              class="rounded mb-50"
-            />
-            <!--/ post video -->
-
-            <!-- likes comments  share-->
-
-            <!--/ likes comments  share-->
-
-            <!-- comments -->
-
-            <!-- <div
-        v-for="commentx in data.comments"
-        :key="commentx.id"
-        class="d-flex align-items-start mb-1"
-      >
-               <b-avatar
-          :src="commentx.owner.avatar"
-          size="34"
-          class="mt-25 mr-75"
-        />
-        <div class="profile-user-info w-100">
-          <div class="d-flex align-items-center justify-content-between">
-            <h6 class="mb-0">{{ commentx.owner.username }}</h6>
-          </div>
-          <small>{{ commentx.text }}</small>
-        </div>
-      </div> -->
-            <!--/ comments -->
-
-            <!--/ comment box -->
-
-            <div id="sensor"></div>
-            <!-- comment box -->
-          </b-card>
-        </b-card-group>
-      </b-col>
-    </b-row>
-
-    <!-- load more  -->
-    <b-col @click="fetchMore()" cols="12" order="4">
-        <profile-bottom />
-      </b-col>
-    <!--/ load more  -->
-    <router-view />
+<div v-if="currentPost" class="row">
+  <div class="col-8">
+    <b-img
+      rounded
+      center
+      class="d-inline-block mr-1 mb-1"
+      :src="currentPost.photo"
+      fluid
+    />
   </div>
-</template>
+  <div class="col-4">
+    <div class="d-flex justify-content-start align-items-center mb-1">
+      <b-avatar size="50" class="mr-1" :src="currentPost.author.avatar" />
+
+      <div class="profile-user-info">
+        <h6 class="mb-0">{{ currentPost.author.username }}</h6>
+        <small class="text-muted">{{ currentPost.created_at }}</small>
+      </div>
+    </div>
+    <b-card-text>
+      {{ currentPost.content }}
+    </b-card-text>
+
+    <b-link class="d-flex align-items-center text-muted text-nowrap">
+      <feather-icon
+        icon="HeartIcon"
+        class="mr-50"
+        :class="currentPost.youLiked ? 'profile-likes' : 'profile-icon'"
+        size="18"
+        @click="
+          currentPost.youLiked
+            ? unlike(currentPost.id)
+            : addnewliketoPost(currentPost.id)
+        "
+      />
+    </b-link>
+
+    <div class="d-flex align-item-center">
+      <b-avatar-group size="26" class="ml-1">
+        <b-avatar
+          v-for="(avatarData, i) in currentPost.likedby"
+          :key="i"
+          v-b-tooltip.hover.bottom="avatarData.authorOBJ.username"
+          class="pull-up"
+          :src="avatarData.authorOBJ.avatar"
+        />
+      </b-avatar-group>
+      <b-link
+        v-if="currentPost.likedby_aggregate.aggregate.count"
+        class="text-muted text-nowrap mt-50 ml-50"
+        >{{ currentPost.likedby_aggregate.aggregate.count }} Likes</b-link
+      >
+    </div>
+
+    <div
+      v-for="commentx in currentPost.comments"
+      :key="commentx.id"
+      class="d-flex align-items-start mb-1"
+    >
+      <b-avatar
+        :src="commentx.owner.avatar"
+        size="34"
+        class="mt-25 mr-75"
+      />
+      <div class="profile-user-info w-100">
+        <div class="d-flex align-items-center justify-content-between">
+          <h6 class="mb-0">{{ commentx.owner.username }}</h6>
+        </div>
+        <small>{{ commentx.text }}</small>
+      </div>
+    </div>
+    <br />
+    <b-form-group>
+      <b-form-textarea rows="3" placeholder="Add Comment" />
+    </b-form-group>
+    <!--/ comment box -->
+
+    <b-button
+      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+      size="sm"
+      variant="primary"
+    >
+      Submit
+    </b-button>
+  </div>
+</div>
