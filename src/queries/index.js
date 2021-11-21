@@ -159,8 +159,24 @@ export const GET_PROFILE = gql`
       username
       firstName
       fullname
+      avatar
       id
       created_at
+      Follow_aggregate {
+        aggregate {
+          count
+        }
+      }
+      Following_aggregate {
+        aggregate {
+          count
+        }
+      }
+      Posts_aggregate {
+        aggregate {
+          count
+        }
+      }
     }
   }
 `;

@@ -109,15 +109,7 @@ const router = new VueRouter({
           component: () => import('@/views/pages/profile/Profile.vue'),
           meta: {
             pageTitle: 'Profile',
-            breadcrumb: [
-              {
-                text: 'Pages',
-              },
-              {
-                text: 'Profile',
-                active: true,
-              },
-            ],
+
           },
 
         },

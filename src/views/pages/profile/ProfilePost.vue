@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-col md="12">
-        <b-card-group columns>
+        <b-card-group v-if="Fitness_Posts" deck>
           <!-- card image top -->
           <b-card
             v-for="data in Fitness_Posts"
@@ -75,11 +75,15 @@
             </b-row>
           </b-card>
         </b-card-group>
+
         <b-col @click="fetchMore()" cols="12" order="4">
           <profile-bottom />
         </b-col>
       </b-col>
     </b-row>
+    <div v-if="!Fitness_Posts.length" class="text-center mb-2">
+      <h2>No posts</h2>
+    </div>
 
     <b-modal
       id="idk2"
@@ -209,16 +213,20 @@
       scrollable:false
       title="Add new post"
     >
-
-    <create-post> </create-post>
+      <create-post> </create-post>
     </b-modal>
     <div class="btn-new-post">
       <!-- We have wrapper because ripple effect give position relative to this absolute positioned btn -->
       <!-- Hence due to that our btn get lost -->
-      <b-button @click="newPostModal" v-ripple.400="'rgba(255, 255, 255, 0.15)'" variant="primary">
+      <b-button
+
+        @click="newPostModal"
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        variant="success"
+      >
         <feather-icon icon="PlusCircleIcon" size="18" />
-        Create new post
-      </b-button>
+  
+Add Post        </b-button>
     </div>
   </div>
 </template>
@@ -255,7 +263,7 @@ import BCardCode from "@core/components/b-card-code";
 import gql from "graphql-tag";
 import { DELETE_POST_BY_ID, GET_POST, GET_POST_BY_ID } from "@/queries/";
 import profileBottom from "./profileBottom.vue";
-import CreatePost from './createPost.vue';
+import CreatePost from "./createPost.vue";
 
 const pageSize = 2;
 
@@ -402,7 +410,7 @@ export default {
 
   methods: {
     newPostModal() {
-      this.showNewPostModal= true
+      this.showNewPostModal = true;
     },
 
     modalContent(data) {

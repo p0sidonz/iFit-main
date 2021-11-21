@@ -1,126 +1,167 @@
 <template>
-  <b-card
-    class="profile-header mb-2"
-    img-src="https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/demo-1/img/timeline.aa03c008.jpg"
-    img-top
-    alt="cover photo"
-    body-class="p-0"
-  >
-    <!-- profile picture -->
-    <div class="position-relative">
-      <div class="profile-img-container d-flex align-items-center">
-        <div class="profile-img">
-          <b-img
-            :src="userInfo.avatar"
-            rounded
-            fluid
-            alt="profile photo"
-          />
+  <div>
+    <b-card
+      v-if="headerData"
+      img-alt="Profile Cover Photo"
+      img-top
+      class="card-profile"
+    >
+      <div class="profile-image-wrapper">
+        <div class="profile-image p-0">
+          <b-avatar size="114" variant="light" :src="headerData.avatar" />
         </div>
-        <!-- profile title -->
-        <div class="profile-title ml-3">
-          <h2 class="text-white">
-            {{ userInfo.username }}
-          </h2>
-          <p class="text-white">
-          </p>
-        </div>
-        <!--/ profile title -->
       </div>
-    </div>
-    <!--/ profile picture -->
+      <h3>
+        {{ headerData.fullname }} |
+        <b-badge class="profile-badge" variant="light-primary">
+          Trainer
+        </b-badge>
+      </h3>
+      {{ headerData.about }} <br /><br />
+      <b-button
+        v-if="userInfo.username === currentUsername"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="outline-primary"
+        size="sm"
+      >
+        <feather-icon icon="EditIcon" class="mr-50" />
+        <span class="align-middle">Edit Profile</span>
+      </b-button>
+      <b-button
+        v-else
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="outline-primary"
+        size="sm"
+      >
+        <feather-icon icon="UserPlusIcon" class="mr-50" />
+        <span class="align-middle">Follow</span>
+      </b-button>
 
-    <!-- profile navbar -->
-    <div class="profile-header-nav">
-      <b-navbar toggleable="md" type="light">
-        <!-- toggle button -->
-        <b-navbar-toggle class="ml-auto" target="nav-text-collapse">
-          <feather-icon icon="AlignJustifyIcon" size="21" />
-        </b-navbar-toggle>
-        <!--/ toggle button -->
+      <hr class="mb-2" />
 
-        <!-- collapse -->
-        <b-collapse id="nav-text-collapse" is-nav>
-          <b-tabs pills class="profile-tabs mt-1 mt-md-0" nav-class="mb-0">
-            <template #tabs-start>
-              <b-nav-item role="presentation" active class="font-weight-bold">
-                <span class="d-none d-md-block">Feed</span>
-                <feather-icon icon="RssIcon" class="d-block d-md-none" />
-              </b-nav-item>
-              <b-nav-item role="presentation" class="font-weight-bold">
-                <span class="d-none d-md-block">About</span>
-                <feather-icon icon="InfoIcon" class="d-block d-md-none" />
-              </b-nav-item>
-              <b-nav-item role="presentation" class="font-weight-bold">
-                <span class="d-none d-md-block">Transormation</span>
-                <feather-icon icon="UsersIcon" class="d-block d-md-none" />
-              </b-nav-item>
-            </template>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="cursor-pointer" @click="showFollowers(headerData.id)">
+          <h6 class="text-muted font-weight-bolder">Followers</h6>
+          <h3 class="mb-0">
+            {{ headerData.Following_aggregate.aggregate.count }}
+          </h3>
+        </div>
+        <div class="cursor-pointer" @click="showFollowing(headerData.id)">
+          <h6 class="text-muted font-weight-bolder">Following</h6>
+          <h3 class="mb-0">
+            {{ headerData.Follow_aggregate.aggregate.count }}
+          </h3>
+        </div>
+        <div>
+          <h6 class="text-muted font-weight-bolder">Posts</h6>
+          <h3 class="mb-0">{{ headerData.Posts_aggregate.aggregate.count }}</h3>
+        </div>
+      </div>
 
-            <!-- edit buttons -->
-            <!-- <template #tabs-end>
-              <b-button
-              v-if="headerData.is_trainer"
-                class="ml-auto"
-                v-b-tooltip.hover
-                title="Apply for Training"
-                variant="gradient-primary"
+      <b-modal
+        id="following"
+        size="sm"
+        centered
+        hide-footer
+        v-model="showFollowingModal"
+        scrollable:false
+        title="Following"
+      >
+        <div v-if="followers">
+          <div
+            v-for="(data, index) in followers"
+            :key="data.id"
+            class="d-flex justify-content-start align-items-center"
+            :class="index == 0 ? 'mt-2' : 'mt-1'"
+          >
+            <b-avatar
+              :src="data.myfollowersObj.avatar"
+              class="mr-50"
+              size="40"
+            />
+            <div class="user-page-info">
+              <b-link
+                :to="{
+                  name: 'profile',
+                  params: { username: data.myfollowersObj.username },
+                }"
               >
-                Manage Client
-                </b-button>
-              <b-button
-              v-if="!headerData.is_trainer"
-                class="ml-auto"
-                v-b-tooltip.hover
-                title="Apply for Training"
-                variant="gradient-primary"
-                :to="{ name: 'trainer-pricing' }"
+                <h6 class="mb-0">
+                  {{ data.myfollowersObj.fullname }}
+                </h6>
+                <small class="text-muted"></small>
+              </b-link>
+            </div>
+            <!-- <b-button
+              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+              variant="primary"
+              class="btn-icon ml-auto"
+              size="sm"
+              @click="test()"
+            >
+              <feather-icon icon="UserPlusIcon" />
+              Follow
+            </b-button> -->
+          </div>
+        </div>
+
+
+      </b-modal>
+
+      <b-modal
+        id="followers"
+        size="sm"
+        centered
+        hide-footer
+        v-model="showFollowerModal"
+        scrollable:false
+        title="Followers"
+      >
+        <div v-if="followings">
+          <div
+            v-for="(data, index) in followings"
+            :key="data.id"
+            class="d-flex justify-content-start align-items-center"
+            :class="index == 0 ? 'mt-2' : 'mt-1'"
+          >
+            <b-avatar
+              :src="data.myfollowingObj.avatar"
+              class="mr-50"
+              size="40"
+            />
+            <div class="user-page-info">
+                            <b-link
+                :to="{
+                  name: 'profile',
+                  params: { username: data.myfollowingObj.username },
+                }"
               >
-                Become a trainer
-                </b-button>
 
+              <h6 class="mb-0">
+                {{ data.myfollowingObj.fullname }}
+              </h6>
+              <small class="text-muted"></small>
+                            </b-link>
+            </div>
+            <!-- <b-button
+              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+              variant="primary"
+              class="btn-icon ml-auto"
+              size="sm"
+              @click="test()"
+            >
+              <feather-icon icon="UserPlusIcon" />
+              Follow
+            </b-button> -->
+          </div>
+        </div>
 
-            </template> -->
-            <!-- edit buttons -->
-
-            <!-- edit buttons -->
-            <!-- <template #tabs-end>
-              <b-button
-                v-if="
-                  isUserLoggedIn & (userInfo.username === headerData.username)
-                "
-                variant="primary"
-                class="ml-auto"
-              >
-                <feather-icon icon="EditIcon" class="d-block d-md-none" />
-                <span class="font-weight-bold d-none d-md-block">Edit</span>
-              </b-button>
-
-              <b-button
-                v-if="
-                  isUserLoggedIn &
-                  (userInfo.username != headerData.username) &
-                  headerData.isTrainer
-                "
-                variant="primary"
-                class="ml-auto"
-              >
-                <feather-icon icon="EditIcon" class="d-block d-md-none" />
-                <span
-                  class="font-weight-bold d-none d-md-block"
-                  @click="applyForTraning"
-                  >Apply for training</span
-                >
-              </b-button>
-            </template> -->
-            <!-- edit buttons -->
-          </b-tabs>
-        </b-collapse>
-        <!--/ collapse -->
-      </b-navbar>
-    </div>
-    <!--/ profile navbar -->
-  </b-card>
+        <div v-else>
+          <span>Such emptiness </span>
+        </div>
+      </b-modal>
+    </b-card>
+  </div>
 </template>
 
 <script>
@@ -133,9 +174,14 @@ import {
   BTabs,
   BNavItem,
   BButton,
+  BAvatar,
+  BBadge,
+  BLink,
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import gql from "graphql-tag";
+import { GET_FOLLOWERS, GET_FOLLOWINGS } from "@/queries/";
+import { BSpinner } from "bootstrap-vue";
 
 export default {
   components: {
@@ -147,6 +193,10 @@ export default {
     BNavbarToggle,
     BCollapse,
     BImg,
+    BAvatar,
+    BBadge,
+    BLink,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -154,13 +204,24 @@ export default {
   data() {
     return {
       temp: null,
+      currentUsername: this.$route.params.username,
       applyData: {
         traineeId: null,
         trainerId: null,
       },
+      showFollowingModal: false,
+      showFollowerModal: false,
+      followers: null,
+      followings: null,
     };
   },
 
+  props: {
+    headerData: {
+      type: Object,
+      default: () => {},
+    },
+  },
   //   created() {
   //   const { temp } = this.$route.params
   //   console.log(temp)
@@ -177,6 +238,36 @@ export default {
   },
 
   methods: {
+    async showFollowing(id) {
+      this.showFollowingModal = true;
+      try {
+        const data = await this.$apollo.query({
+          query: GET_FOLLOWERS,
+          variables: {
+            userId: id,
+          },
+        });
+        this.followers = data.data.Fitness_Follow;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async showFollowers(id) {
+      this.showFollowerModal = true;
+      try {
+        const data = await this.$apollo.query({
+          query: GET_FOLLOWINGS,
+          variables: {
+            userId: id,
+          },
+        });
+        this.followings = data.data.Fitness_Follow;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     // async applyForTraning() {
     //   console.log(this.userInfo)
     //   if (this.headerData.isTrainer & this.userInfo.role === "USER") {
@@ -198,17 +289,11 @@ export default {
     //         traineeId: this.applyData.traineeId,
     //       },
     //     });
-
     //     console.log("ok Boss!");
     //   } catch (error) {
     //     console.log(error);
     //   }
     // },
   },
-
-  created() {
-    console.log(userInfo)
-  },
-
 };
 </script>

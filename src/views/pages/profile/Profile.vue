@@ -1,34 +1,16 @@
 <template>
   <div id="user-profile">
-    <profile-header />
-    <!-- profile info  -->
+    <profile-header :header-data="profileData" />
     <section id="profile-info">
-      <!--/ about suggested page and twitter feed -->
-
-      <!-- post -->
-      <!-- {{ profileData }} -->
-      <profile-post /> 
-
-      <!-- post -->
-
-      <!-- latest photos suggestion and polls -->
-
-      <!--/ latest photos suggestion and polls -->
+      <profile-post />
     </section>
-    <!--/ profile info  -->
   </div>
 </template>
 
 <script>
 import { BRow, BCol } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
-import ProfileAbout from "./ProfileAbout.vue";
-import ProfileSuggestedPages from "./ProfileSuggestedPages.vue";
-import ProfileTwitterFeed from "./ProfileTwitterFeed.vue";
 import ProfilePost from "./ProfilePost.vue";
-import ProfileLatestPhotos from "./ProfileLatestPhotos.vue";
-import ProfileSuggestion from "./ProfileSuggestion.vue";
-import ProfilePolls from "./ProfilePolls.vue";
 
 import gql from "graphql-tag";
 
@@ -38,13 +20,7 @@ export default {
     BRow,
     BCol,
     ProfileHeader,
-    ProfileAbout,
-    ProfileSuggestedPages,
-    ProfileTwitterFeed,
     ProfilePost,
-    ProfileLatestPhotos,
-    ProfileSuggestion,
-    ProfilePolls,
   },
   data() {
     return {
@@ -60,6 +36,7 @@ export default {
       this.refreshkey += 1;
     },
     async refetchProfile(ReUsername) {
+      console.log("testing if this is even triggering");
       try {
         const newProfile = await this.$apollo.query({
           query: gql`
@@ -68,8 +45,25 @@ export default {
                 username
                 firstName
                 fullname
+                avatar
+                about
                 id
                 created_at
+                Follow_aggregate {
+                  aggregate {
+                    count
+                  }
+                }
+                Following_aggregate {
+                  aggregate {
+                    count
+                  }
+                }
+                Posts_aggregate {
+                  aggregate {
+                    count
+                  }
+                }
               }
             }
           `,
@@ -77,7 +71,7 @@ export default {
             username: ReUsername,
           },
         });
-        this.profileData = data.data.Fitness_User[0];
+        this.profileData = newProfile.data.Fitness_User[0];
       } catch (error) {
         console.log(error);
       }
@@ -97,6 +91,22 @@ export default {
               avatar
               fullname
               created_at
+              about
+              Follow_aggregate {
+                aggregate {
+                  count
+                }
+              }
+              Following_aggregate {
+                aggregate {
+                  count
+                }
+              }
+              Posts_aggregate {
+                aggregate {
+                  count
+                }
+              }
             }
           }
         `,
@@ -104,16 +114,19 @@ export default {
           username: tempUsername,
         },
       });
-
       this.profileData = data.data.Fitness_User[0];
-    } catch (error) {}
+      console.log("created", this.profileData);
+    } catch (error) {
+      console.log(error);
+    }
 
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
         const ReUsername = this.$route.params.username;
         // react to route changes...
-        this.refetchProfile(ReUsername);
+        // this.refetchProfile(ReUsername);
+        location.reload();
       }
     );
   },
