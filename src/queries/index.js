@@ -135,6 +135,7 @@ export const GET_FOLLOWINGS = gql`
         username
         avatar
         fullname
+        is_follow
       }
     }
   }
@@ -148,6 +149,7 @@ export const GET_FOLLOWERS = gql`
         username
         avatar
         fullname
+        is_follow
       }
     }
   }

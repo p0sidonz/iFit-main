@@ -41,13 +41,13 @@
 
       <div class="d-flex justify-content-between align-items-center">
         <div class="cursor-pointer" @click="showFollowers(headerData.id)">
-          <h6 class="text-muted font-weight-bolder">Followers</h6>
+          <h6 class="text-muted font-weight-bolder">Following</h6>
           <h3 class="mb-0">
             {{ headerData.Following_aggregate.aggregate.count }}
           </h3>
         </div>
         <div class="cursor-pointer" @click="showFollowing(headerData.id)">
-          <h6 class="text-muted font-weight-bolder">Following</h6>
+          <h6 class="text-muted font-weight-bolder">Followers</h6>
           <h3 class="mb-0">
             {{ headerData.Follow_aggregate.aggregate.count }}
           </h3>
@@ -59,13 +59,13 @@
       </div>
 
       <b-modal
-        id="following"
+        id="followers"
         size="sm"
         centered
         hide-footer
         v-model="showFollowingModal"
         scrollable:false
-        title="Following"
+        title="Followers"
       >
         <div v-if="followers">
           <div
@@ -92,16 +92,16 @@
                 <small class="text-muted"></small>
               </b-link>
             </div>
-            <!-- <b-button
+            <b-button
+            v-if="!data.myfollowersObj.is_follow & userInfo.username === currentUsername"
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               variant="primary"
               class="btn-icon ml-auto"
               size="sm"
               @click="test()"
             >
-              <feather-icon icon="UserPlusIcon" />
-              Follow
-            </b-button> -->
+              Remove
+            </b-button>
           </div>
         </div>
 
@@ -109,13 +109,13 @@
       </b-modal>
 
       <b-modal
-        id="followers"
+        id="following"
         size="sm"
         centered
         hide-footer
         v-model="showFollowerModal"
         scrollable:false
-        title="Followers"
+        title="Following"
       >
         <div v-if="followings">
           <div
@@ -143,16 +143,16 @@
               <small class="text-muted"></small>
                             </b-link>
             </div>
-            <!-- <b-button
+            <b-button
+            v-if="data.myfollowingObj.is_follow"
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               variant="primary"
               class="btn-icon ml-auto"
               size="sm"
               @click="test()"
             >
-              <feather-icon icon="UserPlusIcon" />
-              Follow
-            </b-button> -->
+              UnFollow
+            </b-button>
           </div>
         </div>
 
