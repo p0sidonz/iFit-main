@@ -6,6 +6,76 @@ export default {
   getters: {},
   mutations: {},
   actions: {
+    UnAssignClient(ctx, payload) {
+      console.log("Unassign diet pyload", payload);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `mutation MyMutation ($client_id: Int!, $diet_id: Int!){
+                delete_Fitness_diet_assigned_clients(where: {_and: {client_id: {_eq: $client_id}, diet_id: {_eq: $diet_id}}}){
+                  affected_rows
+                }
+              }
+              
+              
+              `,
+              variables: {
+                diet_id: payload.meal_id,
+                client_id: payload.userId,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    assignClient(ctx, payload) {
+      console.log("assign diet pyload", payload);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `mutation MyMutation($diet_id : Int!, $user_id: Int!) {
+                insert_Fitness_diet_assigned_clients_one(object: {diet_id: $diet_id, client_id:$user_id}){
+                  id
+                }
+              }
+              
+              
+              `,
+              variables: {
+                diet_id: payload.meal_id,
+                user_id: payload.userId,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
     nonAssignedClients() {
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
@@ -50,7 +120,9 @@ export default {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
         let where = {
-          diet_assigned_clients: { diet_id: { _eq: context.meal_id.value.value } },
+          diet_assigned_clients: {
+            diet_id: { _eq: context.meal_id.value.value },
+          },
         };
         console.log(where);
         axios

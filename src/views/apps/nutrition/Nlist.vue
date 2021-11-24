@@ -311,9 +311,9 @@
             <span>Currently Assigned</span>
           </template>
 
-          <b-card v-show="AssignedClientsList" no-body class="card-employee-task">
-            <b-card-body v-if="AssignedClientsList" >
-              <div >
+          <b-card v-show="AssignedClientsList" class="card-employee-task">
+            <b-card-body v-if="AssignedClientsList">
+              <div>
                 <div
                   v-for="(employee, index) in AssignedClientsList"
                   :key="index"
@@ -349,23 +349,16 @@
               {{ unAssginedSingleClientId }}
             </b-card-body>
 
-            
-
-              <div v-if="!AssignedClientsList.length">
-                <b-alert variant="warning" show>
-                  <h4 class="alert-heading">Warning!</h4>
-                  <div class="alert-body">
-                    You haven't assigned this diet to anyone.
-                  </div>
-                </b-alert>
-              </div>
+            <div v-if="!AssignedClientsList.length">
+              <b-alert variant="warning" show>
+                <h4 class="alert-heading">Warning!</h4>
+                <div class="alert-body">
+                  You haven't assigned this diet to anyone.
+                </div>
+              </b-alert>
+            </div>
             <!-- {{ selected }} -->
-
-
           </b-card>
-
-
-
         </b-tab>
 
         <b-tab lazy @click="nonAssigned">
@@ -406,7 +399,6 @@
                     </b-form-checkbox>
                   </div>
                 </div>
-                {{ assginedSingleClientId }}
               </b-card-body>
               <!-- {{ selected }} -->
             </b-card>
@@ -427,19 +419,18 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         block
-       
+        @click="UnAssignClient(unAssginedSingleClientId)"
         >Unassigned Diet</b-button
       >
 
-            <b-button
+      <b-button
         v-if="assginedSingleClientId"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         block
-       
+        @click="assignClient(assginedSingleClientId)"
         >Assign Diet</b-button
       >
-
     </b-modal>
   </b-card>
 </template>
@@ -516,7 +507,7 @@ export default {
     BFormCheckbox,
     BTabs,
     BTab,
-    BAlert
+    BAlert,
   },
 
   data() {
@@ -575,8 +566,8 @@ export default {
       this.modalShow = true;
       this.currentDietId.value = id;
       this.fetchAssignedClients();
-      this.unAssginedSingleClientId = null
-      this.assginedSingleClientId = null
+      this.unAssginedSingleClientId = null;
+      this.assginedSingleClientId = null;
     },
 
     sendCreateMeal() {
@@ -607,10 +598,67 @@ export default {
           });
 
         this.$bvModal.hide("idk2");
+
         this.refetchData();
       }
     },
+
+    assignClient(userid) {
+      //close modal
+      store
+        .dispatch("app-todo/assignClient", {
+          meal_id: this.currentDietId.value,
+          userId: userid,
+        })
+        .then((response) => {
+          if (response.data.data.insert_Fitness_diet_assigned_clients_one.id) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Success",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+            //close modal
+            this.$bvModal.hide("idk");
+          } else {
+            console.log("An error occured");
+          }
+        });
+    },
+
+
+    UnAssignClient(userid) {
+      console.log("unsassined", userid)
+      //close modal
+      store
+        .dispatch("app-todo/UnAssignClient", {
+          meal_id: this.currentDietId.value,
+          userId: userid,
+        })
+        .then((response) => {
+          console.log(response)
+          if (response.data.data.delete_Fitness_diet_assigned_clients.affected_rows) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Success",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+            //close modal
+            this.$bvModal.hide("idk");
+          } else {
+            console.log("An error occured");
+          }
+        });
+    },
+
+
   },
+
   directives: {
     "b-modal": VBModal,
     Ripple,
@@ -626,7 +674,7 @@ export default {
     const finalassignedx = ref({});
     const currentDietId = ref({});
     const unAssginedSingleClientId = ref();
-    const assginedSingleClientId = ref()
+    const assginedSingleClientId = ref();
 
     // Register module
     if (!store.hasModule(TODO_APP_STORE_MODULE_NAME))
@@ -683,6 +731,31 @@ export default {
         });
     };
 
+    const assignClient = (userid) => {
+      console.log(userid);
+      store
+        .dispatch("app-todo/assignClient", {
+          meal_id: currentDietId.value,
+          userId: userid,
+        })
+        .then((response) => {
+          if (response.data.data.insert_Fitness_diet_assigned_clients_one.id) {
+            toast({
+              component: ToastificationContent,
+              props: {
+                title: "Success",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+            this.$bvModal.hide("idk2");
+            nonAssigned();
+          } else {
+            console.log("An error occured");
+          }
+        });
+    };
+
     const {
       fetchInvoices,
       tableColumns,
@@ -733,7 +806,7 @@ export default {
       finalassignedx,
       currentDietId,
       unAssginedSingleClientId,
-      assginedSingleClientId
+      assginedSingleClientId,
     };
   },
 };

@@ -7,6 +7,157 @@ export default {
   mutations: {},
   actions: {
 
+    UnAssignClient(ctx, payload) {
+      console.log("Unassign program pyload", payload);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `mutation MyMutation ($client_id: Int!, $program_id: Int!){
+                delete_Fitness_program_assigned_clients(where: {_and: {client_id: {_eq: $client_id}, program_id: {_eq: $program_id}}}){
+                  affected_rows
+                }
+              }
+              
+              
+              `,
+              variables: {
+                program_id: payload.program_id,
+                client_id: payload.user_id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    assignClient(ctx, payload) {
+      console.log("assign program_id pyload", payload);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `mutation MyMutation($program_id : Int!, $client_id: Int!) {
+                insert_Fitness_program_assigned_clients_one(object: {program_id: $program_id, client_id:$client_id}){
+                  id
+                }
+              }
+              
+              
+              `,
+              variables: {
+                program_id: payload.program_id,
+                client_id: payload.user_id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    nonAssignedClients() {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        let where = {
+          traineelist: {},
+        };
+
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
+                Fitness_User(where: $where, limit: $limit, offset: $offset) {
+                  fullname
+                  id
+                  avatar
+              
+                }
+              }
+              
+              `,
+              variables: {
+                where,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+
+
+    fetchAssignedClients(ctx, context) {
+      console.log("program assigned clients fetch", context);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        let where = {
+          program_assigned_clients: {
+            program_id: { _eq: context.program_id.value.value },
+          },
+        };
+        console.log(where);
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
+                Fitness_User(where: $where, limit: $limit, offset: $offset) {
+                  fullname
+                  id
+                  avatar
+              
+                }
+              }
+              
+              `,
+              variables: {
+                where,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
     deleteWeek(ctx, context)  {
       console.log("deleteWeek ", context)
       // let id = parseInt(context)

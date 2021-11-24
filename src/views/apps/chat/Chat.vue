@@ -395,10 +395,14 @@ export default {
         }
 
         if (activeChat.value.chat) {
+          console.log("dekho", activeChat.value.chat)
           var last_element =
             activeChat.value.chat.chat_messages[
               activeChat.value.chat.chat_messages.length - 1
             ];
+            if(!last_element){
+              return
+            }
           if (last_element.created_at === test.created_at) {
             return console.log("same hi h");
           } else {

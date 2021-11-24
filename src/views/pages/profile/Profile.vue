@@ -1,6 +1,6 @@
 <template>
   <div id="user-profile">
-    <profile-header :header-data="profileData" />
+    <profile-header :header-data="profileData" @refresh-data="ok" />
     <section id="profile-info">
       <profile-post />
     </section>
@@ -32,11 +32,15 @@ export default {
   },
 
   methods: {
+    ok(username) {
+     let x = username.username
+      this.refetchProfile(x)
+    },
     refreshx() {
       this.refreshkey += 1;
     },
     async refetchProfile(ReUsername) {
-      console.log("testing if this is even triggering");
+      console.log("testing if this is even triggering", ReUsername);
       try {
         const newProfile = await this.$apollo.query({
           query: gql`
@@ -46,7 +50,10 @@ export default {
                 firstName
                 fullname
                 avatar
+                is_follow
+                is_applied
                 about
+                role
                 id
                 created_at
                 Follow_aggregate {
@@ -71,6 +78,7 @@ export default {
             username: ReUsername,
           },
         });
+        console.log(newProfile)
         this.profileData = newProfile.data.Fitness_User[0];
       } catch (error) {
         console.log(error);
@@ -90,8 +98,11 @@ export default {
               id
               avatar
               fullname
+              is_follow
               created_at
               about
+              is_applied
+              role
               Follow_aggregate {
                 aggregate {
                   count

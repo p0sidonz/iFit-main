@@ -260,7 +260,8 @@ export default {
             this.$router.replace({ path: "/dashboard" });
           }
           if(response.role === "user") {
-            this.$router.replace({ path: "/profile/" });
+            console.log(response.username)
+            this.$router.replace({ path: `/user/${response.username}` });
 
           }
 

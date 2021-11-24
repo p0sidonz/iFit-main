@@ -156,7 +156,7 @@
             icon="SendIcon"
             class="cursor-pointer"
             size="16"
-            @click="modalContent()"
+            @click="modalContent(data.item.id)"
           />
           <b-tooltip
             title="Assign Diet"
@@ -302,46 +302,112 @@
     <b-modal
       id="idk"
       size="lg"
-      title="Assigning diet to the customer"
+      title="Assigning program to the customer"
       hide-footer
       v-model="modalShow"
       scrollable:true
     >
-      <b-card no-body class="card-employee-task">
-        <b-card-body>
-          <div
-            v-for="(employee, index) in AssignedClientsList"
-            :key="index"
-            class="
-              employee-task
-              d-flex
-              justify-content-between
-              align-items-center
-            "
-          >
-            <b-media no-body>
-              <b-media-aside class="mr-75">
-                <b-avatar rounded size="42" :src="employee.avatar" />
-              </b-media-aside>
-              <b-media-body class="my-auto">
-                <h6 class="mb-0">
-                  {{ employee.fullname }}
-                </h6>
-                <small>Degesination</small>
-              </b-media-body>
-            </b-media>
-            <div class="d-flex align-items-center">
-              <b-form-checkbox
-                v-model="selected"
-                :value="employee.id"
-                class="custom-control-primary"
-              >
-              </b-form-checkbox>
+      <b-tabs>
+        <b-tab lazy active @click="fetchAssignedClients">
+          <template #title>
+            <feather-icon icon="ToolIcon" />
+            <span>Currently Assigned</span>
+          </template>
+
+          <b-card v-show="AssignedClientsList" class="card-employee-task">
+            <b-card-body v-if="AssignedClientsList">
+              <div>
+                <div
+                  v-for="(employee, index) in AssignedClientsList"
+                  :key="index"
+                  class="
+                    employee-task
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                  "
+                >
+                  <b-media no-body>
+                    <b-media-aside class="mr-75">
+                      <b-avatar rounded size="42" :src="employee.avatar" />
+                    </b-media-aside>
+                    <b-media-body class="my-auto">
+                      <h6 class="mb-0">
+                        {{ employee.fullname }}
+                      </h6>
+                      <small>Degesination</small>
+                    </b-media-body>
+                  </b-media>
+                  <div class="d-flex align-items-center">
+                    <b-form-checkbox
+                      v-model="unAssginedSingleClientId"
+                      :value="employee.id"
+                      class="custom-control-primary"
+                    >
+                    </b-form-checkbox>
+                  </div>
+                </div>
+              </div>
+
+              {{ unAssginedSingleClientId }}
+            </b-card-body>
+
+            <div v-if="!AssignedClientsList.length">
+              <b-alert variant="warning" show>
+                <h4 class="alert-heading">Warning!</h4>
+                <div class="alert-body">
+                  You haven't assigned this diet to anyone.
+                </div>
+              </b-alert>
             </div>
+            <!-- {{ selected }} -->
+          </b-card>
+        </b-tab>
+
+        <b-tab lazy @click="nonAssigned">
+          <template #title>
+            <feather-icon icon="UserIcon" />
+            <span>Non Assigned Clients</span>
+          </template>
+          <div v-if="finalassignedx">
+            <b-card no-body class="card-employee-task">
+              <b-card-body>
+                <div
+                  v-for="(employee, index) in finalassignedx"
+                  :key="index"
+                  class="
+                    employee-task
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                  "
+                >
+                  <b-media no-body>
+                    <b-media-aside class="mr-75">
+                      <b-avatar rounded size="42" :src="employee.avatar" />
+                    </b-media-aside>
+                    <b-media-body class="my-auto">
+                      <h6 class="mb-0">
+                        {{ employee.fullname }}
+                      </h6>
+                      <small>Degesination</small>
+                    </b-media-body>
+                  </b-media>
+                  <div class="d-flex align-items-center">
+                    <b-form-checkbox
+                      v-model="assginedSingleClientId"
+                      :value="employee.id"
+                      class="custom-control-primary"
+                    >
+                    </b-form-checkbox>
+                  </div>
+                </div>
+              </b-card-body>
+              <!-- {{ selected }} -->
+            </b-card>
           </div>
-        </b-card-body>
-        {{ selected }}
-      </b-card>
+        </b-tab>
+      </b-tabs>
 
       <b-button
         v-ripple.400="'rgba(234, 84, 85, 0.15)'"
@@ -352,12 +418,21 @@
       >
       <br />
       <b-button
-        v-if="selected"
+        v-if="unAssginedSingleClientId"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         block
-        @click="$bvModal.hide('idk')"
-        >Save</b-button
+        @click="UnAssignClient(unAssginedSingleClientId)"
+        >Unassigned Diet</b-button
+      >
+
+      <b-button
+        v-if="assginedSingleClientId"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="outline-primary"
+        block
+        @click="assignClient(assginedSingleClientId)"
+        >Assign Diet</b-button
       >
     </b-modal>
   </b-card>
@@ -388,7 +463,10 @@ import {
   BInputGroupPrepend,
   BInputGroupAppend,
   BInputGroup,
+  BTabs,
+  BTab,
   BFormTextarea,
+  BAlert,
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -430,6 +508,9 @@ export default {
     vSelect,
     BMediaAside,
     BFormCheckbox,
+    BTabs,
+    BTab,
+    BAlert,
   },
 
   data() {
@@ -469,7 +550,6 @@ export default {
               // totalInvoices.value = total
             })
             .then(
-              
               this.$swal({
                 icon: "success",
                 title: "Deleted!",
@@ -479,30 +559,94 @@ export default {
                 },
               })
             );
-            this.refetchData();
+          this.refetchData();
         }
       });
     },
 
-    modalContent() {
+    assignClient(userid) {
+      //close modal
+      store
+        .dispatch("app-program/assignClient", {
+          program_id: this.currentProgramId.value,
+          user_id: userid,
+        })
+        .then((response) => {
+          if (
+            response.data.data.insert_Fitness_program_assigned_clients_one.id
+          ) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Success",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+            //close modal
+            this.$bvModal.hide("idk");
+          } else {
+            console.log("An error occured");
+          }
+        });
+    },
+
+        UnAssignClient(userid) {
+      console.log("unsassined", userid)
+      //close modal
+      store
+        .dispatch("app-program/UnAssignClient", {
+          program_id: this.currentProgramId.value,
+          user_id: userid,
+        })
+        .then((response) => {
+          console.log(response)
+          if (response.data.data.delete_Fitness_program_assigned_clients.affected_rows) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Success",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+            //close modal
+            this.$bvModal.hide("idk");
+          } else {
+            console.log("An error occured");
+          }
+        });
+    },
+
+
+
+    modalContent(id) {
       this.modalShow = true;
+      this.currentProgramId.value = id;
       this.fetchAssignedClients();
+      this.unAssginedSingleClientId = null;
+      this.assginedSingleClientId = null;
     },
 
     sendCreateMeal() {
       console.log(this.createMeal);
-      if (this.createWorkout.title === "" || this.createWorkout.description === "") {
+      if (
+        this.createWorkout.title === "" ||
+        this.createWorkout.description === ""
+      ) {
         return this.$toast({
           component: ToastificationContent,
           props: {
             title: "Please enter the workout name and description",
-            icon: "AlertTriangleIcon",  
+            icon: "AlertTriangleIcon",
             variant: "danger",
           },
         });
       } else {
         store
-          .dispatch("app-workout/createWorkout", { workoutdata: this.createWorkout })
+          .dispatch("app-workout/createWorkout", {
+            workoutdata: this.createWorkout,
+          })
           .then((response) => {
             this.$toast({
               component: ToastificationContent,
@@ -528,10 +672,15 @@ export default {
 
   setup() {
     const toast = useToast();
-
+    const currentProgramId = ref({});
     const TODO_APP_STORE_MODULE_NAME = "app-program";
-
+    const NonAssignedClientsList = ref({});
     const AssignedClientsList = ref({});
+
+    const finalassignedx = ref({});
+
+    const unAssginedSingleClientId = ref();
+    const assginedSingleClientId = ref();
 
     // Register module
     if (!store.hasModule(TODO_APP_STORE_MODULE_NAME))
@@ -545,23 +694,49 @@ export default {
 
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
 
-    const fetchAssignedClients = (taskData) => {
+    const nonAssigned = () => {
+      unAssginedSingleClientId.value = null;
+      console.log("non assinged clicked");
       store
-        .dispatch("app-program/fetchAssignedClients")
+        .dispatch("app-program/nonAssignedClients", {
+          program_id: currentProgramId.value,
+        })
+
         .then((response) => {
-          console.log("RESPONSE MANUALLs", response.data.data.Fitness_User);
+          NonAssignedClientsList.value = response.data.data.Fitness_User;
+          finalassignedx.value = NonAssignedClientsList.value.filter(function (
+            cv
+          ) {
+            return !AssignedClientsList.value.find(function (e) {
+              return e.id == cv.id;
+            });
+          });
+          console.log(finalassignedx.value);
+          // totalInvoices.value = total
+        });
+    };
+
+    const fetchAssignedClients = (taskData) => {
+      console.log;
+      store
+        .dispatch("app-program/fetchAssignedClients", {
+          program_id: currentProgramId,
+        })
+        .then((response) => {
+          console.log(response);
           AssignedClientsList.value = response.data.data.Fitness_User;
           // totalInvoices.value = total
         })
         .catch((error) => {
-          toast({
-            component: ToastificationContent,
-            props: {
-              title: error,
-              icon: "AlertTriangleIcon",
-              variant: "danger",
-            },
-          });
+          console.log(error);
+          // toast({
+          //   component: ToastificationContent,
+          //   props: {
+          //     title: `error: ${error}`,
+          //     icon: "AlertTriangleIcon",
+          //     variant: "danger",
+          //   },
+          // });
         });
     };
 
@@ -609,6 +784,11 @@ export default {
       resolveInvoiceStatusVariantAndIcon,
       resolveClientAvatarVariant,
       AssignedClientsList,
+      currentProgramId,
+      nonAssigned,
+      unAssginedSingleClientId,
+      finalassignedx,
+      assginedSingleClientId,
     };
   },
 };

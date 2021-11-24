@@ -182,3 +182,19 @@ export const GET_PROFILE = gql`
     }
   }
 `;
+
+export const FOLLOW_USER = gql`
+  mutation FollowUser($followingId: Int) {
+    insert_Fitness_Follow_one(object: { following_id: $followingId }) {
+      follower_id
+    }
+  }
+`;
+
+export const UNFOLLOW_USER = gql`
+  mutation($following_id: Int!) {
+    delete_Fitness_Follow(where: { following_id: { _eq: $following_id } }) {
+      affected_rows
+    }
+  }
+`;

@@ -1,27 +1,25 @@
 <template>
   <div class="navbar-container d-flex content align-items-center">
-
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
-        <b-link
-          class="nav-link"
-          @click="toggleVerticalMenuActive"
-        >
-          <feather-icon
-            icon="MenuIcon"
-            size="21"
-          />
+        <b-link class="nav-link" @click="toggleVerticalMenuActive">
+          <feather-icon icon="MenuIcon" size="21" />
         </b-link>
       </li>
     </ul>
 
     <!-- Left Col -->
-    <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
+    <div
+      class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex"
+    >
       <dark-Toggler class="d-none d-lg-block" />
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
+      <search-bar />
+      <notification-dropdown />
+
       <b-nav-item-dropdown
         right
         toggle-class="d-flex align-items-center dropdown-user-link"
@@ -30,33 +28,29 @@
         <template #button-content>
           <div class="d-sm-flex d-none user-nav">
             <p class="user-name font-weight-bolder mb-0">
-              {{userInfo.username}}
+              {{ userInfo.username }}
             </p>
-            <span class="user-status">Admin</span>
+            <span class="user-status">{{ userInfo.role }}</span>
           </div>
           <b-avatar
             size="40"
             variant="light-primary"
             badge
-            :src="require('@/assets/images/avatars/13-small.png')"
+            :src="userInfo.avatar"
             class="badge-minimal"
             badge-variant="success"
           />
         </template>
 
-        <b-dropdown-item link-class="d-flex align-items-center"
-                  :to="`/user/${userInfo.username}`"
-
+        <b-dropdown-item
+          link-class="d-flex align-items-center"
+          :to="`/user/${userInfo.username}`"
         >
-          <feather-icon
-            size="16"
-            icon="UserIcon"
-            class="mr-50"
-          />
+          <feather-icon size="16" icon="UserIcon" class="mr-50" />
           <span>Profile</span>
         </b-dropdown-item>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <!-- <b-dropdown-item link-class="d-flex align-items-center">
           <feather-icon
             size="16"
             icon="MailIcon"
@@ -72,14 +66,13 @@
             class="mr-50"
           />
           <span>Task</span>
-        </b-dropdown-item>
+        </b-dropdown-item> -->
 
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="MessageSquareIcon"
-            class="mr-50"
-          />
+        <b-dropdown-item
+          link-class="d-flex align-items-center"
+          :to="`/apps/chat`"
+        >
+          <feather-icon size="16" icon="MessageSquareIcon" class="mr-50" />
           <span>Chat</span>
         </b-dropdown-item>
 
@@ -89,11 +82,7 @@
           :to="{ name: 'account-settings' }"
           link-class="d-flex align-items-center"
         >
-          <feather-icon
-            size="16"
-            icon="SettingsIcon"
-            class="mr-50"
-          />
+          <feather-icon size="16" icon="SettingsIcon" class="mr-50" />
           <span>Settings</span>
         </b-dropdown-item>
 
@@ -101,20 +90,21 @@
           :to="{ name: 'dashboard' }"
           link-class="d-flex align-items-center"
         >
-          <feather-icon
-            size="16"
-            icon="SettingsIcon"
-            class="mr-50"
-          />
+          <feather-icon size="16" icon="SettingsIcon" class="mr-50" />
           <span>Dashboard</span>
         </b-dropdown-item>
-        <b-dropdown-item link-class="d-flex align-items-center"
-        @click="logout">
-          <feather-icon
-            size="16"
-            icon="LogOutIcon"
-            class="mr-50"
-          />
+
+        <b-dropdown-item
+          :to="{ name: 'trainer-pricing' }"
+          link-class="d-flex align-items-center danger dropdown-bg: danger"
+          variant=""
+        >
+          <feather-icon size="16" icon="ArrowUpCircleIcon" class="mr-50" />
+          <span>UPGRADE</span>
+        </b-dropdown-item>
+
+        <b-dropdown-item link-class="d-flex align-items-center" @click="logout">
+          <feather-icon size="16" icon="LogOutIcon" class="mr-50" />
           <span>Logout</span>
         </b-dropdown-item>
       </b-nav-item-dropdown>
@@ -124,12 +114,18 @@
 
 <script>
 import {
-  BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
-} from 'bootstrap-vue'
-import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+  BLink,
+  BNavbarNav,
+  BNavItemDropdown,
+  BDropdownItem,
+  BDropdownDivider,
+  BAvatar,
+} from "bootstrap-vue";
+import DarkToggler from "@core/layouts/components/app-navbar/components/DarkToggler.vue";
+import SearchBar from "./SearchBar.vue";
+import NotificationDropdown from "./NotificationDropdown.vue";
 
 export default {
-
   components: {
     BLink,
     BNavbarNav,
@@ -137,6 +133,8 @@ export default {
     BDropdownItem,
     BDropdownDivider,
     BAvatar,
+    SearchBar,
+    NotificationDropdown,
 
     // Navbar Components
     DarkToggler,
@@ -149,23 +147,18 @@ export default {
   },
 
   methods: {
-        logout() {
-
-      localStorage.removeItem('userInfo')
-      localStorage.removeItem('apollo-token')
-     // Redirect to login page
-      this.$router.push({ name: 'login' })
+    logout() {
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("apollo-token");
+      // Redirect to login page
+      this.$router.push({ name: "login" });
     },
-
-
   },
 
   computed: {
-  userInfo () {
-    return this.$store.getters.userInfo
-    
-  }
-}
-
-}
+    userInfo() {
+      return this.$store.getters.userInfo;
+    },
+  },
+};
 </script>
