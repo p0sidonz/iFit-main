@@ -141,6 +141,29 @@ export const GET_FOLLOWINGS = gql`
   }
 `;
 
+export const GET_PACKAGES = gql`
+  query getPackages($user_id: Int!) {
+    Fitness_trainer_package(where: {_and: {user_id: {_eq: $user_id}, status: {_eq: "Active"} }}) {
+      id
+      title
+      description
+      amount
+      currency
+      subscription_days
+      is_free
+      status
+      created_at
+      User {
+      id
+      username
+      fullname
+      avatar
+      
+      }
+    }
+  }
+`;
+
 export const GET_FOLLOWERS = gql`
   query MyQuery($userId: Int!) {
     Fitness_Follow(where: { follower_id: { _eq: $userId } }) {

@@ -130,9 +130,9 @@ export default {
     },
     {
       id: 6,
-      category: 'demand-generation',
+      category: 'trainer-packages',
       img: require('@/assets/images/illustration/demand.svg'),
-      title: 'Demand Generation',
+      title: 'Packages', 
       desc: 'Competent means we will never take anything for granted.',
     },
   ],

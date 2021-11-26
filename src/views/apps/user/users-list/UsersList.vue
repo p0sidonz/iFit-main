@@ -124,7 +124,7 @@
             :variant="`light-${resolveUserStatusVariant(data.item.status)}`"
             class="text-capitalize"
           >
-            {{ data.item.traineelist.status }}
+            {{ data.item.status }}
           </b-badge>
         </template>
 

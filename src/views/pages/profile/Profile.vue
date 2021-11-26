@@ -33,8 +33,8 @@ export default {
 
   methods: {
     ok(username) {
-     let x = username.username
-      this.refetchProfile(x)
+      let x = username.username;
+      this.refetchProfile(x);
     },
     refreshx() {
       this.refreshkey += 1;
@@ -78,7 +78,7 @@ export default {
             username: ReUsername,
           },
         });
-        console.log(newProfile)
+        console.log(newProfile);
         this.profileData = newProfile.data.Fitness_User[0];
       } catch (error) {
         console.log(error);
@@ -103,6 +103,7 @@ export default {
               about
               is_applied
               role
+
               Follow_aggregate {
                 aggregate {
                   count
@@ -117,6 +118,9 @@ export default {
                 aggregate {
                   count
                 }
+              }
+              trainer_packages(where: { status: { _eq: "Active" } }, limit: 1) {
+                id
               }
             }
           }

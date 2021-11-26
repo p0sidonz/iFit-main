@@ -30,7 +30,9 @@
             <p class="user-name font-weight-bolder mb-0">
               {{ userInfo.username }}
             </p>
-            <span class="user-status">{{ userInfo.role }}</span>
+            <span class="user-status">    <b-badge pill variant="light-primary">{{ userInfo.role.toUpperCase() }}</b-badge>
+</span>
+
           </div>
           <b-avatar
             size="40"
@@ -120,6 +122,7 @@ import {
   BDropdownItem,
   BDropdownDivider,
   BAvatar,
+  BBadge,
 } from "bootstrap-vue";
 import DarkToggler from "@core/layouts/components/app-navbar/components/DarkToggler.vue";
 import SearchBar from "./SearchBar.vue";
@@ -127,6 +130,7 @@ import NotificationDropdown from "./NotificationDropdown.vue";
 
 export default {
   components: {
+    BBadge,
     BLink,
     BNavbarNav,
     BNavItemDropdown,

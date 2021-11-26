@@ -115,7 +115,8 @@
 
               <div class="profile-user-info">
                 <h6 class="mb-0">{{ currentPost.author.username }}</h6>
-                <small class="text-muted">{{ currentPost.created_at }}</small>
+                <small class="text-muted">
+                  {{ currentPost.created_at | moment("MMMM Do YYYY,  h:mm a" ) }}</small>
               </div>
             </div>
             <b-card-text>
@@ -396,7 +397,7 @@ export default {
         postid: null,
         text: null,
       },
-      Fitness_Posts: null,
+      Fitness_Posts: [],
       addnewPostx: "",
     };
   },

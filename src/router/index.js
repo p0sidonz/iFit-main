@@ -207,6 +207,22 @@ const router = new VueRouter({
       name: "dashboard",
       component: () => import("@/views/dashboard/dashboard.vue"),
     },
+    // *===============================================---*
+    // *--------- CREATE PACKAGES ---- ---------------------------------------*
+    // // *===============================================---*
+
+
+    {
+      path: "/trainer-packages",
+      name: "trainer-packages",
+      component: () => import("@/views/apps/packages/list.vue"),
+    },
+    // {
+    //   path: "/trainer-packages/view/:id",
+    //   name: "packages-view",
+    //   component: () => import("@/views/apps/packages/view.vue"),
+    // },
+
 
     // *===============================================---*
     // *--------- CHAT  ---------------------------------------*

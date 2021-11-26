@@ -19,6 +19,7 @@ import { createProvider } from "./vue-apollo";
 Vue.use(ToastPlugin);
 Vue.use(ModalPlugin);
 Vue.use(VueSweetalert2);
+Vue.use(require('vue-moment'));
 
 // Composition API
 Vue.use(VueCompositionAPI);

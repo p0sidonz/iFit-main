@@ -22,6 +22,7 @@
         </b-badge>
       </h3>
       {{ headerData.about || "No bio" }} <br /><br />
+
       <b-button
         v-if="userInfo.username === currentUsername"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -71,6 +72,7 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="flat-success"
         size="sm"
+        @click="getPackages(headerData.id)"
       >
         <feather-icon icon="ArrowUpCircleIcon" class="mr-50" />
         <span class="align-middle">Apply for training</span>
@@ -239,10 +241,76 @@
         </div>
       </b-modal>
 
-      
-    </b-card>
+      <b-modal
+        id="packages"
+        size="lg"
+        centered
+        hide-footer
+        v-model="showPackagesModal"
+        scrollable:true
+        title="Packages"
+      >
+        <div v-if="packagesList.length">
+          <div v-if="packagesList.length">
+            <b-card v-for="packages in packagesList" :key="packages.id" class="card-apply-job">
+              <b-card-header class="pb-1">
+                <b-media no-body>
+                  <b-media-aside class="mr-1">
+                    <b-avatar size="42" :src="packages.User.avatar" />
+                  </b-media-aside>
+                  <b-media-body>
+                    <h5 class="mb-0">{{ packages.User.fullname }}</h5>
+                    <small class="text-muted">
+                      <span>{{
+                        packages.created_at | moment("MMMM Do YYYY")
+                      }}</span>
+                    </small>
+                  </b-media-body>
+                </b-media>
+              </b-card-header>
+              <b-card-body>
+                <h5 class="apply-job-title">
+                  {{ packages.title }}
+                </h5>
+                <b-card-text class="mb-2">
+                  <div class="blog-content" v-html="packages.description" />
+                </b-card-text>
 
-    
+                <!-- payment  -->
+                <div class="apply-job-package bg-light-primary rounded">
+                  <div>
+                    <sup class="text-body">
+                      <small v-if="packages.currency === '$ US Dollar'"
+                        >$</small
+                      >
+                      <small v-if="packages.currency === '₹ INR'">₹</small>
+                    </sup>
+                    <h2 class="d-inline mr-25">{{ packages.amount }}</h2>
+                    <sub class="text-body"
+                      ><small
+                        >/ {{ packages.subscription_days }} days</small
+                      ></sub
+                    >
+                  </div>
+                </div>
+                <!--/ payment  -->
+                <b-button
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  block
+                  variant="primary"
+                  @click="applyForPackage"
+                >
+                  Apply For This Package
+                </b-button>
+              </b-card-body>
+            </b-card>
+          </div>
+        </div>
+        <div v-else>
+          No packages...
+           </div>
+      </b-modal>
+    </b-card>
   </div>
 </template>
 
@@ -259,9 +327,16 @@ import {
   BAvatar,
   BBadge,
   BLink,
+  BCardText,
+  BMediaBody,
+  BMediaAside,
+  BMedia,
+  BCardHeader,
+  BCardBody,
 } from "bootstrap-vue";
 import { toRefs } from "@vue/composition-api";
 import { ref, watch } from "@vue/composition-api";
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 import Ripple from "vue-ripple-directive";
 import gql from "graphql-tag";
@@ -270,6 +345,7 @@ import {
   GET_FOLLOWINGS,
   FOLLOW_USER,
   UNFOLLOW_USER,
+  GET_PACKAGES,
 } from "@/queries/";
 import { BSpinner } from "bootstrap-vue";
 
@@ -287,6 +363,12 @@ export default {
     BBadge,
     BLink,
     BSpinner,
+    BCardText,
+    BMediaBody,
+    BMediaAside,
+    BMedia,
+    BCardHeader,
+    BCardBody,
   },
   directives: {
     Ripple,
@@ -303,6 +385,8 @@ export default {
       showFollowerModal: false,
       followers: null,
       followings: null,
+      packagesList: [],
+      showPackagesModal: false,
     };
   },
 
@@ -328,6 +412,36 @@ export default {
   },
 
   methods: {
+
+    async applyForPackage() {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Oops!",
+                icon: "BellIcon",
+                variant: "danger",
+                text: "Unfortunately, this feature is currently unavailable  "
+              },
+            });
+    },
+
+    async getPackages(id) {
+      console.log("checking...");
+      this.showPackagesModal = true;
+      try {
+        const data = await this.$apollo.query({
+          query: GET_PACKAGES,
+          variables: {
+            user_id: id,
+          },
+        });
+        this.packagesList = data.data.Fitness_trainer_package;
+        console.log(this.packagesList);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async showFollowing(id) {
       this.showFollowingModal = true;
       try {
@@ -393,7 +507,6 @@ export default {
           if (index) {
             this.followers[index].myfollowersObj.is_follow = false;
           }
-     
         }
       } catch (error) {
         console.log(error);

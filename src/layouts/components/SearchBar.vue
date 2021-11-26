@@ -110,14 +110,17 @@ export default {
 
     const clicked = (username) => {
       showSearchBar.value = false;
-      router.push(`/user/${username}`)
+      router.push(`/user/${username}`);
       resetsearchQuery();
-
-      console.log("clicked", username);
     };
     const searchAPI = () => {
       let where = {
-        firstName: { _ilike: `%${searchQuery.value}%` },
+        _or: {
+          firstName: { _ilike: `%${searchQuery.value}%` },
+        },
+        _or: {
+          username: { _ilike: `%${searchQuery.value}%` },
+        },
       };
       const token = localStorage.getItem("apollo-token");
       const freshTocken = token.replace(/['"]+/g, "");
