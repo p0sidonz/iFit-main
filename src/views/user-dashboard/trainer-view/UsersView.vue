@@ -260,6 +260,32 @@
                       </b-form-group>
                     </b-col>
 
+                    <b-col md="6">
+                       <b-form-group
+                        label="You have epilepsy?"
+                        label-for="have_epilepsy"
+                      >
+                        <b-form-radio
+                          v-model="have_epilepsy"
+                          name="have_epilepsy"
+                          value="false"
+                        >
+                          No
+                        </b-form-radio>
+
+                        <b-form-radio
+                          v-model="have_epilepsy"
+                          name="have_epilepsy"
+                          value="true"
+                          stacked
+                        >
+                          YES
+                        </b-form-radio>
+                      </b-form-group>
+                    </b-col>
+
+
+
                     <b-col md="6" v-if="userData.User.gender === 'female'">
                       <b-form-group
                         label="Are you pregnent or  gave birth in last 8 weeks?"
@@ -283,27 +309,7 @@
                         </b-form-radio>
                       </b-form-group>
 
-                      <b-form-group
-                        label="You have epilepsy?"
-                        label-for="have_epilepsy"
-                      >
-                        <b-form-radio
-                          v-model="have_epilepsy"
-                          name="have_epilepsy"
-                          value="false"
-                        >
-                          No
-                        </b-form-radio>
-
-                        <b-form-radio
-                          v-model="have_epilepsy"
-                          name="have_epilepsy"
-                          value="true"
-                          stacked
-                        >
-                          YES
-                        </b-form-radio>
-                      </b-form-group>
+                     
                     </b-col>
                   </b-row>
                 </tab-content>
@@ -491,6 +497,8 @@ export default {
 
   methods: {
     async popWizardForm() {
+
+
       if (
         this.heart_condition === null ||
         this.have_vertigo === null ||
@@ -513,6 +521,8 @@ export default {
         });
       } else {
         try {
+
+
           const data = await this.$apollo.mutate({
             mutation: CREATE_ADDITIONAL_DETAILS,
             variables: {
@@ -536,7 +546,6 @@ export default {
             },
           });
           if (data.data.insert_Fitness_additional_profile_detail_one.id) {
-            location.reload();
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -545,6 +554,8 @@ export default {
                 variant: "success",
               },
             });
+                        location.reload();
+
           }
           // if (data.data.insert_Fitness_additional_profile_detail_one.id) {
           //   const completed = await this.$apollo.mutate({
