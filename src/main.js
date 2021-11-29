@@ -39,11 +39,11 @@ import { getMainDefinition } from "@apollo/client/utilities";
 const getAuth = JSON.parse(localStorage.getItem("apollo-token"));
 
 const httpLink = new HttpLink({
-  uri: "http://127.0.0.1:8080/v1/graphql",
+  uri: "https://trainers.hasura.app/v1/graphql",
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://127.0.0.1:8080/v1/graphql",
+  uri: "ws://trainers.hasura.app/v1/graphql",
   options: {
     reconnect: true,
 
