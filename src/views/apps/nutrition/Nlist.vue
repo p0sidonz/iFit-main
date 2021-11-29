@@ -346,7 +346,6 @@
                 </div>
               </div>
 
-              {{ unAssginedSingleClientId }}
             </b-card-body>
 
             <div v-if="!AssignedClientsList.length">
@@ -385,7 +384,7 @@
                     </b-media-aside>
                     <b-media-body class="my-auto">
                       <h6 class="mb-0">
-                        {{ employee.fullname }}
+                        {{ employee.fullname }} {{employee.UserRelations[0].id}}
                       </h6>
                       <small>Degesination</small>
                     </b-media-body>
@@ -393,7 +392,7 @@
                   <div class="d-flex align-items-center">
                     <b-form-checkbox
                       v-model="assginedSingleClientId"
-                      :value="employee.id"
+                      :value="employee"
                       class="custom-control-primary"
                     >
                     </b-form-checkbox>
@@ -428,7 +427,7 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         block
-        @click="assignClient(assginedSingleClientId)"
+        @click="assignClient(assginedSingleClientId, )"
         >Assign Diet</b-button
       >
     </b-modal>
@@ -603,12 +602,14 @@ export default {
       }
     },
 
-    assignClient(userid) {
+    assignClient(employee) {
+      console.log(employee)
       //close modal
       store
         .dispatch("app-todo/assignClient", {
           meal_id: this.currentDietId.value,
-          userId: userid,
+          userId: employee.id,
+          relationship_id: employee.UserRelations[0].id
         })
         .then((response) => {
           if (response.data.data.insert_Fitness_diet_assigned_clients_one.id) {

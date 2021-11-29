@@ -89,12 +89,23 @@
         </b-dropdown-item>
 
         <b-dropdown-item
+        v-if="userInfo.role === 'trainer'"
           :to="{ name: 'dashboard' }"
           link-class="d-flex align-items-center"
         >
           <feather-icon size="16" icon="SettingsIcon" class="mr-50" />
           <span>Dashboard</span>
         </b-dropdown-item>
+        <b-dropdown-item
+        v-if="userInfo.role === 'user'"
+          :to="{ name: 'apps-trainers-list' }"
+          link-class="d-flex align-items-center"
+        >
+          <feather-icon size="16" icon="SettingsIcon" class="mr-50" />
+          <span>Dashboard</span>
+        </b-dropdown-item>
+
+
 
         <b-dropdown-item
           :to="{ name: 'trainer-pricing' }"

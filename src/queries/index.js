@@ -1,5 +1,44 @@
 import gql from "graphql-tag";
 
+
+export const GET_MEDICAL_INFO = gql`
+query MyQuery($id: Int!) {
+  Fitness_UserRelation_by_pk(id: $id) {
+    additional_profile_detail {
+      profile_completed
+      heart_condition
+      instagram_id
+      is_injured
+      is_pregnant
+      on_medication
+      tell_us_more
+      youtube_channel_id
+      allergies
+      current_goal
+      facebook_id
+      giveup_alchol
+      have_asthma
+      have_diabetes
+      have_epilepsy
+      have_joint_issue
+      have_vertigo
+    }
+  }
+}
+
+`;
+
+
+export const IS_COMPLETED = gql`
+  mutation MyMutation($profile_completed: Boolean!) {
+    insert_Fitness_additional_profile_detail_one(
+      object: { profile_completed: $profile_completed }
+    ) {
+      profile_completed
+    }
+  }
+`;
+
 export const GET_TRAINEE = `
 query MyQuery($where: Fitness_User_bool_exp = {}) {
   Fitness_User(where: $where) {
@@ -9,6 +48,52 @@ query MyQuery($where: Fitness_User_bool_exp = {}) {
     role
   }
 }
+`;
+
+export const CREATE_ADDITIONAL_DETAILS = gql`
+  mutation MyMutation(
+    $heart_condition: Boolean!
+    $have_vertigo: Boolean!
+    $have_asthma: Boolean!
+    $have_diabetes: Boolean!
+    $have_joint_issue: Boolean!
+    $is_injured: Boolean!
+    $on_medication: Boolean!
+    $giveup_alchol: Boolean!
+    $is_pregnant: Boolean
+    $allergies: jsonb
+    $tell_us_more: String!
+    $instagram_id: String!
+    $facebook_id: String!
+    $current_goal: String!
+    $relationship_id: Int!
+    $have_epilepsy: Boolean!
+    $profile_completed: Boolean
+  ) {
+    insert_Fitness_additional_profile_detail_one(
+      object: {
+        heart_condition: $heart_condition
+        have_vertigo: $have_vertigo
+        have_asthma: $have_asthma
+        have_diabetes: $have_diabetes
+        have_joint_issue: $have_joint_issue
+        is_injured: $is_injured
+        on_medication: $on_medication
+        giveup_alchol: $giveup_alchol
+        is_pregnant: $is_pregnant
+        allergies: $allergies
+        tell_us_more: $tell_us_more
+        instagram_id: $instagram_id
+        facebook_id: $facebook_id
+        current_goal: $current_goal
+        relationship_id: $relationship_id
+        have_epilepsy: $have_epilepsy
+        profile_completed: $profile_completed
+      }
+    ) {
+      id
+    }
+  }
 `;
 
 export const UPGRADE_USER = gql`
@@ -143,7 +228,9 @@ export const GET_FOLLOWINGS = gql`
 
 export const GET_PACKAGES = gql`
   query getPackages($user_id: Int!) {
-    Fitness_trainer_package(where: {_and: {user_id: {_eq: $user_id}, status: {_eq: "Active"} }}) {
+    Fitness_trainer_package(
+      where: { _and: { user_id: { _eq: $user_id }, status: { _eq: "Active" } } }
+    ) {
       id
       title
       description
@@ -154,11 +241,10 @@ export const GET_PACKAGES = gql`
       status
       created_at
       User {
-      id
-      username
-      fullname
-      avatar
-      
+        id
+        username
+        fullname
+        avatar
       }
     }
   }

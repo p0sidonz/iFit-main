@@ -7,6 +7,36 @@ export default {
   mutations: {},
   actions: {
 
+    deleteProgram(ctx, id) {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `mutation MyMutation ($id: Int!){
+                delete_Fitness_program_by_pk(id: $id) {
+                  id
+                }
+              }
+              `,
+              variables: {
+                id: id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
     UnAssignClient(ctx, payload) {
       console.log("Unassign program pyload", payload);
       return new Promise((resolve, reject) => {
@@ -52,8 +82,8 @@ export default {
           .post(
             "http://localhost:8080/v1/graphql",
             {
-              query: `mutation MyMutation($program_id : Int!, $client_id: Int!) {
-                insert_Fitness_program_assigned_clients_one(object: {program_id: $program_id, client_id:$client_id}){
+              query: `mutation MyMutation($program_id : Int!, $client_id: Int!, $relationship_id: Int!) {
+                insert_Fitness_program_assigned_clients_one(object: {program_id: $program_id, client_id:$client_id, relationship_id: $relationship_id}){
                   id
                 }
               }
@@ -63,6 +93,7 @@ export default {
               variables: {
                 program_id: payload.program_id,
                 client_id: payload.user_id,
+                relationship_id: payload.relationship_id
               },
             },
             {
@@ -94,6 +125,9 @@ export default {
                   fullname
                   id
                   avatar
+                  UserRelations{
+                    id
+                  }
               
                 }
               }
@@ -299,7 +333,7 @@ export default {
       });
     },
 
-    createWorkout(ctx, workoutdata) {
+    createProgram(ctx, workoutdata) {
       console.log("workout store dta", workoutdata.workoutdata.title);
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
@@ -309,7 +343,7 @@ export default {
             "http://localhost:8080/v1/graphql",
             {
               query: `mutation MyMutation ($title: String!, $description: String!){
-                insert_Fitness_workout_one(object: {title: $title, description: $description}) {
+                insert_Fitness_program_one(object: {title: $title, description: $description}) {
                   id
                 }
               }

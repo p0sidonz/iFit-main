@@ -148,6 +148,34 @@ const router = new VueRouter({
     },
 
     // *===============================================---*
+    // *--------- TRANER DASHBOARD/ USER  ---- ---------------------------------------*
+    // // *===============================================---*
+
+    {
+      path: "/apps/trainers/list",
+      name: "apps-trainers-list",
+      component: () => import("@/views/user-dashboard/trainers-list/UsersList.vue"),
+    },
+    {
+      path: "/apps/trainers/view/:id",
+      name: "apps-trainers-view",
+      component: () => import("@/views/user-dashboard/trainer-view/UsersView.vue"),
+    },
+
+    {
+      path: "/apps/trainers/view/program/:id",
+      name: "user-program-view",
+      component: () => import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
+    },
+    {
+      path: "/apps/trainers/view/diet/:id",
+      name: "trainer-diet-view",
+      component: () => import("@/views/user-dashboard/diet-view/dietView.vue"),
+    },
+
+
+
+    // *===============================================---*
     // *--------- NUTRITION ---- ---------------------------------------*
     // // *===============================================---*
     {

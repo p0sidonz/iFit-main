@@ -51,7 +51,34 @@ export default function useProgramList() {
     refetchData()
   })
 
+  const fetchInvoices = (ctx, callback) => {
+    store
+      .dispatch('app-program/fetchProgram', {
+        q: searchQuery.value,
+        perPage: perPage.value,
+        page: currentPage.value,
+        sortBy: sortBy.value,
+        sortDesc: isSortDirDesc.value,
+        status: statusFilter.value,
+      })
+      .then(response => {
+        const invoices = response.data.data.Fitness_program
+        console.log("workouts",response.data.data.Fitness_program)
+        callback(invoices)
 
+        // totalInvoices.value = total
+      })
+      .catch(() => {
+        toast({
+          component: ToastificationContent,
+          props: {
+            title: "Error fetching Program' list",
+            icon: 'AlertTriangleIcon',
+            variant: 'danger',
+          },
+        })
+      })
+  }
 
   // *===============================================---*
   // *--------- UI ---------------------------------------*
@@ -78,6 +105,7 @@ export default function useProgramList() {
   }
 
   return {
+    fetchInvoices,
     tableColumns,
     perPage,
     currentPage,

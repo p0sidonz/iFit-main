@@ -141,6 +141,7 @@ export default {
         const ReUsername = this.$route.params.username;
         // react to route changes...
         // this.refetchProfile(ReUsername);
+        //hard refresh always done the job! :D 
         location.reload();
       }
     );

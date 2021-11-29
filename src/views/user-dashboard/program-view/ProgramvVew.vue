@@ -32,7 +32,7 @@
 
               <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ programs.updated_at }}</b-badge
+                  >Last Updated: {{ programs.updated_at| moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -98,29 +98,7 @@
                         </div>
                       </div>
                       <br />
-                      <b-dropdown
-                        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                        text="Add Items"
-                        variant="flat-primary"
-                      >
-                        <b-dropdown-item
-                          @click="addRestDay(week_index, day_index)"
-                        >
-                          Rest Day
-                        </b-dropdown-item>
-                        <b-dropdown-item> Assign Diet </b-dropdown-item>
-                        <b-dropdown-item
-                          @click="showAddWorkoutModal(week_index, day_index)"
-                        >
-                          Add Workout
-                        </b-dropdown-item>
 
-                        <b-dropdown-divider />
-                        <b-dropdown-item
-                          @click="removeItemFromDay(week_index, day_index)"
-                          >Remove all</b-dropdown-item
-                        >
-                      </b-dropdown>
                     </div>
                   </div>
                 </div>
@@ -132,18 +110,6 @@
           </b-row>
         </b-card-body>
 
-        <template #footer>
-          <b-button
-            size="sm"
-            v-ripple.400="'rgba(234, 84, 85, 0.15)'"
-            variant="flat-danger"
-            @click="removeWeek(week_index)"
-          >
-            <feather-icon icon="XIcon" class="mr-50" />
-
-            Remove
-          </b-button>
-        </template>
       </b-card>
       <!-- add workout modal -->
 
@@ -236,30 +202,6 @@
         </div>
       </b-modal>
 
-      <b-row align-h="center">
-        <b-col>
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="outline-primary"
-            block
-            @click="addNewWeek"
-          >
-            <feather-icon icon="PlusIcon" class="mr-50" />
-            Add Week
-          </b-button>
-        </b-col>
-        <b-col>
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="outline-success"
-            block
-            @click="saveProgram"
-          >
-            <feather-icon icon="SaveIcon" class="mr-50" />
-            Save
-          </b-button>
-        </b-col>
-      </b-row>
     </template>
   </div>
 </template>
@@ -267,9 +209,10 @@
 <script>
 import store from "@/store";
 import { ref, watch, computed, onUnmounted } from "@vue/composition-api";
-import programStoreModule from "./programStoreModule";
+import userStoreModule from "../userStoreModule";
 import BCardActions from "@core/components/b-card-actions/BCardActions.vue";
 import vSelect from "vue-select";
+
 import {
   BSpinner,
   BFormInput,
@@ -309,11 +252,14 @@ import Ripple from "vue-ripple-directive";
 import { heightTransition } from "@core/mixins/ui/transition";
 import { VueAutosuggest } from "vue-autosuggest";
 import Cleave from "vue-cleave-component";
+
 export default {
   directives: {
     Ripple,
   },
+
   mixins: [heightTransition],
+
   components: {
     VueAutosuggest,
     BMedia,
@@ -350,7 +296,10 @@ export default {
     Cleave,
     BDropdownDivider,
   },
+
   methods: {
+
+
     saveProgram() {
       let res = this.weeks_days.map((xxx, index) => {
         let deep = xxx.program_days.map((item2, index2) => {
@@ -368,10 +317,12 @@ export default {
         xxx.program_days.on_conflict = { ...constrain };
         xxx.program_days.data = [];
         xxx.program_days.data = deep;
+
         return xxx;
       });
+
       store
-        .dispatch("app-program/saveProgram", {
+        .dispatch("app-user/saveProgram", {
           data: res,
         })
         .then((response) => {
@@ -388,14 +339,17 @@ export default {
           }
         });
     },
+
     addRestDay(week_index, day_index) {
       this.weeks_days[week_index].program_days[day_index].workout = null;
       this.weeks_days[week_index].program_days[day_index].rest_day = true;
     },
+
     addNewWeek(week_index) {
       let p_id = this.$route.params.id;
       let test = {
         program_id: this.$route.params.id,
+
         program_days: [
           {
             rest_day: false,
@@ -436,6 +390,7 @@ export default {
       };
       this.weeks_days.push(test);
     },
+
     removeWeek(week_index) {
       if (this.weeks_days[week_index].id) {
       this.$swal({
@@ -452,7 +407,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           store
-            .dispatch("app-program/deleteWeek", this.weeks_days[week_index].id)
+            .dispatch("app-user/deleteWeek", this.weeks_days[week_index].id)
             .then((response) => {
               console.log(
                 "DIET DELETE RESPONSE",
@@ -478,16 +433,20 @@ export default {
         this.weeks_days.splice(week_index, 1);
       }
     },
+
     removeItemFromDay(week_index, day_index) {
       this.weeks_days[week_index].program_days[day_index].rest_day = false;
       this.weeks_days[week_index].program_days[day_index].workout = null;
+
       this.weeks_days[week_index].program_days[day_index].workout_id = null;
     },
+
     addExcerciseToDayLocal(data) {
       let exID = data.id;
       let singleWorkout = data;
       delete singleWorkout.id;
       singleWorkout.workout_id = exID;
+
       this.weeks_days[this.wk].program_days[this.dy].rest_day = false;
       this.weeks_days[this.wk].program_days[this.dy].workout = singleWorkout;
       this.weeks_days[this.wk].program_days[this.dy].workout_id = exID;
@@ -496,6 +455,7 @@ export default {
       (this.wk = ""), (this.day = ""), (this.fetchedWorkoutResult = null);
       this.workoutSearchValue = "";
     },
+
     addWorkoutToDay() {
       console.log(this.wk, this.dy);
       if (this.workoutSearchValue === "" || this.workoutSearchValue === " ") {
@@ -503,7 +463,7 @@ export default {
       } else {
         this.isLoadingx = true;
         store
-          .dispatch("app-program/searchWorkout", {
+          .dispatch("app-user/searchWorkout", {
             value: this.workoutSearchValue,
           })
           .then((response) => {
@@ -512,11 +472,13 @@ export default {
           });
       }
     },
+
     AddExcercise(ex_data) {
       let exercise = {};
       let json_sets = [];
       exercise.id = ex_data.id;
       exercise.title = ex_data.title;
+
       this.excercies_and_sets.push({ exercise: exercise, json_sets });
       this.fetchedExcerciseResult = null;
       this.$toast({
@@ -541,6 +503,7 @@ export default {
       //   })
       this.$bvModal.hide("idk2");
     },
+
     excerciseSearch() {
       console.log(this.excerciseSearchValue);
       if (
@@ -551,7 +514,7 @@ export default {
       } else {
         this.isLoadingx = true;
         store
-          .dispatch("app-program/searchExcercise", {
+          .dispatch("app-user/searchExcercise", {
             value: this.excerciseSearchValue,
           })
           .then((response) => {
@@ -569,13 +532,16 @@ export default {
           });
       }
     },
+
     showAddWorkoutModal(week_index, day_index) {
       this.addWorkoutModal = true;
       (this.wk = week_index), (this.dy = day_index);
     },
+
     repeateAgain(index) {
       console.log(index);
       this.excercies_and_sets[index].json_sets.push({});
+
       this.$nextTick(() => {
         this.trAddHeight(this.$refs.row[0].offsetHeight);
       });
@@ -622,9 +588,11 @@ export default {
           uppercase: true,
         },
       },
+
       //Week and day indexes post searching diet and workout
       wk: "",
       dy: "",
+
       //Add workout Modal
       addWorkoutModal: false,
       workoutSearchValue: "",
@@ -632,24 +600,32 @@ export default {
       singleWorkout: null,
     };
   },
+
   setup() {
     const toast = useToast();
-    const TODO_APP_STORE_MODULE_NAME = "app-program";
+
+    const TODO_APP_STORE_MODULE_NAME = "app-user";
+
     const programs = ref({});
     const weeks_days = ref([]);
+
     // Register module
     if (!store.hasModule(TODO_APP_STORE_MODULE_NAME))
-      store.registerModule(TODO_APP_STORE_MODULE_NAME, programStoreModule);
+      store.registerModule(TODO_APP_STORE_MODULE_NAME, userStoreModule);
+
     // UnRegister on leave
     onUnmounted(() => {
       if (store.hasModule(TODO_APP_STORE_MODULE_NAME))
         store.unregisterModule(TODO_APP_STORE_MODULE_NAME);
     });
+
     const { route, router } = useRouter();
+
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
+
     const fetchExcercise = () => {
       store
-        .dispatch("app-program/getWorkout", {
+        .dispatch("app-user/getWorkout", {
           id: router.currentRoute.params.id,
         })
         .then((response) => {
@@ -673,6 +649,7 @@ export default {
     const printInvoice = () => {
       window.print();
     };
+
     return {
       programs,
       fetchExcercise,

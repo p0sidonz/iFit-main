@@ -158,11 +158,7 @@
             size="16"
             @click="modalContent(data.item.id)"
           />
-          <b-tooltip
-            title="Assign Diet"
-            class="cursor-pointer"
-            :target="`invoice-row-${data.item.id}-preview-icon`"
-          />
+          <b-tooltip title="Assign Diet" class="cursor-pointer" />
 
           <feather-icon
             :id="`invoice-row-${data.item.id}-preview-icon`"
@@ -175,10 +171,6 @@
                 params: { id: data.item.id },
               })
             "
-          />
-          <b-tooltip
-            title="Edit Program"
-            :target="`invoice-row-${data.item.id}-preview-icon`"
           />
 
           <!-- Dropdown -->
@@ -200,7 +192,7 @@
               <span class="align-middle ml-50">Download</span>
             </b-dropdown-item>
             <b-dropdown-item
-              :to="{ name: 'nutrition-edit', params: { id: data.item.id } }"
+              :to="{ name: 'program-edit', params: { id: data.item.id } }"
             >
               <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">Edit</span>
@@ -396,7 +388,7 @@
                   <div class="d-flex align-items-center">
                     <b-form-checkbox
                       v-model="assginedSingleClientId"
-                      :value="employee.id"
+                      :value="employee"
                       class="custom-control-primary"
                     >
                     </b-form-checkbox>
@@ -540,16 +532,12 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          store
-            .dispatch("app-todo/deleteDiet", id)
-            .then((response) => {
+          store.dispatch("app-program/deleteProgram", id).then((response) => {
+            if (response.data.data.delete_Fitness_program_by_pk) {
               console.log(
                 "DIET DELETE RESPONSE",
-                response.data.data.delete_Fitness_Diet_by_pk
+                result.value
               );
-              // totalInvoices.value = total
-            })
-            .then(
               this.$swal({
                 icon: "success",
                 title: "Deleted!",
@@ -557,19 +545,32 @@ export default {
                 customClass: {
                   confirmButton: "btn btn-success",
                 },
-              })
-            );
-          this.refetchData();
+              });
+              this.refetchData();
+            }
+          
+            // totalInvoices.value = total
+          }).catch((error) => {
+                          this.$swal({
+                icon: "error",
+                title: "Sorry!!",
+                text: `Please check if there is any exisiting assigned user.`,
+                customClass: {
+                  confirmButton: "btn btn-danger",
+                },
+              });
+          })
         }
       });
     },
 
-    assignClient(userid) {
+    assignClient(employee) {
       //close modal
       store
         .dispatch("app-program/assignClient", {
           program_id: this.currentProgramId.value,
-          user_id: userid,
+          user_id: employee.id,
+          relationship_id: employee.UserRelations[0].id,
         })
         .then((response) => {
           if (
@@ -591,8 +592,8 @@ export default {
         });
     },
 
-        UnAssignClient(userid) {
-      console.log("unsassined", userid)
+    UnAssignClient(userid) {
+      console.log("unsassined", userid);
       //close modal
       store
         .dispatch("app-program/UnAssignClient", {
@@ -600,8 +601,11 @@ export default {
           user_id: userid,
         })
         .then((response) => {
-          console.log(response)
-          if (response.data.data.delete_Fitness_program_assigned_clients.affected_rows) {
+          console.log(response);
+          if (
+            response.data.data.delete_Fitness_program_assigned_clients
+              .affected_rows
+          ) {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -617,8 +621,6 @@ export default {
           }
         });
     },
-
-
 
     modalContent(id) {
       this.modalShow = true;
@@ -644,7 +646,7 @@ export default {
         });
       } else {
         store
-          .dispatch("app-workout/createWorkout", {
+          .dispatch("app-program/createProgram", {
             workoutdata: this.createWorkout,
           })
           .then((response) => {

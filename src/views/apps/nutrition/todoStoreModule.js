@@ -51,8 +51,8 @@ export default {
           .post(
             "http://localhost:8080/v1/graphql",
             {
-              query: `mutation MyMutation($diet_id : Int!, $user_id: Int!) {
-                insert_Fitness_diet_assigned_clients_one(object: {diet_id: $diet_id, client_id:$user_id}){
+              query: `mutation MyMutation($diet_id : Int!, $user_id: Int!, $relationship_id: Int!) {
+                insert_Fitness_diet_assigned_clients_one(object: {diet_id: $diet_id, client_id:$user_id, relationship_id: $relationship_id}){
                   id
                 }
               }
@@ -62,6 +62,7 @@ export default {
               variables: {
                 diet_id: payload.meal_id,
                 user_id: payload.userId,
+                relationship_id: payload.relationship_id
               },
             },
             {
@@ -93,7 +94,9 @@ export default {
                   fullname
                   id
                   avatar
-              
+                  UserRelations{
+      id
+    }
                 }
               }
               

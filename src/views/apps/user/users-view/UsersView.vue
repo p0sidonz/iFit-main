@@ -14,22 +14,29 @@
 
     <template v-if="userData">
       <!-- First Row -->
-
       <b-row>
         <b-col cols="12" xl="9" lg="8" md="7">
           <user-view-user-info-card :user-data="userData" />
         </b-col>
         <b-col cols="12" md="5" xl="3" lg="4">
-          <user-view-user-plan-card />
+          <user-view-user-plan-card :plan-data="userData.user_subscriptions" />
         </b-col>
       </b-row>
 
       <b-row>
         <b-col cols="12" lg="6">
-          <user-view-user-timeline-card />
+          <user-view-program-card :user-data="userData" />
         </b-col>
         <b-col cols="12" lg="6">
           <user-view-user-permissions-card :user-data="userData" />
+        </b-col>
+        <b-col cols="12" lg="6">
+          <user-view-user-timeline-card
+           
+          />
+        </b-col>
+        <b-col cols="12" lg="6">
+          <user-subscription-card  :plan-data="userData" />
         </b-col>
       </b-row>
     </template>
@@ -55,7 +62,8 @@ import UserViewUserInfoCard from "./UserViewUserInfoCard.vue";
 import UserViewUserPlanCard from "./UserViewUserPlanCard.vue";
 import UserViewUserTimelineCard from "./UserViewUserTimelineCard.vue";
 import UserViewUserPermissionsCard from "./UserViewUserPermissionsCard.vue";
-
+import UserViewProgramCard from "./UserViewProgramCard.vue";
+import UserSubscriptionCard from "./UserSubscriptionCard.vue";
 export default {
   components: {
     BRow,
@@ -72,7 +80,10 @@ export default {
     UserViewUserPlanCard,
     UserViewUserTimelineCard,
     UserViewUserPermissionsCard,
+    UserViewProgramCard,
+    UserSubscriptionCard,
   },
+
   setup() {
     const userData = ref(null);
 

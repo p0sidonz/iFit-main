@@ -9,67 +9,125 @@ export default {
   mutations: {},
   actions: {
 
+    fetchDiet(ctx, dietid) {
+      const token = localStorage.getItem("apollo-token");
+      const freshTocken = token.replace(/['"]+/g, "");
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `query MyQuery ($id: Int!){
+                Fitness_Diet_by_pk(id: $id) {
+                  id
+                  updated_at
+                  diet_name
+                  diet_description
+                  target_calories
+                  target_protein
+                  target_fat
+                  target_fibre
+                  target_sodium
+                  target_sugar
+                  target_carbs
+                  is_macro_set
+                  macro_type
+                  meals {
+                    id
+                    meal_title
+                    meal_decsription
+                    FoodLists {
+                      id
+                      food_name
+                      carbohydrate
+                      calories
+                      protein
+                      fat
+                      fiber
+                      quantity
+                      per_serving_cals
+                      serving_description
 
+                    }
+                  }
+                }
+              }
+              `,
+              variables: {
+                id: dietid.id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
 
+    getWorkout(ctx, id) {
+      console.log(id.id);
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        axios
+          .post(
+            "http://localhost:8080/v1/graphql",
+            {
+              query: `query MyQuery ($id: Int!){
+                Fitness_program_by_pk(id: $id) {
+                  id
+                  title
+                  description
+                  is_active
+                  updated_at
+                  workout_weeks(distinct_on: id) {
+                    id
+                    program_id
+                    program_days(distinct_on: id) {
+                      id
+                      rest_day
+                      completed
+                      workout_id
+                      workout {
+                        id
+                        title
+                      }
+                    }
+                  }
+                  
+                }
+              }
+              
+              `,
+              variables: {
+                id: id.id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    
     fetchUsers(ctx, queryParams) {
       const token = localStorage.getItem("apollo-token");
       const freshTocken = token.replace(/['"]+/g, "");
 
       console.log("queryParams", queryParams);
-      let where = {};
+      let where = {trainer_list_arr : {}};
       return new Promise((resolve, reject) => {
-        if (queryParams.role & queryParams.status) {
-          where = {
-            role: { _in: queryParams.role },
-            traineelist: {
-              User: {
-                status: { _eq: queryParams.status },
-              },
-            },
-          };
-        }
-        if (queryParams.role & queryParams.status & queryParams.q) {
-          where = {
-            role: { _eq: queryParams.role },
-            traineelist: {
-              User: {
-                firstName: { _ilike: `%${queryParams.q}%` },
-                status: { _eq: queryParams.status },
-              },
-            },
-          };
-        }
-        if (queryParams.role) {
-          where = {
-            traineelist: {
-              User: {
-                role: { _in: queryParams.role },
-              },
-            },
-          };
-        }
-        if (queryParams.q) {
-          where = {
-            traineelist: {
-              User: {
-                firstName: { _ilike: `%${queryParams.q}%` },
-              },
-            },
-          };
-        }
-        if (queryParams.status) {
-          where = {
-            traineelist: {
-              status: { _eq: queryParams.status },
-            },
-          };
-        }
-        if (!queryParams.role & !queryParams.q & !queryParams.status) {
-          where = {
-            traineelist: {},
-          };
-        }
-        console.log(where);
+
 
         axios
           .post(
@@ -83,7 +141,8 @@ export default {
                   role
                   email
                   fullname
-                  traineelist{
+                  status
+                  trainer_list_arr{
                     id
                     status
                     user_subscriptions{
@@ -135,7 +194,9 @@ export default {
                   Fitness_UserRelation_by_pk(id: $id) {
                     id
                     status
-
+                    additional_profile_detail{
+                      profile_completed
+                    }
                     user_subscriptions(order_by: {created_at: asc}) {
                       start_date
                       end_date
@@ -165,6 +226,11 @@ export default {
                     }
                     User {
                       id
+                      role
+                      gender
+                    }
+                    TrainerByUserId {
+                      id
                       username
                       role
                       avatar
@@ -172,7 +238,8 @@ export default {
                       country
                       fullname
                       status
-                      is_follow
+                      is_applied
+                      
                     }
                   }
               }

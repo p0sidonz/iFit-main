@@ -1,6 +1,7 @@
 <template>
   <b-card no-body>
     <b-card-body>
+
       <b-card-title>Currently Assigned Diets</b-card-title>
 
       <app-collapse hover>
@@ -12,10 +13,7 @@
           {{ diets.diet_details.diet_description }}
 
           <b-button
-            :to="{
-              name: 'trainer-diet-view',
-              params: { id: diets.diet_details.id },
-            }"
+          :to="{name: 'trainer-diet-view' , params: {id: diets.diet_details.id}}"
             class="float-right"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="primary"
@@ -38,7 +36,7 @@ import {
   BCardSubTitle,
   BFormCheckbox,
   BButton,
-  BCardHeader,
+  BCardHeader
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
@@ -55,7 +53,7 @@ export default {
     AppCollapse,
     AppCollapseItem,
     BButton,
-    BCardHeader,
+    BCardHeader
   },
   directives: {
     Ripple,
