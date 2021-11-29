@@ -43,7 +43,7 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://trainers.hasura.app/v1/graphql",
+  uri: "wss://trainers.hasura.app/v1/graphql",
   options: {
     reconnect: true,
 
