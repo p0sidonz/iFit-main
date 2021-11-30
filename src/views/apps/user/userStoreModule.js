@@ -73,7 +73,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -129,7 +129,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!) {
                   Fitness_UserRelation_by_pk(id: $id) {
@@ -199,7 +199,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($phonenumber: Int!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String! ){
                 addUserToTrainer(phonenumber: $phonenumber, email: $email, firstName:  $firstName, password: $password , username: $username, lastName: $lastName) {
@@ -237,7 +237,7 @@ export default {
     return new Promise((resolve, reject) => {
       axios
         .post(
-          "http://localhost:8080/v1/graphql",
+          process.env.VUE_APP_GRAPHQL_HTTP,
           {
             query: `mutation MyMutation ($phonenumber: Int!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String! ){
               addUserToTrainer(phonenumber: $phonenumber, email: $email, firstName:  $firstName, password: $password , username: $username, lastName: $lastName) {

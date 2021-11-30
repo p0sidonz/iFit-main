@@ -14,7 +14,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
               Fitness_Diet(where: {owner: {_eq: 18}}) {
@@ -47,7 +47,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_Diet_by_pk(id: $id) {
@@ -119,7 +119,7 @@ export default {
         };
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {

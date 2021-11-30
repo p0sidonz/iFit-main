@@ -13,7 +13,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
                 delete_Fitness_program_by_pk(id: $id) {
@@ -45,7 +45,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($client_id: Int!, $program_id: Int!){
                 delete_Fitness_program_assigned_clients(where: {_and: {client_id: {_eq: $client_id}, program_id: {_eq: $program_id}}}){
@@ -80,7 +80,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($program_id : Int!, $client_id: Int!, $relationship_id: Int!) {
                 insert_Fitness_program_assigned_clients_one(object: {program_id: $program_id, client_id:$client_id, relationship_id: $relationship_id}){
@@ -118,7 +118,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -164,7 +164,7 @@ export default {
         console.log(where);
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -201,7 +201,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
                 delete_Fitness_program_weeks_by_pk(id: $id) {
@@ -234,7 +234,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($objects: [Fitness_program_weeks_insert_input!] = {}) {
                 insert_Fitness_program_weeks(objects: $objects, on_conflict: {constraint: workout_weeks_pkey, update_columns: updated_at}) {
@@ -268,7 +268,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($exercise_id: Int!, $workout_id: Int!) {
                 insert_Fitness_workout_exercise_one(object: {workout_id: $workout_id, exercise_id: $exercise_id}) {
@@ -306,7 +306,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_workout_bool_exp = {}) {
                 Fitness_workout(where: $where) {
@@ -340,7 +340,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($title: String!, $description: String!){
                 insert_Fitness_program_one(object: {title: $title, description: $description}) {
@@ -376,7 +376,7 @@ export default {
         };
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery {
                 Fitness_program(where: {owner: {_eq: 18}}) {
@@ -410,7 +410,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_program_by_pk(id: $id) {

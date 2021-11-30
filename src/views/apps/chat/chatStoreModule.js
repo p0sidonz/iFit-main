@@ -17,7 +17,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query ChatsListQuery($userId: Int!, $where: Fitness_User_bool_exp = {}) {
                 Fitness_chat(where: {chat_users: {user_id: {_eq: $userId}}, userId: {_is_null: true}}) {
@@ -80,7 +80,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query getProfileInfo($userId: Int!) {
                 Fitness_User_by_pk (id : $userId){
@@ -122,7 +122,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_chat_users_bool_exp = {}) {
                 Fitness_chat_users(where: $where){
@@ -175,7 +175,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation NewChatScreenMutation($userId: Int!,$currentUserId: Int!) {
                 insert_Fitness_chat(objects: [{
@@ -220,7 +220,7 @@ export default {
         // };
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($objects: [Fitness_chat_message_insert_input!] = {}) {
                 insert_Fitness_chat_message(objects: $objects){

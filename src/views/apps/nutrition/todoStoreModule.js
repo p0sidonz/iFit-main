@@ -14,7 +14,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($client_id: Int!, $diet_id: Int!){
                 delete_Fitness_diet_assigned_clients(where: {_and: {client_id: {_eq: $client_id}, diet_id: {_eq: $diet_id}}}){
@@ -49,7 +49,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($diet_id : Int!, $user_id: Int!, $relationship_id: Int!) {
                 insert_Fitness_diet_assigned_clients_one(object: {diet_id: $diet_id, client_id:$user_id, relationship_id: $relationship_id}){
@@ -87,7 +87,7 @@ export default {
 
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -130,7 +130,7 @@ export default {
         console.log(where);
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -164,7 +164,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
                 delete_Fitness_Diet_by_pk(id: $id) {
@@ -194,7 +194,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($diet_name: String!, $diet_description: String!){
                 insert_Fitness_Diet_one(object: {diet_name: $diet_name, diet_description: $diet_description}) {
@@ -231,7 +231,7 @@ export default {
         };
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
               Fitness_Diet{
@@ -264,7 +264,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_Diet_by_pk(id: $id) {
@@ -336,7 +336,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($id: Int! , $_set: Fitness_Diet_set_input = {}) {
                 update_Fitness_Diet_by_pk(pk_columns: {id: $id}, _set: $_set){
@@ -369,7 +369,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($diet_id: Int! ){
                 insert_Fitness_meal(objects: { diet_id: $diet_id}) {
@@ -411,7 +411,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($objects: [Fitness_FoodList_insert_input!] = {}) {
                 insert_Fitness_FoodList(objects: $objects) {
@@ -443,7 +443,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
                 delete_Fitness_FoodList_by_pk(id: $id) {
@@ -475,7 +475,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
                 delete_Fitness_meal_by_pk( id: $id) {
@@ -510,7 +510,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!, $quantity: Int! $carbohydrate: numeric!, $fat: numeric!, $calories: numeric!, $protein: numeric! ){
               update_Fitness_FoodList_by_pk( pk_columns: {id: $id}, _set: {quantity: $quantity, carbohydrate: $carbohydrate, fat: $fat, calories: $calories, protein: $protein}) {
