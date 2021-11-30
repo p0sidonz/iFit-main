@@ -5,7 +5,7 @@
       <b-link class="brand-logo">
         <vuexy-logo />
 
-        <h2 class="brand-text text-primary ml-1">Vuexy</h2>
+        <h2 class="brand-text text-primary ml-1">iFit</h2>
       </b-link>
       <!-- /Brand logo-->
 
@@ -277,14 +277,14 @@ export default {
       const data = await this.$apollo
         .mutate({
           mutation: gql`
-            mutation createAccount(
+            mutation signup(
               $firstName: String!
               $lastName: String
               $username: String!
               $email: String!
               $password: String!
             ) {
-              createAccount(
+              signup(
                 firstName: $firstName
                 lastName: $lastName
                 username: $username
