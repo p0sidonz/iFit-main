@@ -118,8 +118,8 @@ export default {
 
 
     updatePackage(ctx, payload) {
-      let amount = payload.data.amount.replace(/,/g, '');
-        console.log(amount)
+      // let amount = payload.data.amount.replace(/,/g, '');
+      //   console.log(amount)
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");

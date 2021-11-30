@@ -335,10 +335,9 @@
           >
             <cleave
               id="bpackage-amount"
-              v-model="createPackage.amount"
+              v-model="createPackage.amount.number"
               class="form-control"
               :raw="false"
-              :options="number"
               placeholder="10,000"
             />
           </b-form-group>
