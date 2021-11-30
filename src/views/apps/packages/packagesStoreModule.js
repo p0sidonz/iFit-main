@@ -169,6 +169,7 @@ export default {
 
     createProgram(ctx, workoutdata) {
       let amount = workoutdata.amount.replace(/,/g, '');
+      amount = parseInt(amount,10);
       console.log(amount)
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");

@@ -1,5 +1,5 @@
 <template>
-<div v-if="planData.length"><b-card
+<div v-if="planData.length && planData.trainer_package"><b-card
     no-body
     class="border-primary"
   >

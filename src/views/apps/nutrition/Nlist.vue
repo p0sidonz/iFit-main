@@ -345,7 +345,6 @@
                   </div>
                 </div>
               </div>
-
             </b-card-body>
 
             <div v-if="!AssignedClientsList.length">
@@ -384,7 +383,8 @@
                     </b-media-aside>
                     <b-media-body class="my-auto">
                       <h6 class="mb-0">
-                        {{ employee.fullname }} {{employee.UserRelations[0].id}}
+                        {{ employee.fullname }}
+                        {{ employee.UserRelations[0].id }}
                       </h6>
                       <small>Degesination</small>
                     </b-media-body>
@@ -427,7 +427,7 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         block
-        @click="assignClient(assginedSingleClientId, )"
+        @click="assignClient(assginedSingleClientId)"
         >Assign Diet</b-button
       >
     </b-modal>
@@ -592,24 +592,33 @@ export default {
                 variant: "success",
               },
             });
+            this.$bvModal.hide("idk2");
+
+            this.refetchData();
 
             // totalInvoices.value = total
+          })
+          .catch((error) => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Oops! Please try again",
+                icon: "BellIcon",
+                variant: "danger",
+              },
+            });
           });
-
-        this.$bvModal.hide("idk2");
-
-        this.refetchData();
       }
     },
 
     assignClient(employee) {
-      console.log(employee)
+      console.log(employee);
       //close modal
       store
         .dispatch("app-todo/assignClient", {
           meal_id: this.currentDietId.value,
           userId: employee.id,
-          relationship_id: employee.UserRelations[0].id
+          relationship_id: employee.UserRelations[0].id,
         })
         .then((response) => {
           if (response.data.data.insert_Fitness_diet_assigned_clients_one.id) {
@@ -629,9 +638,8 @@ export default {
         });
     },
 
-
     UnAssignClient(userid) {
-      console.log("unsassined", userid)
+      console.log("unsassined", userid);
       //close modal
       store
         .dispatch("app-todo/UnAssignClient", {
@@ -639,8 +647,11 @@ export default {
           userId: userid,
         })
         .then((response) => {
-          console.log(response)
-          if (response.data.data.delete_Fitness_diet_assigned_clients.affected_rows) {
+          console.log(response);
+          if (
+            response.data.data.delete_Fitness_diet_assigned_clients
+              .affected_rows
+          ) {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -656,8 +667,6 @@ export default {
           }
         });
     },
-
-
   },
 
   directives: {
