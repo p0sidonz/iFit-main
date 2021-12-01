@@ -286,7 +286,7 @@ export default {
         })
         .then((data) => {
           // const decoded = jwt.verify(data.data.login.token, 'hack-me-if-u-can-2589');
-          if (data.id) {
+          if (data.username) {
             this.$router.replace({ path: "/login" });
             this.$toast({
               component: ToastificationContent,
