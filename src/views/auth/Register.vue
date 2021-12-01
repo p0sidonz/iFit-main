@@ -168,25 +168,7 @@
             </b-link>
           </p>
 
-          <!-- divider -->
-          <div class="divider my-2">
-            <div class="divider-text">or</div>
-          </div>
 
-          <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button variant="facebook" href="javascript:void(0)">
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button variant="twitter" href="javascript:void(0)">
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button variant="google" href="javascript:void(0)">
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button variant="github" href="javascript:void(0)">
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div>
         </b-col>
       </b-col>
       <!-- /Register-->
@@ -272,7 +254,6 @@ export default {
   },
   methods: {
     async signup() {
-      console.log(this.register);
       // Call to the graphql mutation
       const data = await this.$apollo
         .mutate({
@@ -305,12 +286,7 @@ export default {
           },
         })
         .then((data) => {
-          console.log(data);
-          // const decoded = jwt.verify(data.data.login.token, 'hack-me-if-u-can-2589');
-
-          this.$router.replace({ path: "/login" });
-        })
-        .then(() => {
+           this.$router.replace({ path: "/login" });
           this.$toast({
             component: ToastificationContent,
             position: "top-right",
@@ -321,11 +297,11 @@ export default {
               text: `You have successfully Registerd, You may login now.`,
             },
           });
+         
         })
 
-        .catch((error) => {
-          //Error
-          console.log(error);
+        .catch((errors) => {
+          console.log(errors);
           this.$toast({
             component: ToastificationContent,
             position: "top-right",
@@ -333,10 +309,40 @@ export default {
               title: `Error `,
               icon: "AlertOctagonIcon",
               variant: "danger",
-              text: `${error}`,
+              text: `Email or Username already in use. Please kindly use the different one or try to reset the password.`,
             },
           });
+
+          //  console.log( error[0].extensions.internal.response.body.error)
         });
+
+      // .then(() => {
+      //   this.$toast({
+      //     component: ToastificationContent,
+      //     position: "top-right",
+      //     props: {
+      //       title: `Success `,
+      //       icon: "CoffeeIcon",
+      //       variant: "success",
+      //       text: `You have successfully Registerd, You may login now.`,
+      //     },
+      //   });
+      // })
+
+      // .catch((error) => {
+      //   //Error
+      //   console.log(error);
+      //   this.$toast({
+      //     component: ToastificationContent,
+      //     position: "top-right",
+      //     props: {
+      //       title: `Error `,
+      //       icon: "AlertOctagonIcon",
+      //       variant: "danger",
+      //       text: `${error}`,
+      //     },
+      //   });
+      // });
     },
   },
 };
