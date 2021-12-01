@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar-container d-flex content align-items-center">
+  <div v-if="isUserLoggedIn" class="navbar-container d-flex content align-items-center">
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
@@ -52,23 +52,7 @@
           <span>Profile</span>
         </b-dropdown-item>
 
-        <!-- <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="MailIcon"
-            class="mr-50"
-          />
-          <span>Inbox</span>
-        </b-dropdown-item>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="CheckSquareIcon"
-            class="mr-50"
-          />
-          <span>Task</span>
-        </b-dropdown-item> -->
 
         <b-dropdown-item
           link-class="d-flex align-items-center"
@@ -123,6 +107,43 @@
       </b-nav-item-dropdown>
     </b-navbar-nav>
   </div>
+
+  <div  v-else class="navbar-container d-flex content align-items-center">
+
+    <!-- Nav Menu Toggler -->
+    <ul class="nav navbar-nav d-xl-none">
+      <li class="nav-item">
+        <b-link
+          class="nav-link"
+          @click="toggleVerticalMenuActive"
+        >
+          <feather-icon
+            icon="MenuIcon"
+            size="21"
+          />
+        </b-link>
+      </li>
+    </ul>
+
+    <!-- Left Col -->
+    <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
+      <dark-Toggler class="d-none d-lg-block" />
+
+      <!-- Bookmarks Container -->
+    </div>
+
+    <b-navbar-nav class="nav align-items-center ml-auto">
+          <b-button
+      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+      variant="flat-primary"
+              :to="{ name: 'login' }"
+
+    >
+      Login / Register
+    </b-button>
+    </b-navbar-nav>
+  </div>
+
 </template>
 
 <script>
@@ -134,10 +155,12 @@ import {
   BDropdownDivider,
   BAvatar,
   BBadge,
+  BButton
 } from "bootstrap-vue";
 import DarkToggler from "@core/layouts/components/app-navbar/components/DarkToggler.vue";
 import SearchBar from "./SearchBar.vue";
 import NotificationDropdown from "./NotificationDropdown.vue";
+import Ripple from 'vue-ripple-directive'
 
 export default {
   components: {
@@ -150,9 +173,13 @@ export default {
     BAvatar,
     SearchBar,
     NotificationDropdown,
+    BButton,
 
     // Navbar Components
     DarkToggler,
+  },
+    directives: {
+    Ripple,
   },
   props: {
     toggleVerticalMenuActive: {
@@ -173,6 +200,9 @@ export default {
   computed: {
     userInfo() {
       return this.$store.getters.userInfo;
+    },
+        isUserLoggedIn() {
+      return this.$store.getters.isUserLoggedIn;
     },
   },
 };
