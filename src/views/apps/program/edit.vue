@@ -32,7 +32,7 @@
 
               <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ programs.updated_at }}</b-badge
+                  >Last Updated: {{ programs.updated_at | moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -57,80 +57,76 @@
         class="card-developer-meetup"
       >
         <b-card-body>
-          <b-row>
-            <!-- metting header -->
-            <div class="meetup-header d-flex align-items-center">
-              <div class="meetup-day">
+          <div class="container">
+                          <div class="meetup-day">
                 <h6 class="mb-0">WEEK</h6>
                 <h3 class="mb-0">{{ week_index + 1 }}</h3>
               </div>
-              <b-col
+            <div class="row">
+
+
+              <div
                 v-for="(days, day_index) in week.program_days"
                 :key="day_index"
+                class="col-sm"
               >
-                <div>
-                  <div class="d-flex justify-content-around">
-                    <div
-                      class="bg-light-secondary position-relative rounded p-2"
-                    >
-                      <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
+                <div class="justify-content-around">
+                  <div class="bg-light-secondary position-relative  p-1">
+                    <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
 
-                      <div v-if="days.workout">
-                        <div class="text-center">
-                          <b-badge href="#" class="d-block" variant="primary">
-                            {{ days.workout.title }}
-                          </b-badge>
-                        </div>
+                    <div v-if="days.workout">
+                      <div class="text-center">
+                        <b-badge href="#" class="d-block" variant="primary">
+                          {{ days.workout.title }}
+                        </b-badge>
                       </div>
-                      <div v-else-if="!days.workout">
-                        <div class="text-center">
-                          <b-badge pill variant="light-secondary">
-                            No workout
-                          </b-badge>
-                        </div>
-                      </div>
-
-                      <div v-show="days.rest_day">
-                        <div class="text-center">
-                          <b-badge pill variant="light-secondary">
-                            Rest Day
-                          </b-badge>
-                        </div>
-                      </div>
-                      <br />
-                      <b-dropdown
-                        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                        text="Add Items"
-                        variant="flat-primary"
-                      >
-                        <b-dropdown-item
-                          @click="addRestDay(week_index, day_index)"
-                        >
-                          Rest Day
-                        </b-dropdown-item>
-                        <b-dropdown-item> Assign Diet </b-dropdown-item>
-                        <b-dropdown-item
-                          @click="showAddWorkoutModal(week_index, day_index)"
-                        >
-                          Add Workout
-                        </b-dropdown-item>
-
-                        <b-dropdown-divider />
-                        <b-dropdown-item
-                          @click="removeItemFromDay(week_index, day_index)"
-                          >Remove all</b-dropdown-item
-                        >
-                      </b-dropdown>
                     </div>
+                    <div v-else-if="!days.workout">
+                      <div class="text-center">
+                        <b-badge pill variant="light-secondary">
+                          No workout
+                        </b-badge>
+                      </div>
+                    </div>
+
+                    <div v-show="days.rest_day">
+                      <div class="text-center">
+                        <b-badge pill variant="light-secondary">
+                          Rest Day
+                        </b-badge>
+                      </div>
+                    </div>
+                    <br />
+                    <b-dropdown
+                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                      text="Add Items"
+                      variant="flat-primary"
+                    >
+                      <b-dropdown-item
+                        @click="addRestDay(week_index, day_index)"
+                      >
+                        Rest Day
+                      </b-dropdown-item>
+                      <b-dropdown-item> Assign Diet </b-dropdown-item>
+                      <b-dropdown-item
+                        @click="showAddWorkoutModal(week_index, day_index)"
+                      >
+                        Add Workout
+                      </b-dropdown-item>
+
+                      <b-dropdown-divider />
+                      <b-dropdown-item
+                        @click="removeItemFromDay(week_index, day_index)"
+                        >Remove all</b-dropdown-item
+                      >
+                    </b-dropdown>
                   </div>
                 </div>
-              </b-col>
+              </div>
             </div>
-            <!--/ metting header -->
-
-            <!-- media -->
-          </b-row>
+          </div>
         </b-card-body>
+
 
         <template #footer>
           <b-button
@@ -438,42 +434,42 @@ export default {
     },
     removeWeek(week_index) {
       if (this.weeks_days[week_index].id) {
-      this.$swal({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!x",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        customClass: {
-          confirmButton: "btn btn-primary",
-          cancelButton: "btn btn-outline-danger ml-1",
-        },
-        buttonsStyling: false,
-      }).then((result) => {
-        if (result.value) {
-          store
-            .dispatch("app-program/deleteWeek", this.weeks_days[week_index].id)
-            .then((response) => {
-              console.log(
-                "DIET DELETE RESPONSE",
-                response
-              );
-              // totalInvoices.value = total
-            })
-            .then(
-              this.$swal({
-                icon: "success",
-                title: "Deleted!",
-                text: "Deleted.",
-                customClass: {
-                  confirmButton: "btn btn-success",
-                },
+        this.$swal({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!x",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete it!",
+          customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: "btn btn-outline-danger ml-1",
+          },
+          buttonsStyling: false,
+        }).then((result) => {
+          if (result.value) {
+            store
+              .dispatch(
+                "app-program/deleteWeek",
+                this.weeks_days[week_index].id
+              )
+              .then((response) => {
+                console.log("DIET DELETE RESPONSE", response);
+                // totalInvoices.value = total
               })
-            );
-          this.fetchExcercise();
-        }
-      });
-    } else if (!this.weeks_days[week_index].id) {
+              .then(
+                this.$swal({
+                  icon: "success",
+                  title: "Deleted!",
+                  text: "Deleted.",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                })
+              );
+            this.fetchExcercise();
+          }
+        });
+      } else if (!this.weeks_days[week_index].id) {
         console.log("Locally removed from array");
         this.weeks_days.splice(week_index, 1);
       }
@@ -684,6 +680,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+
+
 .repeater-form {
   overflow: hidden;
   transition: 0.35s height;
@@ -693,8 +691,8 @@ export default {
   height: auto;
   text-align: center;
 }
-.col {
-  max-width: 180px;
-}
+// .col {
+//   max-width: 180px;
+// }
 </style>
  

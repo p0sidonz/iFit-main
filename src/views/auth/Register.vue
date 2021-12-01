@@ -24,7 +24,7 @@
         <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
           <b-card-title class="mb-1"> Adventure starts here 🚀 </b-card-title>
           <b-card-text class="mb-2">
-            Make your app management easy and fun!
+            Connect with fitness professional from all around the world.
           </b-card-text>
 
           <!-- form -->
@@ -167,26 +167,6 @@
               <span>&nbsp;Sign in instead</span>
             </b-link>
           </p>
-
-          <!-- divider -->
-          <div class="divider my-2">
-            <div class="divider-text">or</div>
-          </div>
-
-          <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button variant="facebook" href="javascript:void(0)">
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button variant="twitter" href="javascript:void(0)">
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button variant="google" href="javascript:void(0)">
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button variant="github" href="javascript:void(0)">
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div>
         </b-col>
       </b-col>
       <!-- /Register-->
@@ -305,37 +285,31 @@ export default {
           },
         })
         .then((data) => {
-          console.log(data);
           // const decoded = jwt.verify(data.data.login.token, 'hack-me-if-u-can-2589');
-
-          this.$router.replace({ path: "/login" });
-        })
-        .then(() => {
-          this.$toast({
-            component: ToastificationContent,
-            position: "top-right",
-            props: {
-              title: `Success `,
-              icon: "CoffeeIcon",
-              variant: "success",
-              text: `You have successfully Registerd, You may login now.`,
-            },
-          });
-        })
-
-        .catch((error) => {
-          //Error
-          console.log(error);
-          this.$toast({
-            component: ToastificationContent,
-            position: "top-right",
-            props: {
-              title: `Error `,
-              icon: "AlertOctagonIcon",
-              variant: "danger",
-              text: `${error}`,
-            },
-          });
+          if (data.id) {
+            this.$router.replace({ path: "/login" });
+            this.$toast({
+              component: ToastificationContent,
+              position: "top-right",
+              props: {
+                title: `Success `,
+                icon: "CoffeeIcon",
+                variant: "success",
+                text: `You have successfully Registerd, You may login now.`,
+              },
+            });
+          } else {
+                       this.$toast({
+              component: ToastificationContent,
+              position: "top-right",
+              props: {
+                title: `Sorry! `,
+                icon: "CoffeeIcon",
+                variant: "danger",
+                text: `Something went wrong. Please try again.`,
+              },
+            }); 
+          }
         });
     },
   },
