@@ -263,6 +263,7 @@
       size="lg"
       title="Create New Workout"
       hide-footer
+      centered
       v-model="CreateNewMealModal"
       scrollable:false
     >
@@ -284,78 +285,20 @@
             variant="outline-primary"
             block
             @click="sendCreateMeal()"
-            >Save</b-button
           >
+            <div v-if="isloading">
+              <b-spinner small />
+
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div v-if="!isloading">
+              <span>Create</span>
+            </div>
+          </b-button>
         </div>
       </div>
     </b-modal>
 
-    <b-modal
-      id="idk"
-      size="lg"
-      title="Assigning diet to the customer"
-      hide-footer
-      v-model="modalShow"
-      scrollable:true
-    >
-      <b-card no-body class="card-employee-task">
-        <b-card-body>
-          <div
-            v-for="(employee, index) in AssignedClientsList"
-            :key="index"
-            class="
-              employee-task
-              d-flex
-              justify-content-between
-              align-items-center
-            "
-          >
-            <b-media no-body>
-              <b-media-aside class="mr-75">
-                <b-avatar rounded size="42" :src="employee.avatar" />
-              </b-media-aside>
-              <b-media-body class="my-auto">
-                <h6 class="mb-0">
-                  {{ employee.fullname }}
-                </h6>
-                <small>Degesination</small>
-              </b-media-body>
-            </b-media>
-            <div class="d-flex align-items-center">
-              <b-form-checkbox
-                v-model="selected"
-                :value="employee.id"
-                class="custom-control-primary"
-              >
-              </b-form-checkbox>
-            </div>
-          </div>
-        </b-card-body>
-        {{ selected }}
-      </b-card>
-
-      <b-button
-        v-ripple.400="'rgba(234, 84, 85, 0.15)'"
-        variant="outline-danger"
-        block
-        @click="$bvModal.hide('idk')"
-        >Close Me</b-button
-      >
-      <br />
-      <b-button
-        v-if="selected"
-        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-        variant="outline-primary"
-        block
-        @click="$bvModal.hide('idk')"
-      >
-        <div v-if="isLoading">
-          <b-spinner small />
-          <span class="sr-only">Loading...</span>
-        </div>
-        <div v-else>Save</div>
-      </b-button>
-    </b-modal>
   </b-card>
 </template>
 

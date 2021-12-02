@@ -828,9 +828,10 @@ export default {
           toast({
             component: ToastificationContent,
             props: {
-              title: error,
+              title: "Sorry!",
               icon: "AlertTriangleIcon",
               variant: "danger",
+              text: `${error}`,
             },
           });
         });

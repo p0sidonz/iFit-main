@@ -63,6 +63,13 @@
       :sort-desc.sync="isSortDirDesc"
       class="position-relative"
     >
+      <template #table-busy>
+        <div class="text-center text-primary my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+      </template>
+
       <!-- 
       <template #head(invoiceStatus)>
         <feather-icon
@@ -296,6 +303,7 @@
       size="lg"
       title="Assigning program to the customer"
       hide-footer
+      centered
       v-model="modalShow"
       scrollable:true
     >
@@ -305,55 +313,62 @@
             <feather-icon icon="ToolIcon" />
             <span>Currently Assigned</span>
           </template>
-
-          <b-card v-show="AssignedClientsList" class="card-employee-task">
-            <b-card-body v-if="AssignedClientsList">
-              <div>
-                <div
-                  v-for="(employee, index) in AssignedClientsList"
-                  :key="index"
-                  class="
-                    employee-task
-                    d-flex
-                    justify-content-between
-                    align-items-center
-                  "
-                >
-                  <b-media no-body>
-                    <b-media-aside class="mr-75">
-                      <b-avatar rounded size="42" :src="employee.avatar" />
-                    </b-media-aside>
-                    <b-media-body class="my-auto">
-                      <h6 class="mb-0">
-                        {{ employee.fullname }}
-                      </h6>
-                      <small>Degesination</small>
-                    </b-media-body>
-                  </b-media>
-                  <div class="d-flex align-items-center">
-                    <b-form-checkbox
-                      v-model="unAssginedSingleClientId"
-                      :value="employee.id"
-                      class="custom-control-primary"
-                    >
-                    </b-form-checkbox>
+          <div v-if="!isLoadingClient">
+            <b-card v-show="AssignedClientsList" class="card-employee-task">
+              <b-card-body v-if="AssignedClientsList">
+                <div>
+                  <div
+                    v-for="(employee, index) in AssignedClientsList"
+                    :key="index"
+                    class="
+                      employee-task
+                      d-flex
+                      justify-content-between
+                      align-items-center
+                    "
+                  >
+                    <b-media no-body>
+                      <b-media-aside class="mr-75">
+                        <b-avatar rounded size="42" :src="employee.avatar" />
+                      </b-media-aside>
+                      <b-media-body class="my-auto">
+                        <h6 class="mb-0">
+                          {{ employee.fullname }}
+                        </h6>
+                        <small>Degesination</small>
+                      </b-media-body>
+                    </b-media>
+                    <div class="d-flex align-items-center">
+                      <b-form-checkbox
+                        v-model="unAssginedSingleClientId"
+                        :value="employee.id"
+                        class="custom-control-primary"
+                      >
+                      </b-form-checkbox>
+                    </div>
                   </div>
                 </div>
+
+                {{ unAssginedSingleClientId }}
+              </b-card-body>
+
+              <div v-if="!AssignedClientsList.length">
+                <b-alert variant="warning" show>
+                  <h4 class="alert-heading">Warning!</h4>
+                  <div class="alert-body">
+                    You haven't assigned this diet to anyone.
+                  </div>
+                </b-alert>
               </div>
+              <!-- {{ selected }} -->
+            </b-card>
+          </div>
 
-              {{ unAssginedSingleClientId }}
-            </b-card-body>
-
-            <div v-if="!AssignedClientsList.length">
-              <b-alert variant="warning" show>
-                <h4 class="alert-heading">Warning!</h4>
-                <div class="alert-body">
-                  You haven't assigned this diet to anyone.
-                </div>
-              </b-alert>
+          <div v-if="isLoadingClient">
+            <div class="text-center">
+              <b-spinner variant="primary" label="Loading..." />
             </div>
-            <!-- {{ selected }} -->
-          </b-card>
+          </div>
         </b-tab>
 
         <b-tab lazy @click="nonAssigned">
@@ -361,42 +376,53 @@
             <feather-icon icon="UserIcon" />
             <span>Non Assigned Clients</span>
           </template>
-          <div v-if="finalassignedx">
-            <b-card no-body class="card-employee-task">
-              <b-card-body>
-                <div
-                  v-for="(employee, index) in finalassignedx"
-                  :key="index"
-                  class="
-                    employee-task
-                    d-flex
-                    justify-content-between
-                    align-items-center
-                  "
-                >
-                  <b-media no-body>
-                    <b-media-aside class="mr-75">
-                      <b-avatar rounded size="42" :src="employee.avatar" />
-                    </b-media-aside>
-                    <b-media-body class="my-auto">
-                      <h6 class="mb-0">
-                        {{ employee.fullname }}
-                      </h6>
-                      <small>Degesination</small>
-                    </b-media-body>
-                  </b-media>
-                  <div class="d-flex align-items-center">
-                    <b-form-checkbox
-                      v-model="assginedSingleClientId"
-                      :value="employee"
-                      class="custom-control-primary"
-                    >
-                    </b-form-checkbox>
+          <div v-if="isLoadingClient">
+            <div>
+              <b-card
+                v-show="finalassignedx"
+                no-body
+                class="card-employee-task"
+              >
+                <b-card-body>
+                  <div
+                    v-for="(employee, index) in finalassignedx"
+                    :key="index"
+                    class="
+                      employee-task
+                      d-flex
+                      justify-content-between
+                      align-items-center
+                    "
+                  >
+                    <b-media no-body>
+                      <b-media-aside class="mr-75">
+                        <b-avatar rounded size="42" :src="employee.avatar" />
+                      </b-media-aside>
+                      <b-media-body class="my-auto">
+                        <h6 class="mb-0">
+                          {{ employee.fullname }}
+                        </h6>
+                        <small>Degesination</small>
+                      </b-media-body>
+                    </b-media>
+                    <div class="d-flex align-items-center">
+                      <b-form-checkbox
+                        v-model="assginedSingleClientId"
+                        :value="employee"
+                        class="custom-control-primary"
+                      >
+                      </b-form-checkbox>
+                    </div>
                   </div>
-                </div>
-              </b-card-body>
-              <!-- {{ selected }} -->
-            </b-card>
+                </b-card-body>
+                <!-- {{ selected }} -->
+              </b-card>
+            </div>
+          </div>
+          <div v-if="isLoadingClient">
+            <div class="text-center">
+              <b-spinner variant="primary" label="Loading..." />
+            </div>
           </div>
         </b-tab>
       </b-tabs>
@@ -415,8 +441,13 @@
         variant="outline-primary"
         block
         @click="UnAssignClient(unAssginedSingleClientId)"
-        >Unassigned Diet</b-button
       >
+        <div v-if="isLoading">
+          <b-spinner small />
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else>Unassigned Diet</div>
+      </b-button>
 
       <b-button
         v-if="assginedSingleClientId"
@@ -424,8 +455,13 @@
         variant="outline-primary"
         block
         @click="assignClient(assginedSingleClientId)"
-        >Assign Diet</b-button
       >
+        <div v-if="isLoading">
+          <b-spinner small />
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else>Assign Diet</div>
+      </b-button>
     </b-modal>
   </b-card>
 </template>
@@ -514,6 +550,7 @@ export default {
         title: "",
         description: "",
       },
+      isLoading: false,
     };
   },
 
@@ -532,26 +569,26 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          store.dispatch("app-program/deleteProgram", id).then((response) => {
-            if (response.data.data.delete_Fitness_program_by_pk) {
-              console.log(
-                "DIET DELETE RESPONSE",
-                result.value
-              );
+          store
+            .dispatch("app-program/deleteProgram", id)
+            .then((response) => {
+              if (response.data.data.delete_Fitness_program_by_pk) {
+                console.log("DIET DELETE RESPONSE", result.value);
+                this.$swal({
+                  icon: "success",
+                  title: "Deleted!",
+                  text: "Your file has been deleted.",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                });
+                this.refetchData();
+              }
+
+              // totalInvoices.value = total
+            })
+            .catch((error) => {
               this.$swal({
-                icon: "success",
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                customClass: {
-                  confirmButton: "btn btn-success",
-                },
-              });
-              this.refetchData();
-            }
-          
-            // totalInvoices.value = total
-          }).catch((error) => {
-                          this.$swal({
                 icon: "error",
                 title: "Sorry!!",
                 text: `Please check if there is any exisiting assigned user.`,
@@ -559,12 +596,14 @@ export default {
                   confirmButton: "btn btn-danger",
                 },
               });
-          })
+            });
         }
       });
     },
 
     assignClient(employee) {
+      this.isLoading = true;
+
       //close modal
       store
         .dispatch("app-program/assignClient", {
@@ -576,6 +615,8 @@ export default {
           if (
             response.data.data.insert_Fitness_program_assigned_clients_one.id
           ) {
+            this.isLoading = false;
+
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -586,13 +627,25 @@ export default {
             });
             //close modal
             this.$bvModal.hide("idk");
-          } else {
-            console.log("An error occured");
           }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry",
+              icon: "BellIcon",
+              text: `${error}`,
+              variant: "danger",
+            },
+          });
         });
     },
 
     UnAssignClient(userid) {
+      this.isLoading = true;
+
       console.log("unsassined", userid);
       //close modal
       store
@@ -606,6 +659,8 @@ export default {
             response.data.data.delete_Fitness_program_assigned_clients
               .affected_rows
           ) {
+            this.isLoading = false;
+
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -619,6 +674,18 @@ export default {
           } else {
             console.log("An error occured");
           }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry",
+              icon: "BellIcon",
+              text: `${error}`,
+              variant: "danger",
+            },
+          });
         });
     },
 
@@ -676,6 +743,8 @@ export default {
     const toast = useToast();
     const currentProgramId = ref({});
     const TODO_APP_STORE_MODULE_NAME = "app-program";
+    const isLoadingClient = ref(false);
+
     const NonAssignedClientsList = ref({});
     const AssignedClientsList = ref({});
 
@@ -697,6 +766,8 @@ export default {
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
 
     const nonAssigned = () => {
+      isLoadingClient.value = true;
+
       unAssginedSingleClientId.value = null;
       console.log("non assinged clicked");
       store
@@ -713,24 +784,50 @@ export default {
               return e.id == cv.id;
             });
           });
-          console.log(finalassignedx.value);
+          isLoadingClient.value = false;
+
           // totalInvoices.value = total
+        })
+        .catch((error) => {
+          isLoadingClient.value = false;
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry!",
+              icon: "AlertTriangleIcon",
+              variant: "danger",
+              text: `${error}`,
+            },
+          });
         });
     };
 
     const fetchAssignedClients = (taskData) => {
+      isLoadingClient.value = true;
+      assginedSingleClientId.value = null;
+
       console.log;
       store
         .dispatch("app-program/fetchAssignedClients", {
           program_id: currentProgramId,
         })
         .then((response) => {
+          isLoadingClient.value = false;
+
           console.log(response);
           AssignedClientsList.value = response.data.data.Fitness_User;
           // totalInvoices.value = total
         })
         .catch((error) => {
-          console.log(error);
+          isLoadingClient.value = false;
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: error,
+              icon: "AlertTriangleIcon",
+              variant: "danger",
+            },
+          });
           // toast({
           //   component: ToastificationContent,
           //   props: {

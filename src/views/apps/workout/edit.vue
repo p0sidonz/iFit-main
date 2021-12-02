@@ -223,9 +223,12 @@
             >
               <div v-if="isLoading">
                 <b-spinner small />
+
                 <span class="sr-only">Loading...</span>
               </div>
-              <div v-else>Save</div>
+              <div v-if="!isLoading">
+                <span> Save</span>
+              </div>
             </b-button>
 
             <!-- Button: Add Payment -->
