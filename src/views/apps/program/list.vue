@@ -495,6 +495,8 @@ import {
   BTab,
   BFormTextarea,
   BAlert,
+    BSpinner,
+
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -539,6 +541,8 @@ export default {
     BTabs,
     BTab,
     BAlert,
+      BSpinner,
+
   },
 
   data() {
