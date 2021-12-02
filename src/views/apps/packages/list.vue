@@ -379,6 +379,7 @@
       size="lg"
       title="Previewing package"
       hide-footer
+      centered
       v-model="showPreviewModal"
       scrollable:true
     >
@@ -466,13 +467,16 @@
       size="lg"
       title="Edit package"
       hide-footer
+      centered
       v-model="showEditModal"
       scrollable:true
     >
-      <div v-if="isLoading"></div>
+      <div v-if="isLoading">
       <div class="text-center">
         <b-spinner variant="primary" label="Loading..." />
       </div>
+      </div>
+
       <div v-if="!isLoading">
         <div v-if="editPackageContent">
           <div class="demo-vertical-spacing">
