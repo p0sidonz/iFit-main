@@ -13,7 +13,7 @@ export default function useInvoicesList() {
 
   // Table Handlers
   const tableColumns = [
-    // { key: 'id', label: '#', sortable: true },
+   { key: 'id', label: '#', sortable: true },
     { key: 'diet_name', sortable: true },
     { key: 'diet_description', sortable: true },
     { key: 'target_calories', sortable: true },

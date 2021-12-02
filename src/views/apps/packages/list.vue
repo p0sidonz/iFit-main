@@ -39,6 +39,13 @@
       :sort-desc.sync="isSortDirDesc"
       class="position-relative"
     >
+      <template #table-busy>
+        <div class="text-center text-primary my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+      </template>
+
       <template #cell(id)="data">
         {{ data.index + 1 }}
       </template>
@@ -242,113 +249,127 @@
       scrollable:false
     >
       <div>
-        <div class="demo-vertical-spacing">
-          <b-form-group
-            label="Title"
-            label-for="blog-edit-title"
-            required
-            class="mb-2"
-          >
-            <b-form-input v-model="createPackage.title" id="blog-edit-title" />
-          </b-form-group>
-
-          <b-form-group
-            label="Package description"
-            label-for="blog-content"
-            class="mb-2"
-          >
-            <quill-editor
-              v-model="createPackage.description"
-              :options="editorOption"
+        <div>
+          <div class="demo-vertical-spacing">
+            <b-form-group
+              label="Title"
+              label-for="blog-edit-title"
+              required
+              class="mb-2"
             >
-              <div id="toolbar" slot="toolbar">
-                <!-- Add a bold button -->
-                <button class="ql-bold">Bold</button>
-                <button class="ql-italic">Italic</button>
+              <b-form-input
+                v-model="createPackage.title"
+                id="blog-edit-title"
+              />
+            </b-form-group>
 
-                <!-- Add font size dropdown -->
-                <select class="ql-size">
-                  <option value="small" />
-                  <!-- Note a missing, thus falsy value, is used to reset to default -->
-                  <option selected />
-                  <option value="large" />
-                  <option value="huge" />
-                </select>
+            <b-form-group
+              label="Package description"
+              label-for="blog-content"
+              class="mb-2"
+            >
+              <quill-editor
+                v-model="createPackage.description"
+                :options="editorOption"
+              >
+                <div id="toolbar" slot="toolbar">
+                  <!-- Add a bold button -->
+                  <button class="ql-bold">Bold</button>
+                  <button class="ql-italic">Italic</button>
 
-                <select class="ql-font">
-                  <option selected="selected" />
-                  <option value="serif" />
-                  <option value="monospace" />
-                </select>
+                  <!-- Add font size dropdown -->
+                  <select class="ql-size">
+                    <option value="small" />
+                    <!-- Note a missing, thus falsy value, is used to reset to default -->
+                    <option selected />
+                    <option value="large" />
+                    <option value="huge" />
+                  </select>
+
+                  <select class="ql-font">
+                    <option selected="selected" />
+                    <option value="serif" />
+                    <option value="monospace" />
+                  </select>
+                </div>
+              </quill-editor>
+            </b-form-group>
+            <b-row>
+              <b-col md="4">
+                <b-form-group
+                  label="Status"
+                  label-for="status-package"
+                  class="mb-2"
+                >
+                  <v-select
+                    id="status-package"
+                    v-model="createPackage.status"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="statusOption"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col md="4">
+                <b-form-group
+                  label="Days (Max. 365)"
+                  label-for="sb-wrap"
+                  class="mb-2"
+                >
+                  <b-form-spinbutton
+                    v-model="createPackage.days"
+                    id="sb-wrap"
+                    wrap
+                    min="1"
+                    max="365"
+                    placeholder="--"
+                  />
+                </b-form-group>
+              </b-col>
+
+              <b-col md="4">
+                <b-form-group
+                  label="Currency"
+                  label-for="currency"
+                  class="mb-2"
+                >
+                  <v-select
+                    id="status-package"
+                    v-model="createPackage.currency"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="currencyOption"
+                  />
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-form-group
+              label="Package Amount"
+              label-for="package-amount"
+              required
+              class="mb-2"
+            >
+              <cleave
+                id="bpackage-amount"
+                v-model.number="createPackage.amount"
+                class="form-control"
+                :raw="false"
+                placeholder="10,000"
+              />
+            </b-form-group>
+
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="outline-primary"
+              block
+              @click="sendCreateMeal()"
+            >
+              <div v-if="isLoading">
+                <b-spinner small />
+                <span class="sr-only">Loading...</span>
               </div>
-            </quill-editor>
-          </b-form-group>
-          <b-row>
-            <b-col md="4">
-              <b-form-group
-                label="Status"
-                label-for="status-package"
-                class="mb-2"
-              >
-                <v-select
-                  id="status-package"
-                  v-model="createPackage.status"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="statusOption"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col md="4">
-              <b-form-group
-                label="Days (Max. 365)"
-                label-for="sb-wrap"
-                class="mb-2"
-              >
-                <b-form-spinbutton
-                  v-model="createPackage.days"
-                  id="sb-wrap"
-                  wrap
-                  min="1"
-                  max="365"
-                  placeholder="--"
-                />
-              </b-form-group>
-            </b-col>
-
-            <b-col md="4">
-              <b-form-group label="Currency" label-for="currency" class="mb-2">
-                <v-select
-                  id="status-package"
-                  v-model="createPackage.currency"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="currencyOption"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-form-group
-            label="Package Amount"
-            label-for="package-amount"
-            required
-            class="mb-2"
-          >
-            <cleave
-              id="bpackage-amount"
-              v-model.number="createPackage.amount"
-              class="form-control"
-              :raw="false"
-              placeholder="10,000"
-            />
-          </b-form-group>
-
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="outline-primary"
-            block
-            @click="sendCreateMeal()"
-            >Create Package</b-button
-          >
+              <div v-else>Create Package</div>
+            </b-button>
+          </div>
         </div>
       </div>
     </b-modal>
@@ -448,118 +469,128 @@
       v-model="showEditModal"
       scrollable:true
     >
-      <div v-if="editPackageContent">
-        <div class="demo-vertical-spacing">
-          <b-form-group
-            label="Title"
-            label-for="blog-edit-title"
-            required
-            class="mb-2"
-          >
-            <b-form-input
-              v-model="editPackageContent.title"
-              id="blog-edit-title"
-            />
-          </b-form-group>
-
-          <b-form-group
-            label="Package description"
-            label-for="blog-content"
-            class="mb-2"
-          >
-            <quill-editor
-              v-model="editPackageContent.description"
-              :options="editorOption"
+      <div v-if="isLoading"></div>
+      <div class="text-center">
+        <b-spinner variant="primary" label="Loading..." />
+      </div>
+      <div v-if="!isLoading">
+        <div v-if="editPackageContent">
+          <div class="demo-vertical-spacing">
+            <b-form-group
+              label="Title"
+              label-for="blog-edit-title"
+              required
+              class="mb-2"
             >
-              <div id="toolbar" slot="toolbar">
-                <!-- Add a bold button -->
-                <button class="ql-bold">Bold</button>
-                <button class="ql-italic">Italic</button>
+              <b-form-input
+                v-model="editPackageContent.title"
+                id="blog-edit-title"
+              />
+            </b-form-group>
 
-                <!-- Add font size dropdown -->
-                <select class="ql-size">
-                  <option value="small" />
-                  <!-- Note a missing, thus falsy value, is used to reset to default -->
-                  <option selected />
-                  <option value="large" />
-                  <option value="huge" />
-                </select>
-
-                <select class="ql-font">
-                  <option selected="selected" />
-                  <option value="serif" />
-                  <option value="monospace" />
-                </select>
-              </div>
-            </quill-editor>
-          </b-form-group>
-          <b-row>
-            <b-col md="4">
-              <b-form-group
-                label="Status"
-                label-for="status-package"
-                class="mb-2"
+            <b-form-group
+              label="Package description"
+              label-for="blog-content"
+              class="mb-2"
+            >
+              <quill-editor
+                v-model="editPackageContent.description"
+                :options="editorOption"
               >
-                <v-select
-                  id="status-package"
-                  v-model="editPackageContent.status"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="statusOption"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col md="4">
-              <b-form-group
-                label="Days (Max. 365)"
-                label-for="sb-wrap"
-                class="mb-2"
-              >
-                <b-form-spinbutton
-                  v-model="editPackageContent.subscription_days"
-                  id="sb-wrap"
-                  wrap
-                  min="1"
-                  max="365"
-                  placeholder="--"
-                />
-              </b-form-group>
-            </b-col>
+                <div id="toolbar" slot="toolbar">
+                  <!-- Add a bold button -->
+                  <button class="ql-bold">Bold</button>
+                  <button class="ql-italic">Italic</button>
 
-            <b-col md="4">
-              <b-form-group label="Currency" label-for="currency" class="mb-2">
-                <v-select
-                  id="status-package"
-                  v-model="editPackageContent.currency"
-                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="currencyOption"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
+                  <!-- Add font size dropdown -->
+                  <select class="ql-size">
+                    <option value="small" />
+                    <!-- Note a missing, thus falsy value, is used to reset to default -->
+                    <option selected />
+                    <option value="large" />
+                    <option value="huge" />
+                  </select>
 
-          <b-form-group
-            label="Package Amount"
-            label-for="package-amount"
-            required
-            class="mb-2"
-          >
-            <cleave
-              id="bpackage-amount"
-              v-model="editPackageContent.amount"
-              class="form-control"
-              :raw="false"
-              :options="number"
-              placeholder="10,000"
-            />
-          </b-form-group>
+                  <select class="ql-font">
+                    <option selected="selected" />
+                    <option value="serif" />
+                    <option value="monospace" />
+                  </select>
+                </div>
+              </quill-editor>
+            </b-form-group>
+            <b-row>
+              <b-col md="4">
+                <b-form-group
+                  label="Status"
+                  label-for="status-package"
+                  class="mb-2"
+                >
+                  <v-select
+                    id="status-package"
+                    v-model="editPackageContent.status"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="statusOption"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col md="4">
+                <b-form-group
+                  label="Days (Max. 365)"
+                  label-for="sb-wrap"
+                  class="mb-2"
+                >
+                  <b-form-spinbutton
+                    v-model="editPackageContent.subscription_days"
+                    id="sb-wrap"
+                    wrap
+                    min="1"
+                    max="365"
+                    placeholder="--"
+                  />
+                </b-form-group>
+              </b-col>
 
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="outline-primary"
-            block
-            @click="updatePackage(editPackageContent.id)"
-            >Update Package</b-button
-          >
+              <b-col md="4">
+                <b-form-group
+                  label="Currency"
+                  label-for="currency"
+                  class="mb-2"
+                >
+                  <v-select
+                    id="status-package"
+                    v-model="editPackageContent.currency"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    :options="currencyOption"
+                  />
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-form-group
+              label="Package Amount"
+              label-for="package-amount"
+              required
+              class="mb-2"
+            >
+              <cleave
+                id="bpackage-amount"
+                v-model="editPackageContent.amount"
+                class="form-control"
+                :raw="false"
+                :options="number"
+                placeholder="10,000"
+              />
+            </b-form-group>
+
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="outline-primary"
+              block
+              @click="updatePackage(editPackageContent.id)"
+              >Update Package</b-button
+            >
+          </div>
         </div>
       </div>
     </b-modal>
@@ -596,6 +627,7 @@ import {
   BFormSpinbutton,
   BCardText,
   BCardHeader,
+  BSpinner,
 } from "bootstrap-vue";
 import Cleave from "vue-cleave-component";
 
@@ -652,10 +684,12 @@ export default {
     BMediaAside,
     BFormCheckbox,
     BFormSpinbutton,
+    BSpinner,
   },
 
   data() {
     return {
+      isLoading: false,
       showEditModal: false,
       editPackageContent: {},
       showPreviewModal: false,
@@ -797,11 +831,14 @@ export default {
     },
 
     sendCreateMeal() {
+      this.isLoading = true;
       console.log("hehehe");
       if (
         this.createPackage.title === "" ||
         this.createPackage.description === ""
       ) {
+        this.isLoading = false;
+
         return this.$toast({
           component: ToastificationContent,
           props: {
@@ -815,6 +852,8 @@ export default {
           .dispatch("app-packages/createProgram", this.createPackage)
           .then((response) => {
             if (response.data.data.insert_Fitness_trainer_package_one.id) {
+              this.isLoading = false;
+
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -823,22 +862,21 @@ export default {
                   variant: "success",
                 },
               });
+              this.$bvModal.hide("idk2");
             }
-            if (!response.data.data.insert_Fitness_trainer_package_one.id) {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: "Please try again...",
-                  icon: "BellIcon",
-                  variant: "danger",
-                },
-              });
-            }
-
             // totalInvoices.value = total
+          })
+          .catch((error) => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Sorry",
+                icon: "BellIcon",
+                variant: "danger",
+                text: `${error}`,
+              },
+            });
           });
-
-        this.$bvModal.hide("idk2");
         this.refetchData();
       }
     },

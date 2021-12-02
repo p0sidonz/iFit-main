@@ -70,6 +70,12 @@
         </div>
       </template>
 
+
+      <template #cell(id)="data">
+        {{ data.index + 1 }}
+      </template>
+
+
       <!-- 
       <template #head(invoiceStatus)>
         <feather-icon

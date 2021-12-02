@@ -1,21 +1,12 @@
 <template>
-
   <div>
-
     <!-- Filters -->
 
-
     <!-- Table Container Card -->
-    <b-card
-      no-body
-      class="mb-0"
-    >
-
+    <b-card no-body class="mb-0">
       <div class="m-2">
-
         <!-- Table Top -->
         <b-row>
-
           <!-- Per Page -->
           <b-col
             cols="12"
@@ -34,14 +25,8 @@
           </b-col>
 
           <!-- Search -->
-          <b-col
-            cols="12"
-            md="6"
-          >
-
-          </b-col>
+          <b-col cols="12" md="6"> </b-col>
         </b-row>
-
       </div>
 
       <b-table
@@ -56,6 +41,13 @@
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
       >
+        <template #table-busy>
+          <div class="text-center text-primary my-2">
+            <b-spinner class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+          </div>
+        </template>
+
         <!-- Column: User -->
         <template #cell(user)="data">
           <b-media vertical-align="center">
@@ -69,7 +61,10 @@
             </template>
             <b-link
               class="font-weight-bold d-block text-nowrap"
-              :to="{name: 'apps-trainers-view', params: {id: data.item.trainer_list_arr[0].id}}"
+              :to="{
+                name: 'apps-trainers-view',
+                params: { id: data.item.trainer_list_arr[0].id },
+              }"
             >
               {{ data.item.fullname }}
             </b-link>
@@ -86,7 +81,9 @@
               class="mr-50"
               :class="`text-${resolveUserRoleVariant(data.item.role)}`"
             />
-            <span class="align-text-top text-capitalize">{{ data.item.role }}</span>
+            <span class="align-text-top text-capitalize">{{
+              data.item.role
+            }}</span>
           </div>
         </template>
 
@@ -101,7 +98,6 @@
           </b-badge>
         </template>
 
-
         <!-- Column: Actions -->
         <template #cell(actions)="data">
           <b-dropdown
@@ -109,7 +105,6 @@
             no-caret
             :right="$store.state.appConfig.isRTL"
           >
-
             <template #button-content>
               <feather-icon
                 icon="MoreVerticalIcon"
@@ -118,35 +113,43 @@
               />
             </template>
             <b-dropdown-item
-                           :to="{name: 'apps-trainers-view', params: {id: data.item.trainer_list_arr[0].id}}"
-
-             >
+              :to="{
+                name: 'apps-trainers-view',
+                params: { id: data.item.trainer_list_arr[0].id },
+              }"
+            >
               <feather-icon icon="FileTextIcon" />
-              <span 
-              class="align-middle ml-50">Details</span>
+              <span class="align-middle ml-50">Details</span>
             </b-dropdown-item>
-
           </b-dropdown>
         </template>
-
       </b-table>
       <div class="mx-2 mb-2">
         <b-row>
-
           <b-col
             cols="12"
             sm="6"
-            class="d-flex align-items-center justify-content-center justify-content-sm-start"
+            class="
+              d-flex
+              align-items-center
+              justify-content-center justify-content-sm-start
+            "
           >
-            <span class="text-muted">Showing {{ dataMeta.from }} to {{ dataMeta.to }} of {{ dataMeta.of }} entries</span>
+            <span class="text-muted"
+              >Showing {{ dataMeta.from }} to {{ dataMeta.to }} of
+              {{ dataMeta.of }} entries</span
+            >
           </b-col>
           <!-- Pagination -->
           <b-col
             cols="12"
             sm="6"
-            class="d-flex align-items-center justify-content-center justify-content-sm-end"
+            class="
+              d-flex
+              align-items-center
+              justify-content-center justify-content-sm-end
+            "
           >
-
             <b-pagination
               v-model="currentPage"
               :total-rows="totalUsers"
@@ -158,21 +161,13 @@
               next-class="next-item"
             >
               <template #prev-text>
-                <feather-icon
-                  icon="ChevronLeftIcon"
-                  size="18"
-                />
+                <feather-icon icon="ChevronLeftIcon" size="18" />
               </template>
               <template #next-text>
-                <feather-icon
-                  icon="ChevronRightIcon"
-                  size="18"
-                />
+                <feather-icon icon="ChevronRightIcon" size="18" />
               </template>
             </b-pagination>
-
           </b-col>
-
         </b-row>
       </div>
     </b-card>
@@ -181,17 +176,28 @@
 
 <script>
 import {
-  BCard, BRow, BCol, BFormInput, BButton, BTable, BMedia, BAvatar, BLink,
-  BBadge, BDropdown, BDropdownItem, BPagination,
-} from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import store from '@/store'
-import { ref, onUnmounted } from '@vue/composition-api'
-import { avatarText } from '@core/utils/filter'
-import UsersListFilters from './UsersListFilters.vue'
-import useUsersList from './useUsersList'
-import userStoreModule from '../userStoreModule'
-import UserListAddNew from './UserListAddNew.vue'
+  BCard,
+  BRow,
+  BCol,
+  BFormInput,
+  BButton,
+  BTable,
+  BMedia,
+  BAvatar,
+  BLink,
+  BBadge,
+  BDropdown,
+  BDropdownItem,
+  BPagination,
+} from "bootstrap-vue";
+import vSelect from "vue-select";
+import store from "@/store";
+import { ref, onUnmounted } from "@vue/composition-api";
+import { avatarText } from "@core/utils/filter";
+import UsersListFilters from "./UsersListFilters.vue";
+import useUsersList from "./useUsersList";
+import userStoreModule from "../userStoreModule";
+import UserListAddNew from "./UserListAddNew.vue";
 
 export default {
   components: {
@@ -215,38 +221,40 @@ export default {
     vSelect,
   },
   setup() {
-    const USER_APP_STORE_MODULE_NAME = 'app-user'
+    const USER_APP_STORE_MODULE_NAME = "app-user";
 
     // Register module
-    if (!store.hasModule(USER_APP_STORE_MODULE_NAME)) store.registerModule(USER_APP_STORE_MODULE_NAME, userStoreModule)
+    if (!store.hasModule(USER_APP_STORE_MODULE_NAME))
+      store.registerModule(USER_APP_STORE_MODULE_NAME, userStoreModule);
 
     // UnRegister on leave
     onUnmounted(() => {
-      if (store.hasModule(USER_APP_STORE_MODULE_NAME)) store.unregisterModule(USER_APP_STORE_MODULE_NAME)
-    })
+      if (store.hasModule(USER_APP_STORE_MODULE_NAME))
+        store.unregisterModule(USER_APP_STORE_MODULE_NAME);
+    });
 
-    const isAddNewUserSidebarActive = ref(false)
+    const isAddNewUserSidebarActive = ref(false);
 
     const roleOptions = [
-      { label: 'User', value: 'user' },
-      { label: 'Trainer', value: 'trainer' },
+      { label: "User", value: "user" },
+      { label: "Trainer", value: "trainer" },
       // { label: 'Editor', value: 'editor' },
       // { label: 'Maintainer', value: 'maintainer' },
       // { label: 'Subscriber', value: 'subscriber' },
-    ]
+    ];
 
     const planOptions = [
-      { label: 'Basic', value: 'basic' },
-      { label: 'Gold', value: 'gold' },
+      { label: "Basic", value: "basic" },
+      { label: "Gold", value: "gold" },
       // { label: 'Enterprise', value: 'enterprise' },
       // { label: 'Team', value: 'team' },
-    ]
+    ];
 
     const statusOptions = [
-      { label: 'Pending', value: 'pending' },
-      { label: 'Active', value: 'active' },
-      { label: 'Inactive', value: 'inactive' },
-    ]
+      { label: "Pending", value: "pending" },
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ];
 
     const {
       fetchUsers,
@@ -271,10 +279,9 @@ export default {
       roleFilter,
       planFilter,
       statusFilter,
-    } = useUsersList()
+    } = useUsersList();
 
     return {
-
       // Sidebar
       isAddNewUserSidebarActive,
 
@@ -307,9 +314,9 @@ export default {
       roleFilter,
       planFilter,
       statusFilter,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -319,5 +326,5 @@ export default {
 </style>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
+@import "@core/scss/vue/libs/vue-select.scss";
 </style>

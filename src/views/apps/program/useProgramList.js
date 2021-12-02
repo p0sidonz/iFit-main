@@ -13,7 +13,7 @@ export default function useProgramList() {
 
   // Table Handlers
   const tableColumns = [
-    // { key: 'id', label: '#', sortable: true },
+    { key: 'id', label: '#', sortable: true },
     { key: 'id', sortable: true },
     { key: 'title', sortable: true },
     { key: 'description', sortable: true },
