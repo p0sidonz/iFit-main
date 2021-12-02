@@ -4,7 +4,7 @@
       <!-- Brand logo-->
       <b-link class="brand-logo">
         <vuexy-logo />
-        <h2 class="brand-text text-primary ml-1">iFit</h2>
+        <h2 class="brand-text text-primary ml-1">iAnkit</h2>
       </b-link>
       <!-- /Brand logo-->
 
@@ -100,20 +100,26 @@
 
               <!-- submit buttons -->
               <b-button type="submit" variant="primary" block @click="login">
-                Sign in
+                <div v-if="isloading">
+                  <b-spinner small />
+
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div v-if="!isloading">
+                  <span> Sign In</span>
+                </div>
               </b-button>
             </b-form>
           </validation-observer>
 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
-            <b-link :to="{ name: 'register' }">
+            <b-link :to="{ name: 'page-auth-register-v2' }">
               <span>&nbsp;Create an account</span>
             </b-link>
           </b-card-text>
 
-
-
+          <!-- social buttons -->
         </b-col>
       </b-col>
       <!-- /Login-->
@@ -139,12 +145,15 @@ import {
   BImg,
   BForm,
   BButton,
+  BSpinner,
 } from "bootstrap-vue";
 import { required, email } from "@validations";
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
 import store from "@/store/index";
 import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 import gql from "graphql-tag";
+import { data } from "vue-echarts";
+import jwt from "jsonwebtoken";
 
 // import LOGIN_MUTATION from '../graphql/auth.gql'
 
@@ -166,6 +175,7 @@ export default {
     VuexyLogo,
     ValidationProvider,
     ValidationObserver,
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -177,6 +187,7 @@ export default {
       // validation rulesimport store from '@/store/index'
       required,
       email,
+      isloading: false,
     };
   },
   computed: {
@@ -209,6 +220,7 @@ export default {
     },
 
     async login() {
+      this.isloading = true;
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
@@ -224,28 +236,27 @@ export default {
             }
           `,
           variables: {
-            email: this.userEmail,
+            email: this.userEmail.toLowerCase().trim(),
             password: this.password,
           },
         });
-        const response = data.data.Login
+        const response = data.data.Login;
         console.log(response.role);
         if (response.accessToken) {
           localStorage.setItem(
             "apollo-token",
             JSON.stringify(response.accessToken)
           );
+
           localStorage.setItem("userInfo", JSON.stringify(response));
           if (response.role === "trainer") {
             this.$router.replace({ path: "/dashboard" });
           }
-          if(response.role === "user") {
-            console.log(response.username)
+          if (response.role === "user") {
             this.$router.replace({ path: `/user/${response.username}` });
-
           }
 
-          
+          this.isloading = false;
           this.$toast({
             component: ToastificationContent,
             position: "top-right",
@@ -257,6 +268,7 @@ export default {
             },
           });
         } else {
+          this.isloading = false;
           this.$toast({
             component: ToastificationContent,
             position: "top-right",
@@ -269,6 +281,7 @@ export default {
           });
         }
       } catch (error) {
+        this.isloading = false;
         this.$toast({
           component: ToastificationContent,
           position: "top-right",

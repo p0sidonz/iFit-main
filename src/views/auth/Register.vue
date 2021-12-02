@@ -156,7 +156,14 @@
                 type="submit"
                 :disabled="invalid"
               >
-                Sign up
+                <div v-if="isloading">
+                  <b-spinner small />
+
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div v-if="!isloading">
+                  <span> Sign up</span>
+                </div>
               </b-button>
             </b-form>
           </validation-observer>
@@ -167,8 +174,6 @@
               <span>&nbsp;Sign in instead</span>
             </b-link>
           </p>
-
-
         </b-col>
       </b-col>
       <!-- /Register-->
@@ -194,6 +199,7 @@ import {
   BImg,
   BCardTitle,
   BCardText,
+  BSpinner
 } from "bootstrap-vue";
 import { required, email } from "@validations";
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
@@ -220,10 +226,12 @@ export default {
     // validations
     ValidationProvider,
     ValidationObserver,
+    BSpinner
   },
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      isloading: false,
       register: {
         status: "",
         firstName: "",
@@ -254,6 +262,7 @@ export default {
   },
   methods: {
     async signup() {
+      this.isloading = true;
       // Call to the graphql mutation
       const data = await this.$apollo
         .mutate({
@@ -278,15 +287,16 @@ export default {
             }
           `,
           variables: {
-            firstName: this.register.firstName,
-            lastName: this.register.lastName,
-            username: this.register.username,
-            email: this.register.email,
+            firstName: this.register.firstName.toLowerCase().trim(),
+            lastName: this.register.lastName.toLowerCase().trim(),
+            username: this.register.username.toLowerCase().trim(),
+            email: this.register.email.toLowerCase().trim(),
             password: this.register.password,
           },
         })
         .then((data) => {
-           this.$router.replace({ path: "/login" });
+          this.isloading = false;
+          this.$router.replace({ path: "/login" });
           this.$toast({
             component: ToastificationContent,
             position: "top-right",
@@ -297,10 +307,10 @@ export default {
               text: `You have successfully Registerd, You may login now.`,
             },
           });
-         
         })
 
         .catch((errors) => {
+          this.isloading = false;
           console.log(errors);
           this.$toast({
             component: ToastificationContent,
