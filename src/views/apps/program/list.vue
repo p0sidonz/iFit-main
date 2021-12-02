@@ -292,8 +292,13 @@
             variant="outline-primary"
             block
             @click="sendCreateMeal()"
-            >Save</b-button
           >
+            <div v-if="isLoading">
+              <b-spinner small />
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div v-else>Create</div>
+          </b-button>
         </div>
       </div>
     </b-modal>
@@ -377,7 +382,7 @@
             <span>Non Assigned Clients</span>
           </template>
 
-                    <div v-if="isLoadingClient">
+          <div v-if="isLoadingClient">
             <div class="text-center">
               <b-spinner variant="primary" label="Loading..." />
             </div>
@@ -426,7 +431,6 @@
               </b-card>
             </div>
           </div>
-
         </b-tab>
       </b-tabs>
 
@@ -717,11 +721,13 @@ export default {
           },
         });
       } else {
+        this.isLoading = true;
         store
           .dispatch("app-program/createProgram", {
             workoutdata: this.createWorkout,
           })
           .then((response) => {
+            this.isLoading = false;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -729,6 +735,18 @@ export default {
                 icon: "BellIcon",
                 variant: "success",
               },
+            }).catch((error) => {
+              this.isLoading = false;
+
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: "Sorry!",
+                  icon: "BellIcon",
+                  variant: "danger",
+                  text: `${error}`,
+                },
+              });
             });
 
             // totalInvoices.value = total
