@@ -34,7 +34,7 @@
               class="d-inline-block mr-1"
               placeholder="Search..."
             />
-            <v-select
+            <!-- <v-select
               v-model="statusFilter"
               :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
               :options="statusOptions"
@@ -46,7 +46,7 @@
                   {{ label }}
                 </span>
               </template>
-            </v-select>
+            </v-select> -->
           </div>
         </b-col>
       </b-row>
@@ -63,6 +63,13 @@
       :sort-desc.sync="isSortDirDesc"
       class="position-relative"
     >
+      <template #table-busy>
+        <div class="text-center text-primary my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+      </template>
+
       <!-- 
       <template #head(invoiceStatus)>
         <feather-icon
@@ -269,6 +276,7 @@
       size="lg"
       title="Create New Diet"
       hide-footer
+      centered
       v-model="CreateNewMealModal"
       scrollable:false
     >
@@ -290,8 +298,13 @@
             variant="outline-primary"
             block
             @click="sendCreateMeal()"
-            >Save</b-button
           >
+            <div v-if="isLoading">
+              <b-spinner small />
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div v-else>Create</div>
+          </b-button>
         </div>
       </div>
     </b-modal>
@@ -301,6 +314,7 @@
       size="lg"
       title="Assigning diet to the customer"
       hide-footer
+      centered
       v-model="modalShow"
       scrollable:true
     >
@@ -419,8 +433,13 @@
         variant="outline-primary"
         block
         @click="UnAssignClient(unAssginedSingleClientId)"
-        >Unassigned Diet</b-button
       >
+        <div v-if="isLoading">
+          <b-spinner small />
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else>Unassigned Diet</div>
+      </b-button>
 
       <b-button
         v-if="assginedSingleClientId"
@@ -428,8 +447,13 @@
         variant="outline-primary"
         block
         @click="assignClient(assginedSingleClientId)"
-        >Assign Diet</b-button
       >
+        <div v-if="isLoading">
+          <b-spinner small />
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else>Assign Diet</div>
+      </b-button>
     </b-modal>
   </b-card>
 </template>
@@ -463,6 +487,7 @@ import {
   BFormTextarea,
   BTabs,
   BTab,
+  BSpinner,
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -507,6 +532,7 @@ export default {
     BTabs,
     BTab,
     BAlert,
+    BSpinner,
   },
 
   data() {
@@ -519,6 +545,7 @@ export default {
         description: "",
       },
       finalassigned: null,
+      isLoading: false,
     };
   },
 
@@ -540,23 +567,29 @@ export default {
           store
             .dispatch("app-todo/deleteDiet", id)
             .then((response) => {
-              console.log(
-                "DIET DELETE RESPONSE",
-                response.data.data.delete_Fitness_Diet_by_pk
-              );
-              // totalInvoices.value = total
+              if (response.data.data.delete_Fitness_Diet_by_pk) {
+                this.$swal({
+                  icon: "success",
+                  title: "Deleted!",
+                  text: "Your file has been deleted.",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                });
+              }
+              this.refetchData();
             })
-            .then(
-              this.$swal({
-                icon: "success",
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                customClass: {
-                  confirmButton: "btn btn-success",
+            .catch((error) => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: "Sorry",
+                  text: "Client are already assigned to this diet. Please either remove it from the diet or create a new diet.",
+                  icon: "cross",
+                  variant: "danger",
                 },
-              })
-            );
-          this.refetchData();
+              });
+            });
         }
       });
     },
@@ -581,6 +614,7 @@ export default {
           },
         });
       } else {
+        this.isLoading = true;
         store
           .dispatch("app-todo/createMeal", { mealdata: this.createMeal })
           .then((response) => {
@@ -592,6 +626,8 @@ export default {
                 variant: "success",
               },
             });
+            this.isLoading = false;
+
             this.$bvModal.hide("idk2");
 
             this.refetchData();
@@ -599,6 +635,8 @@ export default {
             // totalInvoices.value = total
           })
           .catch((error) => {
+            this.isLoading = false;
+
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -612,7 +650,7 @@ export default {
     },
 
     assignClient(employee) {
-      console.log(employee);
+      this.isLoading = true;
       //close modal
       store
         .dispatch("app-todo/assignClient", {
@@ -622,6 +660,7 @@ export default {
         })
         .then((response) => {
           if (response.data.data.insert_Fitness_diet_assigned_clients_one.id) {
+            this.isLoading = false;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -632,14 +671,24 @@ export default {
             });
             //close modal
             this.$bvModal.hide("idk");
-          } else {
-            console.log("An error occured");
           }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry",
+              icon: "BellIcon",
+              text: `${error}`,
+              variant: "danger",
+            },
+          });
         });
     },
 
     UnAssignClient(userid) {
-      console.log("unsassined", userid);
+      this.isLoading = true;
       //close modal
       store
         .dispatch("app-todo/UnAssignClient", {
@@ -652,6 +701,7 @@ export default {
             response.data.data.delete_Fitness_diet_assigned_clients
               .affected_rows
           ) {
+            this.isLoading = false;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -662,9 +712,19 @@ export default {
             });
             //close modal
             this.$bvModal.hide("idk");
-          } else {
-            console.log("An error occured");
           }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry",
+              icon: "BellIcon",
+              text: `${error}`,
+              variant: "danger",
+            },
+          });
         });
     },
   },
