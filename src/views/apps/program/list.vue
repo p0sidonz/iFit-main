@@ -593,8 +593,6 @@ export default {
                 });
                 this.refetchData();
               }
-
-              // totalInvoices.value = total
             })
             .catch((error) => {
               this.$swal({
@@ -707,11 +705,15 @@ export default {
     },
 
     sendCreateMeal() {
+      this.isLoading = true;
+
       console.log(this.createMeal);
       if (
         this.createWorkout.title === "" ||
         this.createWorkout.description === ""
       ) {
+        this.isLoading = false;
+
         return this.$toast({
           component: ToastificationContent,
           props: {
@@ -727,7 +729,6 @@ export default {
             workoutdata: this.createWorkout,
           })
           .then((response) => {
-            this.isLoading = false;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -735,25 +736,26 @@ export default {
                 icon: "BellIcon",
                 variant: "success",
               },
-            }).catch((error) => {
-              this.isLoading = false;
-
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: "Sorry!",
-                  icon: "BellIcon",
-                  variant: "danger",
-                  text: `${error}`,
-                },
-              });
             });
+            this.isLoading = false;
+            this.$bvModal.hide("idk2");
 
+            this.refetchData();
             // totalInvoices.value = total
-          });
+          })
+          .catch((error) => {
+            this.isLoading = false;
 
-        this.$bvModal.hide("idk2");
-        this.refetchData();
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Sorry!",
+                icon: "BellIcon",
+                variant: "danger",
+                text: `${error}`,
+              },
+            });
+          });
       }
     },
   },
