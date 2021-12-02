@@ -892,6 +892,7 @@ export default {
       unAssginedSingleClientId,
       finalassignedx,
       assginedSingleClientId,
+      isLoadingClient
     };
   },
 };
