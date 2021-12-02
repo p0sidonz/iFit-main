@@ -21,7 +21,6 @@
                 backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
               }"
             >
-
               <b-card-body class="text-center">
                 <h2 class="text-primary">
                   {{ excercises.title.toUpperCase() }}
@@ -35,11 +34,11 @@
 
             <b-alert v-if="!excercies_and_sets.length" variant="warning" show>
               <h4 class="alert-heading">Warning!</h4>
-              <div class="alert-body">You haven't added any excersise yet! 
-        <b-link class="alert-link" @click="modalContent">
-          User List
-        </b-link>
-
+              <div class="alert-body">
+                You haven't added any excersise yet!
+                <b-link class="alert-link" @click="modalContent">
+                  User List
+                </b-link>
               </div>
             </b-alert>
 
@@ -200,10 +199,10 @@
               variant="primary"
               class="mb-75"
               block
+              @click="modalContent"
             >
-              Assign Diet
+              Add Excercise
             </b-button>
-
             <!-- Button: DOwnload -->
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -222,19 +221,14 @@
               block
               @click="saveExcercise"
             >
-              Save
+              <div v-if="isLoading">
+                <b-spinner small />
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div v-else>Save</div>
             </b-button>
 
             <!-- Button: Add Payment -->
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              variant="success"
-              class="mb-75"
-              block
-              @click="modalContent"
-            >
-              Add Excercise
-            </b-button>
           </b-card>
 
           <!-- Payment Method -->
@@ -258,7 +252,6 @@
                 switch
               />
             </div>
-
           </div>
         </b-col>
       </b-row>
@@ -273,7 +266,6 @@
       >
         <b-row>
           <b-col lg="12" class="mb-1">
-
             <!-- button on right -->
             <b-input-group>
               <b-form-input
@@ -411,41 +403,59 @@ export default {
 
   methods: {
     saveExcercise() {
+      this.isLoading = true;
       store
         .dispatch("app-workout/saveExcercise", {
           data: this.excercies_and_sets,
         })
         .then((response) => {
-          console.log(response.data);
-          if (response.data.data.insert_Fitness_workout_exercise.affected_rows){
-          this.fetchExcercise();
+          if (
+            response.data.data.insert_Fitness_workout_exercise.affected_rows
+          ) {
+            this.isLoading = false;
+
+            this.fetchExcercise();
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Excercise Saved",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          this.isLoading = false;
           this.$toast({
             component: ToastificationContent,
             props: {
-              title: "Excercise Saved",
-              icon: "BellIcon",
-              variant: "success",
+              title: "Sorry!",
+              variant: "danger",
+              text: `${error}`,
             },
           });
-          }
-
         });
     },
 
-  removeExcercise(index) {
-    console.log(index)
+    removeExcercise(index) {
+      console.log(index);
       this.excercies_and_sets.splice(index, 1);
-
-  },
+    },
 
     AddExcercise(ex_data) {
       let exercise = {};
       let json_sets = [];
       exercise.id = ex_data.id;
       exercise.title = ex_data.title;
-      let workoutid = this.$route.params.id
+      let workoutid = this.$route.params.id;
 
-      this.excercies_and_sets.push({ exercise_id: exercise.id, workout_id: workoutid,  exercise, json_sets });
+      this.excercies_and_sets.push({
+        exercise_id: exercise.id,
+        workout_id: workoutid,
+        exercise,
+        json_sets,
+      });
       this.fetchedExcerciseResult = null;
       this.$toast({
         component: ToastificationContent,
@@ -535,7 +545,9 @@ export default {
       excerciseSearchValue: "",
       fetchedExcerciseResult: null,
       singleExcercise: null,
-      isLoadingx: false,
+      isLoadingx: false, //i didn't knew it exisits
+      isLoading: false, //saveexcercise
+
       options: {
         reps: {
           delimiters: ["-", "-"],
@@ -548,8 +560,8 @@ export default {
           uppercase: true,
         },
         tempo: {
-          delimiters: ["-","-","-"],
-          blocks: [1,1,1],
+          delimiters: ["-", "-", "-"],
+          blocks: [1, 1, 1],
           uppercase: true,
         },
       },
@@ -621,7 +633,7 @@ export default {
 <style lang="scss" scoped>
 .repeater-form {
   overflow: hidden;
-  transition: .35s height;
+  transition: 0.35s height;
 }
 </style>
  

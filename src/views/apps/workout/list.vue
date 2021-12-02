@@ -63,6 +63,13 @@
       :sort-desc.sync="isSortDirDesc"
       class="position-relative"
     >
+      <template #table-busy>
+        <div class="text-center text-primary my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+      </template>
+
       <!-- 
       <template #head(invoiceStatus)>
         <feather-icon
@@ -152,19 +159,6 @@
       <template #cell(actions)="data">
         <div class="text-nowrap">
           <feather-icon
-            :id="`invoice-row-${data.item.id}-send-icon`"
-            icon="SendIcon"
-            class="cursor-pointer"
-            size="16"
-            @click="modalContent()"
-          />
-          <b-tooltip
-            title="Assign Diet"
-            class="cursor-pointer"
-            :target="`invoice-row-${data.item.id}-preview-icon`"
-          />
-
-          <feather-icon
             :id="`invoice-row-${data.item.id}-preview-icon`"
             icon="EyeIcon"
             size="16"
@@ -177,7 +171,7 @@
             "
           />
           <b-tooltip
-            title="Preview Diet"
+            title="Preview Workout"
             :target="`invoice-row-${data.item.id}-preview-icon`"
           />
 
@@ -195,12 +189,9 @@
                 class="align-middle text-body"
               />
             </template>
-            <b-dropdown-item>
-              <feather-icon icon="DownloadIcon" />
-              <span class="align-middle ml-50">Download</span>
-            </b-dropdown-item>
+
             <b-dropdown-item
-              :to="{ name: 'nutrition-edit', params: { id: data.item.id } }"
+              :to="{ name: 'workout-edit', params: { id: data.item.id } }"
             >
               <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">Edit</span>
@@ -357,8 +348,13 @@
         variant="outline-primary"
         block
         @click="$bvModal.hide('idk')"
-        >Save</b-button
       >
+        <div v-if="isLoading">
+          <b-spinner small />
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else>Save</div>
+      </b-button>
     </b-modal>
   </b-card>
 </template>
@@ -389,6 +385,7 @@ import {
   BInputGroupAppend,
   BInputGroup,
   BFormTextarea,
+  BSpinner,
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -430,6 +427,7 @@ export default {
     vSelect,
     BMediaAside,
     BFormCheckbox,
+    BSpinner,
   },
 
   data() {
@@ -441,6 +439,7 @@ export default {
         title: "",
         description: "",
       },
+      isLoading: false,
     };
   },
 
@@ -460,7 +459,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           store
-            .dispatch("app-todo/deleteDiet", id)
+            .dispatch("app-workout/deleteDiet", id)
             .then((response) => {
               console.log(
                 "DIET DELETE RESPONSE",
@@ -469,7 +468,6 @@ export default {
               // totalInvoices.value = total
             })
             .then(
-              
               this.$swal({
                 icon: "success",
                 title: "Deleted!",
@@ -479,7 +477,7 @@ export default {
                 },
               })
             );
-            this.refetchData();
+          this.refetchData();
         }
       });
     },
@@ -490,20 +488,28 @@ export default {
     },
 
     sendCreateMeal() {
+      this.isLoading = true;
       console.log(this.createMeal);
-      if (this.createWorkout.title === "" || this.createWorkout.description === "") {
+      if (
+        this.createWorkout.title === "" ||
+        this.createWorkout.description === ""
+      ) {
+        this.isLoading = false;
         return this.$toast({
           component: ToastificationContent,
           props: {
             title: "Please enter the workout name and description",
-            icon: "AlertTriangleIcon",  
+            icon: "AlertTriangleIcon",
             variant: "danger",
           },
         });
       } else {
         store
-          .dispatch("app-workout/createWorkout", { workoutdata: this.createWorkout })
+          .dispatch("app-workout/createWorkout", {
+            workoutdata: this.createWorkout,
+          })
           .then((response) => {
+            this.isLoading = false;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -512,12 +518,22 @@ export default {
                 variant: "success",
               },
             });
+            this.$bvModal.hide("idk2");
+            this.refetchData();
 
             // totalInvoices.value = total
+          })
+          .catch((error) => {
+            this.isLoading = false;
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Sorry!",
+                variant: "danger",
+                text: `${error}`,
+              },
+            });
           });
-
-        this.$bvModal.hide("idk2");
-        this.refetchData();
       }
     },
   },
@@ -547,7 +563,7 @@ export default {
 
     const fetchAssignedClients = (taskData) => {
       store
-        .dispatch("app-todo/fetchAssignedClients")
+        .dispatch("app-workout/fetchAssignedClients")
         .then((response) => {
           console.log("RESPONSE MANUALLs", response.data.data.Fitness_User);
           AssignedClientsList.value = response.data.data.Fitness_User;
