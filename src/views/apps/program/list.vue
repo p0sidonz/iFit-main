@@ -313,9 +313,9 @@
             <feather-icon icon="ToolIcon" />
             <span>Currently Assigned</span>
           </template>
-          <div v-if="!isLoadingClient">
-            <b-card v-show="AssignedClientsList" class="card-employee-task">
-              <b-card-body v-if="AssignedClientsList">
+          <div v-if="!isLoadingClient && AssignedClientsList">
+            <b-card class="card-employee-task">
+              <b-card-body>
                 <div>
                   <div
                     v-for="(employee, index) in AssignedClientsList"
@@ -376,7 +376,14 @@
             <feather-icon icon="UserIcon" />
             <span>Non Assigned Clients</span>
           </template>
-          <div v-if="isLoadingClient">
+
+                    <div v-if="isLoadingClient">
+            <div class="text-center">
+              <b-spinner variant="primary" label="Loading..." />
+            </div>
+          </div>
+
+          <div v-else>
             <div>
               <b-card
                 v-show="finalassignedx"
@@ -419,11 +426,7 @@
               </b-card>
             </div>
           </div>
-          <div v-if="isLoadingClient">
-            <div class="text-center">
-              <b-spinner variant="primary" label="Loading..." />
-            </div>
-          </div>
+
         </b-tab>
       </b-tabs>
 
@@ -495,8 +498,7 @@ import {
   BTab,
   BFormTextarea,
   BAlert,
-    BSpinner,
-
+  BSpinner,
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -541,8 +543,7 @@ export default {
     BTabs,
     BTab,
     BAlert,
-      BSpinner,
-
+    BSpinner,
   },
 
   data() {
@@ -892,7 +893,7 @@ export default {
       unAssginedSingleClientId,
       finalassignedx,
       assginedSingleClientId,
-      isLoadingClient
+      isLoadingClient,
     };
   },
 };
