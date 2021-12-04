@@ -12,7 +12,7 @@
         >
 
           <b-button
-          :to="{name: 'user-program-view' , params: {id: program.program_details.id}}"
+          :to="{name: 'user-program-view' , params: {id: program.program_details.id, rid: userData.id}}"
             class="float-right"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="primary"

@@ -46,6 +46,17 @@ const router = new VueRouter({
 
     /*-----END OF LOGIN and REGISTER-----*/
 
+
+        /*-----calendar-----*/
+
+        {
+          path: '/apps/calendar',
+          name: 'apps-calendar',
+          component: () => import('@/views/apps/calendar/Calendar.vue'),
+        },
+
+        
+        
     /*-----ACCOUNT SETTINGS-----*/
     {
       path: "/accounts/edit",
@@ -153,6 +164,8 @@ const router = new VueRouter({
       path: "/apps/trainers/view/program/:id",
       name: "user-program-view",
       component: () => import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
+      props: true,
+
     },
     {
       path: "/apps/trainers/view/diet/:id",

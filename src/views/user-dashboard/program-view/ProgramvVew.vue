@@ -32,7 +32,7 @@
 
               <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ programs.updated_at| moment("from", "now") }}</b-badge
+                  >Last Updated: {{ programs.updated_at | moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -57,104 +57,59 @@
         class="card-developer-meetup"
       >
         <b-card-body>
-          <b-row>
-            <!-- metting header -->
-            <div class="meetup-header d-flex align-items-center">
-              <div class="meetup-day">
+          <div class="container">
+                          <div class="meetup-day">
                 <h6 class="mb-0">WEEK</h6>
                 <h3 class="mb-0">{{ week_index + 1 }}</h3>
               </div>
-              <b-col
+            <div class="row">
+
+
+              <div
                 v-for="(days, day_index) in week.program_days"
                 :key="day_index"
+                class="col-sm"
               >
-                <div>
-                  <div class="d-flex justify-content-around">
-                    <div
-                      class="bg-light-secondary position-relative rounded p-2"
-                    >
-                      <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
+                <div class="justify-content-around">
+                  <div class="bg-light-secondary position-relative  p-1">
+                    <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
 
-                      <div v-if="days.workout">
-                        <div class="text-center">
-                          <b-badge href="#" class="d-block" variant="primary">
-                            {{ days.workout.title }}
-                          </b-badge>
-                        </div>
+                    <div v-if="days.workout">
+                      <div class="text-center">
+                        <b-badge href="#" class="d-block" variant="primary">
+                          {{ days.workout.title }}
+                        </b-badge>
                       </div>
-                      <div v-else-if="!days.workout">
-                        <div class="text-center">
-                          <b-badge pill variant="light-secondary">
-                            No workout
-                          </b-badge>
-                        </div>
-                      </div>
-
-                      <div v-show="days.rest_day">
-                        <div class="text-center">
-                          <b-badge pill variant="light-secondary">
-                            Rest Day
-                          </b-badge>
-                        </div>
-                      </div>
-                      <br />
-
                     </div>
+                    <div v-else-if="!days.workout">
+                      <div class="text-center">
+                        <b-badge pill variant="light-secondary">
+                          No workout
+                        </b-badge>
+                      </div>
+                    </div>
+
+                    <div v-show="days.rest_day">
+                      <div class="text-center">
+                        <b-badge pill variant="light-secondary">
+                          Rest Day
+                        </b-badge>
+                      </div>
+                    </div>
+                    <br />
+
                   </div>
                 </div>
-              </b-col>
+              </div>
             </div>
-            <!--/ metting header -->
-
-            <!-- media -->
-          </b-row>
+          </div>
         </b-card-body>
+
 
       </b-card>
       <!-- add workout modal -->
 
-      <b-modal
-        id="workout_search"
-        size="lg"
-        title="Add workout"
-        hide-footer
-        v-model="addWorkoutModal"
-        scrollable:true
-      >
-        <b-row>
-          <b-col lg="12" class="mb-1">
-            <b-input-group>
-              <b-form-input
-                v-on:input="addWorkoutToDay"
-                v-model="workoutSearchValue"
-                placeholder=""
-              />
-              <b-input-group-append>
-                <b-button variant="outline-primary"> GO </b-button>
-              </b-input-group-append>
-            </b-input-group>
-            <b-spinner
-              v-show="isLoadingx"
-              variant="primary"
-              label="Text Centered"
-            />
-          </b-col>
-        </b-row>
-        <div v-if="fetchedWorkoutResult">
-          <div
-            v-for="data in fetchedWorkoutResult"
-            :key="data.index"
-            class="d-flex align-items-center"
-          >
-            <div @click="addExcerciseToDayLocal(data)" class="detail ml-50">
-              <b-card-text class="mb-0">
-                {{ data.title }}
-              </b-card-text>
-              <small class="text-muted"> 12:12:12 </small>
-            </div>
-          </div>
-        </div>
-      </b-modal>
+
 
       <!-- end of add workout modal -->
 
@@ -202,6 +157,16 @@
         </div>
       </b-modal>
 
+      <b-row align-h="center">
+
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="outline-success"
+          >
+            <feather-icon icon="SaveIcon" class="mr-50" />
+            Add Program to calendar
+          </b-button>
+      </b-row>
     </template>
   </div>
 </template>
@@ -252,6 +217,8 @@ import Ripple from "vue-ripple-directive";
 import { heightTransition } from "@core/mixins/ui/transition";
 import { VueAutosuggest } from "vue-autosuggest";
 import Cleave from "vue-cleave-component";
+import { mergeArrays } from "helprjs";
+import { integer } from "vee-validate/dist/rules";
 
 export default {
   directives: {
@@ -297,211 +264,44 @@ export default {
     BDropdownDivider,
   },
 
+  props: {
+    rid: {
+      type: integer,
+      default: () => 0,
+    },
+  },
   methods: {
-
-
-    saveProgram() {
-      let res = this.weeks_days.map((xxx, index) => {
-        let deep = xxx.program_days.map((item2, index2) => {
-          delete item2.completed;
-          delete item2.rest_day;
-          delete item2.workout;
-          return item2;
-        });
-        let constrain = {
-          constraint: "program_days_pkey",
-          update_columns: "workout_id",
-        };
-        delete xxx.program_days;
-        xxx.program_days = {};
-        xxx.program_days.on_conflict = { ...constrain };
-        xxx.program_days.data = [];
-        xxx.program_days.data = deep;
-
-        return xxx;
-      });
-
-      store
-        .dispatch("app-user/saveProgram", {
-          data: res,
-        })
-        .then((response) => {
-          if (response.data.data.insert_Fitness_program_weeks.affected_rows) {
-            this.fetchExcercise();
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: "Excercise Saved",
-                icon: "BellIcon",
-                variant: "success",
-              },
-            });
-          }
-        });
-    },
-
-    addRestDay(week_index, day_index) {
-      this.weeks_days[week_index].program_days[day_index].workout = null;
-      this.weeks_days[week_index].program_days[day_index].rest_day = true;
-    },
-
-    addNewWeek(week_index) {
-      let p_id = this.$route.params.id;
-      let test = {
-        program_id: this.$route.params.id,
-
-        program_days: [
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-          {
-            rest_day: false,
-            completed: false,
-            workout: null,
-          },
-        ],
-      };
-      this.weeks_days.push(test);
-    },
-
-    removeWeek(week_index) {
-      if (this.weeks_days[week_index].id) {
-      this.$swal({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!x",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        customClass: {
-          confirmButton: "btn btn-primary",
-          cancelButton: "btn btn-outline-danger ml-1",
-        },
-        buttonsStyling: false,
-      }).then((result) => {
-        if (result.value) {
-          store
-            .dispatch("app-user/deleteWeek", this.weeks_days[week_index].id)
-            .then((response) => {
-              console.log(
-                "DIET DELETE RESPONSE",
-                response
-              );
-              // totalInvoices.value = total
-            })
-            .then(
-              this.$swal({
-                icon: "success",
-                title: "Deleted!",
-                text: "Deleted.",
-                customClass: {
-                  confirmButton: "btn btn-success",
-                },
-              })
-            );
-          this.fetchExcercise();
-        }
-      });
-    } else if (!this.weeks_days[week_index].id) {
-        console.log("Locally removed from array");
-        this.weeks_days.splice(week_index, 1);
+    oops() {
+      if (this.rid === 0) {
+        return;
       }
-    },
-
-    removeItemFromDay(week_index, day_index) {
-      this.weeks_days[week_index].program_days[day_index].rest_day = false;
-      this.weeks_days[week_index].program_days[day_index].workout = null;
-
-      this.weeks_days[week_index].program_days[day_index].workout_id = null;
-    },
-
-    addExcerciseToDayLocal(data) {
-      let exID = data.id;
-      let singleWorkout = data;
-      delete singleWorkout.id;
-      singleWorkout.workout_id = exID;
-
-      this.weeks_days[this.wk].program_days[this.dy].rest_day = false;
-      this.weeks_days[this.wk].program_days[this.dy].workout = singleWorkout;
-      this.weeks_days[this.wk].program_days[this.dy].workout_id = exID;
-      this.$bvModal.hide("workout_search");
-      //flush everything.
-      (this.wk = ""), (this.day = ""), (this.fetchedWorkoutResult = null);
-      this.workoutSearchValue = "";
-    },
-
-    addWorkoutToDay() {
-      console.log(this.wk, this.dy);
-      if (this.workoutSearchValue === "" || this.workoutSearchValue === " ") {
-        return (this.fetchedWorkoutResult = null);
-      } else {
-        this.isLoadingx = true;
-        store
-          .dispatch("app-user/searchWorkout", {
-            value: this.workoutSearchValue,
-          })
-          .then((response) => {
-            this.isLoadingx = false;
-            this.fetchedWorkoutResult = response.data.data.Fitness_workout;
-          });
-      }
-    },
-
-    AddExcercise(ex_data) {
-      let exercise = {};
-      let json_sets = [];
-      exercise.id = ex_data.id;
-      exercise.title = ex_data.title;
-
-      this.excercies_and_sets.push({ exercise: exercise, json_sets });
-      this.fetchedExcerciseResult = null;
-      this.$toast({
-        component: ToastificationContent,
-        props: {
-          title: "Success",
-          icon: "BellIcon",
-          variant: "success",
-        },
+      console.log();
+      let getTheProgram = this.test[0].workout_weeks;
+      let xwoops = getTheProgram.map((item, index) => {
+        let chip = [];
+        chip = item.pg_days_obj;
+        chip.all_day = false;
+        chip.relation_id = this.rid;
+        chip.type = "program"
+        delete chip.id
+        delete chip.rest_day;
+        delete chip.workout_id;
+        chip.workout_id = 10
+        return chip;
       });
-      //  store
-      //   .dispatch("app-workout/addExcercise",{excerciseId: id, workoutID: this.$route.params.id }).then((response) => {
-      //     this.fetchExcercise()
-      //     this.$toast({
-      //       component: ToastificationContent,
-      //       props: {
-      //         title: "Success",
-      //         icon: "BellIcon",
-      //         variant: "success",
-      //       },
-      //     });
-      //   })
-      this.$bvModal.hide("idk2");
+      let days = [];
+      const dateStart = this.$moment(this.programs.updated_at);
+      const dateEnd = this.$moment(dateStart).add(xwoops.length - 1, "days");
+      while (dateEnd.diff(dateStart, "days") >= 0) {
+        days.push({
+          start: dateStart.format("YYYY-MM-D"),
+          end: dateStart.format("YYYY-MM-D"),
+        });
+
+        dateStart.add(1, "days");
+      }
+      const result = mergeArrays(xwoops, days);
+      console.log(result);
     },
 
     excerciseSearch() {
@@ -532,34 +332,12 @@ export default {
           });
       }
     },
-
-    showAddWorkoutModal(week_index, day_index) {
-      this.addWorkoutModal = true;
-      (this.wk = week_index), (this.dy = day_index);
-    },
-
-    repeateAgain(index) {
-      console.log(index);
-      this.excercies_and_sets[index].json_sets.push({});
-
-      this.$nextTick(() => {
-        this.trAddHeight(this.$refs.row[0].offsetHeight);
-      });
-    },
-    removeItem(index, index_set) {
-      console.log(index, index_set);
-      this.excercies_and_sets[index].json_sets.splice(index_set, 1);
-      this.trTrimHeight(this.$refs.row[0].offsetHeight);
-    },
-    initTrHeight() {
-      this.trSetHeight(null);
-      this.$nextTick(() => {
-        this.trSetHeight(this.$refs.form.scrollHeight);
-      });
-    },
   },
+
   data() {
     return {
+      xwoops: [],
+      xwoops_days: [],
       macros: [],
       weight: ["KG", "LBS"],
       isPercentagevalid: true,
@@ -598,6 +376,111 @@ export default {
       workoutSearchValue: "",
       fetchedWorkoutResult: null,
       singleWorkout: null,
+
+      test: [
+        {
+          workout_weeks: [
+            {
+              pg_days_obj: {
+                id: 67,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 68,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 69,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 70,
+                workout_id: 10,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 71,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 72,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 73,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 74,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 75,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 76,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 77,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 78,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 79,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+            {
+              pg_days_obj: {
+                id: 80,
+                workout_id: null,
+                rest_day: false,
+              },
+            },
+          ],
+        },
+      ],
     };
   },
 
