@@ -6,6 +6,7 @@
         <b-link class="nav-link" @click="toggleVerticalMenuActive">
           <feather-icon icon="MenuIcon" size="21" />
         </b-link>
+
       </li>
     </ul>
 
@@ -16,7 +17,17 @@
       <dark-Toggler class="d-none d-lg-block" />
     </div>
 
+                              <b-link
+                              :to="{name: 'apps-calendar'}"
+          class="nav-link"
+        >
+          <feather-icon
+            icon="CalendarIcon"
+            size="21"
+          />
+        </b-link>
     <b-navbar-nav class="nav align-items-center ml-auto">
+      
       <search-bar />
       <notification-dropdown />
 
@@ -133,6 +144,9 @@
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
+
+
+
           <b-button
       v-ripple.400="'rgba(113, 102, 240, 0.15)'"
       variant="flat-primary"

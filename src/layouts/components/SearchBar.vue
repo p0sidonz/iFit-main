@@ -126,7 +126,7 @@ export default {
       const freshTocken = token.replace(/['"]+/g, "");
       axios
         .post(
-          "http://localhost:8080/v1/graphql",
+          process.env.VUE_APP_GRAPHQL_HTTP,
           {
             query: `query MyQuery($where: Fitness_User_bool_exp = {}) {
   Fitness_User(where: $where) {
