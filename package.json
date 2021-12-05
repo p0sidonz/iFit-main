@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@casl/ability": "4.1.6",
+    "helprjs": "^1.0.25",
     "@casl/vue": "1.1.1",
     "@fullcalendar/daygrid": "5.5.0",
     "@fullcalendar/interaction": "5.5.0",
