@@ -162,6 +162,7 @@
           <b-button
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="outline-success"
+            @click="oops"
           >
             <feather-icon icon="SaveIcon" class="mr-50" />
             Add Program to calendar
@@ -280,7 +281,7 @@ export default {
       let xwoops = getTheProgram.map((item, index) => {
         let chip = [];
         chip = item.pg_days_obj;
-        chip.all_day = false;
+        chip.allDay = false;
         chip.relation_id = this.rid;
         chip.type = "program"
         delete chip.id

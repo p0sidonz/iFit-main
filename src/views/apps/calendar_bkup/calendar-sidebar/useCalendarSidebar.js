@@ -13,22 +13,10 @@ export default function useCalendarSidebar() {
   // ------------------------------------------------
   const selectedCalendars = computed({
     get: () => store.state.calendar.selectedCalendars,
-    set: (val) => {
+    set: val => {
       store.commit('calendar/SET_SELECTED_EVENTS', val)
     },
   })
-  // ------------------------------------------------
-  const trainerOptions = computed(() => store.state.calendar.trainerOptions)
-
-  const selectedTrainers = computed({
-    get: () => store.state.calendar.selectedTrainers,
-    set: (val) => {
-      store.commit('calendar/SET_TRAINER_EVENTS', val)
-    },
-  })
-
-  // ------------------------------------------------
-
 
   // ------------------------------------------------
   // checkAll
@@ -51,9 +39,7 @@ export default function useCalendarSidebar() {
 
   return {
     calendarOptions,
-    trainerOptions,
     selectedCalendars,
-    selectedTrainers,
     checkAll,
   }
 }

@@ -6,31 +6,27 @@ export default {
     calendarOptions: [
       {
         color: "danger",
-        label: "program",
+        label: "Program",
       },
       {
         color: "success",
-        label: "diet",
+        label: "Holiday",
       },
-
+      {
+        color: "info",
+        label: "ETC",
+      },
     ],
-    trainerOptions: ["Ankit Singh", "Kratos"],
-    selectedTrainers:[],
-
-    selectedCalendars: ["program",  "diet"],
+    selectedCalendars: ["Program",  "Holiday", "ETC"],
   },
   getters: {},
   mutations: {
     SET_SELECTED_EVENTS(state, val) {
       state.selectedCalendars = val;
     },
-    SET_TRAINER_EVENTS(state, val) {
-      state.selectedTrainers = val;
-    }, 
   },
   actions: {
     fetchEvents(ctx, calendars) {
-      console.log(calendars)
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
@@ -47,9 +43,9 @@ export default {
                   start
                   end
                   allDay
+                  url
                   type
                   workout{
-                    id
                     title
                   }
                 }

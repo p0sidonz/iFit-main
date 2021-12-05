@@ -32,8 +32,9 @@ export default function userCalendar() {
   // calendars
   // ------------------------------------------------
   const calendarsColor = {
-    diet: 'success',
-    program: 'danger',
+    Holiday: 'success',
+    Program: 'danger',
+    ETC: 'info',
   }
 
   // ------------------------------------------------
@@ -44,7 +45,7 @@ export default function userCalendar() {
     start: "",
     end: "",
     allDay: false,
-    url: "",
+    url: 'null',
     extendedProps: {
       calendar: "",
       guests: [],
@@ -231,20 +232,11 @@ export default function userCalendar() {
   const selectedCalendars = computed(
     () => store.state.calendar.selectedCalendars
   );
-  const selectedTrainers = computed(
-    () => store.state.calendar.selectedTrainers
-  );
-
-
-  
 
   watch(selectedCalendars, () => {
     refetchEvents();
   });
 
-  watch(selectedTrainers, () => {
-    refetchEvents();
-  });
   // --------------------------------------------------------------------------------------------------
   // AXIOS: fetchEvents
   // * This will be called by fullCalendar to fetch events. Also this can be used to refetch events.
@@ -256,35 +248,22 @@ export default function userCalendar() {
     // Fetch Events from API endpoint
     store
       .dispatch("calendar/fetchEvents", {
-        trainerlist: selectedTrainers.value,
-        type: selectedCalendars.value,
-
+        calendars: 12,
       })
       .then((response) => {
         let res = response.data.data.Fitness_userrelation_calendar;
+
         let haha = res.map((item, index) => {
           let ok = item;
           if (item.type === "program") {
-            ok.extendedProps = { calendar: "program" };
+            ok.extendedProps = { calendar: "Program" };
           }
-          if (item.type === "diet") {
-            ok.extendedProps = { calendar: "diet" };
-          }
-
           if(item.workout){
             ok.title = item.workout.title
           }
-
-          if(item.url === null && !item.workout) {
-            ok.url = `#`
-          }
-          if(item.url === null && item.workout) {
-            ok.url = `workout/view/${item.workout.id}`
-          }
-
           return ok;
         });
-        console.log(haha)
+        console.log(haha);
         successCallback(haha);
       })
       .catch(() => {
@@ -305,10 +284,10 @@ export default function userCalendar() {
   // ------------------------------------------------------------------------
   const calendarOptions = ref({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
-    initialView: 'dayGridMonth',
+    initialView: "dayGridMonth",
     headerToolbar: {
-      start: 'sidebarToggle, prev,next, title',
-      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+      start: "sidebarToggle, prev,next, title",
+      end: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
     },
     events: fetchEvents,
 
@@ -316,7 +295,8 @@ export default function userCalendar() {
       Enable dragging and resizing event
       ? Docs: https://fullcalendar.io/docs/editable
     */
-    editable: false,
+    editable: true,
+    displayEventTime: false,
 
     /*
       Enable resizing event from start
@@ -328,7 +308,7 @@ export default function userCalendar() {
       Automatically scroll the scroll-containers during event drag-and-drop and date selecting
       ? Docs: https://fullcalendar.io/docs/dragScroll
     */
-    dragScroll: false,
+    dragScroll: true,
 
     /*
       Max number of events within a given day
@@ -340,32 +320,34 @@ export default function userCalendar() {
       Determines if day names and week names are clickable
       ? Docs: https://fullcalendar.io/docs/navLinks
     */
-    navLinks: true,
-    displayEventTime: false,
+    navLinks: false,
+
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName =
+        calendarsColor[calendarEvent._def.extendedProps.calendar];
 
       return [
         // Background Color
         `bg-light-${colorName}`,
-      ]
+      ];
     },
-    eventClick( { event: clickedEvent }) {
+    eventClick({ event: clickedEvent }) {
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
-      event.value = grabEventDataFromEventApi(clickedEvent)
+      event.value = grabEventDataFromEventApi(clickedEvent);
+
       // eslint-disable-next-line no-use-before-define
-      // isEventHandlerSidebarActive.value = false
+      isEventHandlerSidebarActive.value = true;
     },
 
     customButtons: {
       sidebarToggle: {
         // --- This dummy text actual icon rendering is handled using SCSS ----- //
-        text: 'sidebar',
+        text: "sidebar",
         click() {
           // eslint-disable-next-line no-use-before-define
-          isCalendarOverlaySidebarActive.value = !isCalendarOverlaySidebarActive.value
+          isCalendarOverlaySidebarActive.value = !isCalendarOverlaySidebarActive.value;
         },
       },
     },
@@ -378,9 +360,11 @@ export default function userCalendar() {
         event.value.start = info.date
         ```
       */
-      event.value = JSON.parse(JSON.stringify(Object.assign(event.value, { start: info.date })))
+      event.value = JSON.parse(
+        JSON.stringify(Object.assign(event.value, { start: info.date }))
+      );
       // eslint-disable-next-line no-use-before-define
-      isEventHandlerSidebarActive.value = false
+      isEventHandlerSidebarActive.value = true;
     },
 
     /*
@@ -389,7 +373,7 @@ export default function userCalendar() {
       ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
     */
     eventDrop({ event: droppedEvent }) {
-      updateEvent(grabEventDataFromEventApi(droppedEvent))
+      updateEvent(grabEventDataFromEventApi(droppedEvent));
     },
 
     /*
@@ -397,13 +381,13 @@ export default function userCalendar() {
       ? Docs: https://fullcalendar.io/docs/eventResize
     */
     eventResize({ event: resizedEvent }) {
-      updateEvent(grabEventDataFromEventApi(resizedEvent))
+      updateEvent(grabEventDataFromEventApi(resizedEvent));
     },
 
     // Get direction from app state (store)
-    direction: computed(() => (store.state.appConfig.isRTL ? 'rtl' : 'ltr')),
+    direction: computed(() => (store.state.appConfig.isRTL ? "rtl" : "ltr")),
     rerenderDelay: 350,
-  })
+  });
 
   // ------------------------------------------------------------------------
 
@@ -411,9 +395,9 @@ export default function userCalendar() {
   // *--------- UI ---------------------------------------*
   // *===============================================---*
 
-  const isEventHandlerSidebarActive = ref(false)
+  const isEventHandlerSidebarActive = ref(false);
 
-  const isCalendarOverlaySidebarActive = ref(false)
+  const isCalendarOverlaySidebarActive = ref(false);
 
   return {
     refCalendar,
@@ -429,5 +413,5 @@ export default function userCalendar() {
 
     // ----- UI ----- //
     isEventHandlerSidebarActive,
-  }
+  };
 }
