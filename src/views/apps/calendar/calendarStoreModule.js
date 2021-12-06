@@ -1,4 +1,5 @@
 import axios from "@axios";
+import { computed } from "@vue/composition-api";
 
 export default {
   namespaced: true,
@@ -12,12 +13,11 @@ export default {
         color: "success",
         label: "diet",
       },
-
     ],
-    trainerOptions: ["Ankit Singh", "Kratos"],
-    selectedTrainers:[],
+    trainerOptions: [],
+    selectedTrainers: [],
 
-    selectedCalendars: ["program",  "diet"],
+    selectedCalendars: ["program", "diet"],
   },
   getters: {},
   mutations: {
@@ -26,21 +26,35 @@ export default {
     },
     SET_TRAINER_EVENTS(state, val) {
       state.selectedTrainers = val;
-    }, 
+    },
+    SET_TRAINER_OPT_EVENTS(state, val) {
+      state.trainerOptions = val;
+    },
   },
   actions: {
-    fetchEvents(ctx, calendars) {
-      console.log(calendars)
+    fetchEvents(ctx, payload) {
+      let searchType = payload.type[0];
+      let rid = payload.trainerlist.trainer_list_arr[0].id;
+      let where = {};
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
-
+        if (payload.type.length === 2) {
+          where = { UserRelation: { id: { _eq: rid } } };
+        }
+        if (payload.type.length < 2) {
+          where = {
+            UserRelation: { id: { _eq: rid } },
+            _and: { type: { _eq: searchType } },
+          };
+        }
+        console.log(where);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
             {
-              query: `query MyQuery {
-                Fitness_userrelation_calendar(where: {UserRelation: {id: {_eq: 12}}}) {
+              query: `query MyQuery($where: Fitness_userrelation_calendar_bool_exp = {}) {
+                Fitness_userrelation_calendar(where: $where) {
                   id
                   url
                   title
@@ -48,15 +62,60 @@ export default {
                   end
                   allDay
                   type
-                  workout{
+                  workout {
                     id
                     title
                   }
                 }
               }
+              
+              
               `,
               variables: {
-                // offset: queryParams.page
+                where,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    fetchbyTrainerCalendar(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        let where = { trainer_list_arr: {} };
+        axios
+          .post(
+            process.env.VUE_APP_GRAPHQL_HTTP,
+            {
+              query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
+                Fitness_User(where: $where, limit: $limit, offset: $offset) {
+                  id
+                  firstName
+                  username
+                  role
+                  email
+                  fullname
+                  status
+                  trainer_list_arr{
+                    id
+                    status
+
+                  }
+                }
+              }
+          
+          `,
+              variables: {
+                where,
               },
             },
             {

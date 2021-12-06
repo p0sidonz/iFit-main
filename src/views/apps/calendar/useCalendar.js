@@ -32,9 +32,9 @@ export default function userCalendar() {
   // calendars
   // ------------------------------------------------
   const calendarsColor = {
-    diet: 'success',
-    program: 'danger',
-  }
+    diet: "success",
+    program: "danger",
+  };
 
   // ------------------------------------------------
   // event
@@ -235,8 +235,12 @@ export default function userCalendar() {
     () => store.state.calendar.selectedTrainers
   );
 
-
-  
+  const selectedTrainersx = computed({
+    get: () => store.state.calendar.selectedTrainers,
+    set: (val) => {
+      store.commit("calendar/SET_TRAINER_EVENTS", val);
+    },
+  });
 
   watch(selectedCalendars, () => {
     refetchEvents();
@@ -252,51 +256,70 @@ export default function userCalendar() {
   const fetchEvents = (info, successCallback) => {
     // If there's no info => Don't make useless API call
     if (!info) return;
-
     // Fetch Events from API endpoint
-    store
-      .dispatch("calendar/fetchEvents", {
-        trainerlist: selectedTrainers.value,
-        type: selectedCalendars.value,
-
-      })
-      .then((response) => {
-        let res = response.data.data.Fitness_userrelation_calendar;
-        let haha = res.map((item, index) => {
-          let ok = item;
-          if (item.type === "program") {
-            ok.extendedProps = { calendar: "program" };
-          }
-          if (item.type === "diet") {
-            ok.extendedProps = { calendar: "diet" };
-          }
-
-          if(item.workout){
-            ok.title = item.workout.title
-          }
-
-          if(item.url === null && !item.workout) {
-            ok.url = `#`
-          }
-          if(item.url === null && item.workout) {
-            ok.url = `workout/view/${item.workout.id}`
-          }
-
-          return ok;
+    if (!selectedTrainers.value.length) {
+      console.log("empty array", selectedTrainers.value);
+      store
+        .dispatch("calendar/fetchbyTrainerCalendar", {
+          trainerlist: selectedTrainers.value,
+          type: selectedCalendars.value,
+        })
+        .then((response) => {
+          store.commit(
+            "calendar/SET_TRAINER_OPT_EVENTS",
+            response.data.data.Fitness_User
+          );
+          console.log(selectedTrainers);
         });
-        console.log(haha)
-        successCallback(haha);
-      })
-      .catch(() => {
-        toast({
-          component: ToastificationContent,
-          props: {
-            title: "Error fetching calendar events",
-            icon: "AlertTriangleIcon",
-            variant: "danger",
-          },
+    }
+    if (
+      selectedTrainers.value.length ||
+      Object.keys(selectedTrainers.value).length
+    ) {
+      store
+        .dispatch("calendar/fetchEvents", {
+          trainerlist: selectedTrainers.value,
+          type: selectedCalendars.value,
+        })
+        .then((response) => {
+          let res = response.data.data.Fitness_userrelation_calendar;
+          let haha = res.map((item, index) => {
+            let ok = item;
+            if (item.type === "program") {
+              ok.extendedProps = { calendar: "program" };
+            }
+            if (item.type === "diet") {
+              ok.extendedProps = { calendar: "diet" };
+            }
+
+            if (item.workout) {
+              ok.title = item.workout.title;
+            }
+
+            if (item.url === null && !item.workout) {
+              ok.url = `#`;
+            }
+            if (item.url === null && item.workout) {
+              ok.url = `workout/view/${item.workout.id}`;
+            }
+
+            return ok;
+          });
+
+          console.log(response);
+          successCallback(res);
+        })
+        .catch(() => {
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Error fetching calendar events",
+              icon: "AlertTriangleIcon",
+              variant: "danger",
+            },
+          });
         });
-      });
+    }
   };
 
   // ------------------------------------------------------------------------
@@ -305,10 +328,10 @@ export default function userCalendar() {
   // ------------------------------------------------------------------------
   const calendarOptions = ref({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
-    initialView: 'dayGridMonth',
+    initialView: "dayGridMonth",
     headerToolbar: {
-      start: 'sidebarToggle, prev,next, title',
-      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+      start: "sidebarToggle, prev,next, title",
+      end: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
     },
     events: fetchEvents,
 
@@ -344,17 +367,18 @@ export default function userCalendar() {
     displayEventTime: false,
     eventClassNames({ event: calendarEvent }) {
       // eslint-disable-next-line no-underscore-dangle
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName =
+        calendarsColor[calendarEvent._def.extendedProps.calendar];
 
       return [
         // Background Color
         `bg-light-${colorName}`,
-      ]
+      ];
     },
-    eventClick( { event: clickedEvent }) {
+    eventClick({ event: clickedEvent }) {
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
-      event.value = grabEventDataFromEventApi(clickedEvent)
+      event.value = grabEventDataFromEventApi(clickedEvent);
       // eslint-disable-next-line no-use-before-define
       // isEventHandlerSidebarActive.value = false
     },
@@ -362,10 +386,10 @@ export default function userCalendar() {
     customButtons: {
       sidebarToggle: {
         // --- This dummy text actual icon rendering is handled using SCSS ----- //
-        text: 'sidebar',
+        text: "sidebar",
         click() {
           // eslint-disable-next-line no-use-before-define
-          isCalendarOverlaySidebarActive.value = !isCalendarOverlaySidebarActive.value
+          isCalendarOverlaySidebarActive.value = !isCalendarOverlaySidebarActive.value;
         },
       },
     },
@@ -378,9 +402,11 @@ export default function userCalendar() {
         event.value.start = info.date
         ```
       */
-      event.value = JSON.parse(JSON.stringify(Object.assign(event.value, { start: info.date })))
+      event.value = JSON.parse(
+        JSON.stringify(Object.assign(event.value, { start: info.date }))
+      );
       // eslint-disable-next-line no-use-before-define
-      isEventHandlerSidebarActive.value = false
+      isEventHandlerSidebarActive.value = false;
     },
 
     /*
@@ -389,7 +415,7 @@ export default function userCalendar() {
       ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
     */
     eventDrop({ event: droppedEvent }) {
-      updateEvent(grabEventDataFromEventApi(droppedEvent))
+      updateEvent(grabEventDataFromEventApi(droppedEvent));
     },
 
     /*
@@ -397,13 +423,13 @@ export default function userCalendar() {
       ? Docs: https://fullcalendar.io/docs/eventResize
     */
     eventResize({ event: resizedEvent }) {
-      updateEvent(grabEventDataFromEventApi(resizedEvent))
+      updateEvent(grabEventDataFromEventApi(resizedEvent));
     },
 
     // Get direction from app state (store)
-    direction: computed(() => (store.state.appConfig.isRTL ? 'rtl' : 'ltr')),
+    direction: computed(() => (store.state.appConfig.isRTL ? "rtl" : "ltr")),
     rerenderDelay: 350,
-  })
+  });
 
   // ------------------------------------------------------------------------
 
@@ -411,9 +437,9 @@ export default function userCalendar() {
   // *--------- UI ---------------------------------------*
   // *===============================================---*
 
-  const isEventHandlerSidebarActive = ref(false)
+  const isEventHandlerSidebarActive = ref(false);
 
-  const isCalendarOverlaySidebarActive = ref(false)
+  const isCalendarOverlaySidebarActive = ref(false);
 
   return {
     refCalendar,
@@ -429,5 +455,5 @@ export default function userCalendar() {
 
     // ----- UI ----- //
     isEventHandlerSidebarActive,
-  }
+  };
 }

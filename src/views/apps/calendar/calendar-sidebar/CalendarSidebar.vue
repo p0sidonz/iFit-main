@@ -2,6 +2,20 @@
   <div class="sidebar-wrapper d-flex justify-content-between flex-column flex-grow-1">
     <div class="p-2">
 
+
+                <h5 class="app-label section-label mb-1 text-primary">
+          <span class="align-middle">Select the trainer to get your schedule</span>
+        </h5>
+      <b-form-group>
+        <v-select
+        
+          v-model="selectedTrainers"
+          label="fullname"
+          :options="trainerOptions"
+        />
+      </b-form-group>
+
+
       <div class="mt-3">
         <h5 class="app-label section-label mb-1">
           <span class="align-middle">Calendar options</span>
@@ -31,16 +45,6 @@
           </b-form-checkbox-group>
         </b-form-group>
 
-                <h5 class="app-label section-label mb-1">
-          <span class="align-middle">Sort by trainers</span>
-        </h5>
-      <b-form-group>
-        <v-select
-          v-model="selectedTrainers"
-          label="title"
-          :options="trainerOptions"
-        />
-      </b-form-group>
 
       </div>
     </div>
