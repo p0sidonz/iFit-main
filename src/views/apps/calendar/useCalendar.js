@@ -235,12 +235,17 @@ export default function userCalendar() {
     () => store.state.calendar.selectedTrainers
   );
 
+  const userInformation = computed(() => store.state.calendar.USERINFO);
+  const userOption = computed(() => store.state.calendar.userOption);
+
   const selectedTrainersx = computed({
     get: () => store.state.calendar.selectedTrainers,
     set: (val) => {
       store.commit("calendar/SET_TRAINER_EVENTS", val);
     },
   });
+
+  const selectedUsers = computed(() => store.state.calendar.selectedUsers);
 
   watch(selectedCalendars, () => {
     refetchEvents();
@@ -249,6 +254,11 @@ export default function userCalendar() {
   watch(selectedTrainers, () => {
     refetchEvents();
   });
+
+  watch(selectedUsers, () => {
+    refetchEvents();
+  });
+
   // --------------------------------------------------------------------------------------------------
   // AXIOS: fetchEvents
   // * This will be called by fullCalendar to fetch events. Also this can be used to refetch events.
@@ -257,28 +267,95 @@ export default function userCalendar() {
     // If there's no info => Don't make useless API call
     if (!info) return;
     // Fetch Events from API endpoint
-    if (!selectedTrainers.value.length) {
-      console.log("empty array", selectedTrainers.value);
-      store
-        .dispatch("calendar/fetchbyTrainerCalendar", {
-          trainerlist: selectedTrainers.value,
-          type: selectedCalendars.value,
-        })
-        .then((response) => {
-          store.commit(
-            "calendar/SET_TRAINER_OPT_EVENTS",
-            response.data.data.Fitness_User
-          );
-          console.log(selectedTrainers);
-        });
+    if (userInformation.value.role === "user") {
+      console.log("I AM AUSER ACCOUNT");
+      if (!selectedTrainers.value.length) {
+        console.log("empty array", selectedTrainers.value);
+        store
+          .dispatch("calendar/fetchbyTrainerCalendar", {
+            trainerlist: selectedTrainers.value,
+            type: selectedCalendars.value,
+          })
+          .then((response) => {
+            store.commit(
+              "calendar/SET_TRAINER_OPT_EVENTS",
+              response.data.data.Fitness_User
+            );
+            console.log(selectedTrainers);
+          });
+      }
+      if (
+        selectedTrainers.value.length ||
+        Object.keys(selectedTrainers.value).length
+      ) {
+        store
+          .dispatch("calendar/fetchEvents", {
+            trainerlist: selectedTrainers.value,
+            type: selectedCalendars.value,
+          })
+          .then((response) => {
+            let res = response.data.data.Fitness_userrelation_calendar;
+            let haha = res.map((item, index) => {
+              let ok = item;
+              if (item.type === "program") {
+                ok.extendedProps = { calendar: "program" };
+              }
+              if (item.type === "diet") {
+                ok.extendedProps = { calendar: "diet" };
+              }
+
+              if (item.workout) {
+                ok.title = item.workout.title;
+              }
+
+              if (item.url === null && !item.workout) {
+                ok.url = `#`;
+              }
+              if (item.url === null && item.workout) {
+                ok.url = `workout/view/${item.workout.id}`;
+              }
+
+              return ok;
+            });
+
+            console.log(response);
+            successCallback(res);
+          })
+          .catch(() => {
+            toast({
+              component: ToastificationContent,
+              props: {
+                title: "Error fetching calendar events",
+                icon: "AlertTriangleIcon",
+                variant: "danger",
+              },
+            });
+          });
+      }
     }
-    if (
-      selectedTrainers.value.length ||
-      Object.keys(selectedTrainers.value).length
-    ) {
-      store
+    if (userInformation.value.role === "trainer") {
+      if (!userOption.value.length) {
+        store
+          .dispatch("calendar/fetchbyUserList", {
+            trainerlist: selectedTrainers.value,
+            type: selectedCalendars.value,
+          })
+          .then((response) => {
+            store.commit(
+              "calendar/SET_USER_SELECTED_EVENTS",
+              response.data.data.Fitness_User
+            );
+          });
+        console.log("USER OPTIONS LIST ", userOption);
+      }
+      if (
+        selectedUsers.value.length ||
+        Object.keys(selectedUsers.value).length
+      ) {
+
+        store
         .dispatch("calendar/fetchEvents", {
-          trainerlist: selectedTrainers.value,
+          userlist: selectedUsers.value,
           type: selectedCalendars.value,
         })
         .then((response) => {
@@ -319,6 +396,12 @@ export default function userCalendar() {
             },
           });
         });
+
+
+        console.log("idk ab kya krna", selectedUsers);
+
+
+      }
     }
   };
 

@@ -16,8 +16,12 @@ export default {
     ],
     trainerOptions: [],
     selectedTrainers: [],
-
     selectedCalendars: ["program", "diet"],
+
+    //for user role trainer
+    selectedUsers: [],
+    userOption: [],
+    USERINFO: JSON.parse(localStorage.getItem("userInfo")),
   },
   getters: {},
   mutations: {
@@ -30,11 +34,24 @@ export default {
     SET_TRAINER_OPT_EVENTS(state, val) {
       state.trainerOptions = val;
     },
+    SET_USER_EVENTS(state, val) {
+      state.selectedUsers = val;
+    },
+    SET_USER_SELECTED_EVENTS(state, val) {
+      state.userOption = val;
+    },
   },
   actions: {
     fetchEvents(ctx, payload) {
+      console.log("payload",payload)
       let searchType = payload.type[0];
-      let rid = payload.trainerlist.trainer_list_arr[0].id;
+      let rid = null;
+      if (payload.trainerlist) {
+        rid = payload.trainerlist.trainer_list_arr[0].id;
+      }
+      if (payload.userlist) {
+        rid = payload.userlist.traineelist.id;
+      }
       let where = {};
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
@@ -48,7 +65,6 @@ export default {
             _and: { type: { _eq: searchType } },
           };
         }
-        console.log(where);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
@@ -71,6 +87,41 @@ export default {
               
               
               `,
+              variables: {
+                where,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    fetchbyUserList(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        let where = { traineelist: {} };
+        axios
+          .post(
+            process.env.VUE_APP_GRAPHQL_HTTP,
+            {
+              query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
+                Fitness_User(where: $where, limit: $limit, offset: $offset) {
+                  id
+                  fullname
+                  traineelist{
+                    id
+                  }
+                }
+              }
+          `,
               variables: {
                 where,
               },

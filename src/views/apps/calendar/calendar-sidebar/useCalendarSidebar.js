@@ -1,12 +1,12 @@
-import store from '@/store'
+import store from "@/store";
 
-import { computed } from '@vue/composition-api'
+import { computed } from "@vue/composition-api";
 
 export default function useCalendarSidebar() {
   // ------------------------------------------------
   // calendarOptions
   // ------------------------------------------------
-  const calendarOptions = computed(() => store.state.calendar.calendarOptions)
+  const calendarOptions = computed(() => store.state.calendar.calendarOptions);
 
   // ------------------------------------------------
   // selectedCalendars
@@ -14,21 +14,30 @@ export default function useCalendarSidebar() {
   const selectedCalendars = computed({
     get: () => store.state.calendar.selectedCalendars,
     set: (val) => {
-      store.commit('calendar/SET_SELECTED_EVENTS', val)
+      store.commit("calendar/SET_SELECTED_EVENTS", val);
     },
-  })
+  });
   // ------------------------------------------------
-  const trainerOptions = computed(() => store.state.calendar.trainerOptions)
+  const trainerOptions = computed(() => store.state.calendar.trainerOptions);
 
   const selectedTrainers = computed({
     get: () => store.state.calendar.selectedTrainers,
     set: (val) => {
-      store.commit('calendar/SET_TRAINER_EVENTS', val)
+      store.commit("calendar/SET_TRAINER_EVENTS", val);
     },
-  })
-
+  });
   // ------------------------------------------------
+  // USER OPTIONS
+  //
+  // ------------------------------------------------
+  const userOption = computed(() => store.state.calendar.userOption);
 
+  const selectedUsers = computed({
+    get: () => store.state.calendar.selectedUsers,
+    set: (val) => {
+      store.commit("calendar/SET_USER_EVENTS", val);
+    },
+  });
 
   // ------------------------------------------------
   // checkAll
@@ -40,14 +49,16 @@ export default function useCalendarSidebar() {
            Else if => all filters are selected (by checking length of both array) => Empty Selected array  => Deselect All
     */
     get: () => selectedCalendars.value.length === calendarOptions.value.length,
-    set: val => {
+    set: (val) => {
       if (val) {
-        selectedCalendars.value = calendarOptions.value.map(i => i.label)
-      } else if (selectedCalendars.value.length === calendarOptions.value.length) {
-        selectedCalendars.value = []
+        selectedCalendars.value = calendarOptions.value.map((i) => i.label);
+      } else if (
+        selectedCalendars.value.length === calendarOptions.value.length
+      ) {
+        selectedCalendars.value = [];
       }
     },
-  })
+  });
 
   return {
     calendarOptions,
@@ -55,5 +66,7 @@ export default function useCalendarSidebar() {
     selectedCalendars,
     selectedTrainers,
     checkAll,
-  }
+    selectedUsers,
+    userOption,
+  };
 }

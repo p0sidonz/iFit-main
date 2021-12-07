@@ -79,14 +79,14 @@
             >
 
               <b-form-group
-                label="Calendar"
+                label="Type"
                 label-for="calendar"
                 :state="getValidationState(validationContext)"
               >
                 <v-select
                   v-model="eventLocal.extendedProps.calendar"
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                  :options="calendarOptions"
+                  :options="eventType"
                   label="label"
                   :reduce="calendar => calendar.label"
                   input-id="calendar"
@@ -215,21 +215,21 @@
                 input-id="add-guests"
               >
 
-                <template #option="{ avatar, name }">
+                <template #option="{ avatar, fullname }">
                   <b-avatar
                     size="sm"
                     :src="avatar"
                   />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
+                  <span class="ml-50 align-middle"> {{ fullname }}</span>
                 </template>
 
-                <template #selected-option="{ avatar, name }">
+                <template #selected-option="{ avatar, fullname }">
                   <b-avatar
                     size="sm"
                     class="border border-white"
                     :src="avatar"
                   />
-                  <span class="ml-50 align-middle"> {{ name }}</span>
+                  <span class="ml-50 align-middle"> {{ fullname }}</span>
                 </template>
               </v-select>
             </b-form-group>
@@ -338,6 +338,7 @@ export default {
       required,
       email,
       url,
+      eventType: ['Other']
     }
   },
   setup(props, { emit }) {
