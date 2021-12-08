@@ -1,14 +1,17 @@
 <template>
   <div id="user-profile">
-    <profile-header :header-data="profileData" @refresh-data="ok" />
-    <section id="profile-info">
-      <profile-post />
-    </section>
+    <div v-if="profileData">
+      <profile-header :header-data="profileData" @refresh-data="ok" />
+      <section id="profile-info">
+        <profile-post />
+      </section>
+    </div>
+    <div v-else><b-spinner label="Loading..." /></div>
   </div>
 </template>
 
 <script>
-import { BRow, BCol } from "bootstrap-vue";
+import { BRow, BCol, BSpinner } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
 import ProfilePost from "./ProfilePost.vue";
 
@@ -21,6 +24,7 @@ export default {
     BCol,
     ProfileHeader,
     ProfilePost,
+    BSpinner,
   },
   data() {
     return {
@@ -141,7 +145,7 @@ export default {
         const ReUsername = this.$route.params.username;
         // react to route changes...
         // this.refetchProfile(ReUsername);
-        //hard refresh always done the job! :D 
+        //hard refresh always done the job! :D
         location.reload();
       }
     );
