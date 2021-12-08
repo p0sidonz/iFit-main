@@ -13,8 +13,11 @@
         <feather-icon icon="UserIcon" size="18" class="mr-50" />
         <span class="font-weight-bold">General</span>
       </template>
+      <div v-if="options">
+        <account-setting-general v-if="options" :general-data="options" />
+      </div>
 
-      <account-setting-general v-if="options" :general-data="options" />
+      <div v-else><b-spinner label="Loading..." /></div>
     </b-tab>
     <!--/ general tab -->
 
@@ -36,14 +39,19 @@
         <feather-icon icon="InfoIcon" size="18" class="mr-50" />
         <span class="font-weight-bold">BodyMeasurements</span>
       </template>
-
-      <account-setting-information v-if="options" :information-data="options" />
+      <div v-if="options">
+        <account-setting-information
+          v-if="options"
+          :information-data="options"
+        />
+      </div>
+      <div v-else><b-spinner label="Loading..." /></div>
     </b-tab>
   </b-tabs>
 </template>
 
 <script>
-import { BTabs, BTab } from "bootstrap-vue";
+import { BTabs, BTab,BSpinner } from "bootstrap-vue";
 import AccountSettingGeneral from "./AccountSettingGeneral.vue";
 import AccountSettingPassword from "./AccountSettingPassword.vue";
 import AccountSettingInformation from "./AccountSettingInformation.vue";
@@ -59,6 +67,7 @@ export default {
     AccountSettingGeneral,
     AccountSettingPassword,
     AccountSettingInformation,
+    BSpinner
   },
 
   data() {

@@ -108,69 +108,72 @@
         scrollable:false
         title="Following"
       >
-        <div v-if="followers">
-          <div
-            v-for="(data, index) in followers"
-            :key="data.id"
-            class="d-flex justify-content-start align-items-center"
-            :class="index == 0 ? 'mt-2' : 'mt-1'"
-          >
-            <b-avatar
-              :src="data.myfollowersObj.avatar"
-              class="mr-50"
-              size="40"
-            />
-            <div class="user-page-info">
-              <b-link
-                :to="{
-                  name: 'profile',
-                  params: { username: data.myfollowersObj.username },
-                }"
-              >
-                <h6 class="mb-0">
-                  {{ data.myfollowersObj.username }}
-                </h6>
-                <small class="text-muted">
-                  {{ data.myfollowersObj.fullname }}</small
+        <div v-if="isLoading">
+          <div v-if="followers">
+            <div
+              v-for="(data, index) in followers"
+              :key="data.id"
+              class="d-flex justify-content-start align-items-center"
+              :class="index == 0 ? 'mt-2' : 'mt-1'"
+            >
+              <b-avatar
+                :src="data.myfollowersObj.avatar"
+                class="mr-50"
+                size="40"
+              />
+              <div class="user-page-info">
+                <b-link
+                  :to="{
+                    name: 'profile',
+                    params: { username: data.myfollowersObj.username },
+                  }"
                 >
-              </b-link>
-            </div>
-            <b-button
-              v-if="
-                data.myfollowersObj.is_follow &
-                (userInfo.username === currentUsername)
-              "
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              variant="flat-danger"
-              class="btn-icon ml-auto"
-              size="default"
-              @click="
-                unFollowUser(
-                  data.myfollowersObj.id,
-                  index,
-                  data.myfollowersObj.id
-                )
-              "
-            >
-              Unfollow
-            </b-button>
-            <b-button
-              v-if="
-                userInfo.username != currentUsername &&
-                userInfo.username != data.myfollowersObj.username
-              "
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              variant="flat-primary"
-              class="btn-icon ml-auto"
-              size="default"
-              @click="followUser(data.myfollowersObj.id)"
-            >
-              <feather-icon icon="UserPlusIcon" class="mr-50" />
+                  <h6 class="mb-0">
+                    {{ data.myfollowersObj.username }}
+                  </h6>
+                  <small class="text-muted">
+                    {{ data.myfollowersObj.fullname }}</small
+                  >
+                </b-link>
+              </div>
+              <b-button
+                v-if="
+                  data.myfollowersObj.is_follow &
+                  (userInfo.username === currentUsername)
+                "
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="flat-danger"
+                class="btn-icon ml-auto"
+                size="default"
+                @click="
+                  unFollowUser(
+                    data.myfollowersObj.id,
+                    index,
+                    data.myfollowersObj.id
+                  )
+                "
+              >
+                Unfollow
+              </b-button>
+              <b-button
+                v-if="
+                  userInfo.username != currentUsername &&
+                  userInfo.username != data.myfollowersObj.username
+                "
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="flat-primary"
+                class="btn-icon ml-auto"
+                size="default"
+                @click="followUser(data.myfollowersObj.id)"
+              >
+                <feather-icon icon="UserPlusIcon" class="mr-50" />
 
-              Follow
-            </b-button>
+                Follow
+              </b-button>
+            </div>
           </div>
         </div>
+        <div v-else><b-spinner label="Loading..." /></div>
       </b-modal>
 
       <b-modal
@@ -182,63 +185,66 @@
         scrollable:false
         title="Followers"
       >
-        <div v-if="followings">
-          <div
-            v-for="(data, index) in followings"
-            :key="data.id"
-            class="d-flex justify-content-start align-items-center"
-            :class="index == 0 ? 'mt-2' : 'mt-1'"
-          >
-            <b-avatar
-              :src="data.myfollowingObj.avatar"
-              class="mr-50"
-              size="40"
-            />
-            <div class="user-page-info">
-              <b-link
-                :to="{
-                  name: 'profile',
-                  params: { username: data.myfollowingObj.username },
-                }"
-              >
-                <h6 class="mb-0">
-                  {{ data.myfollowingObj.username }}
-                </h6>
-                <small class="text-muted">
-                  {{ data.myfollowingObj.fullname }}</small
+        <div v-if="isLoading">
+          <div v-if="followings">
+            <div
+              v-for="(data, index) in followings"
+              :key="data.id"
+              class="d-flex justify-content-start align-items-center"
+              :class="index == 0 ? 'mt-2' : 'mt-1'"
+            >
+              <b-avatar
+                :src="data.myfollowingObj.avatar"
+                class="mr-50"
+                size="40"
+              />
+              <div class="user-page-info">
+                <b-link
+                  :to="{
+                    name: 'profile',
+                    params: { username: data.myfollowingObj.username },
+                  }"
                 >
-              </b-link>
-            </div>
-            <b-button
-              v-if="userInfo.username === currentUsername"
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              variant="flat-primary"
-              class="btn-icon ml-auto"
-              size="default"
-              @click="test()"
-            >
-              Remove
-            </b-button>
+                  <h6 class="mb-0">
+                    {{ data.myfollowingObj.username }}
+                  </h6>
+                  <small class="text-muted">
+                    {{ data.myfollowingObj.fullname }}</small
+                  >
+                </b-link>
+              </div>
+              <b-button
+                v-if="userInfo.username === currentUsername"
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="flat-primary"
+                class="btn-icon ml-auto"
+                size="default"
+                @click="test()"
+              >
+                Remove
+              </b-button>
 
-            <b-button
-              v-if="
-                userInfo.username != currentUsername &&
-                userInfo.username != data.myfollowingObj.username
-              "
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              variant="flat-primary"
-              class="btn-icon ml-auto"
-              size="default"
-              @click="test()"
-            >
-              Follow
-            </b-button>
+              <b-button
+                v-if="
+                  userInfo.username != currentUsername &&
+                  userInfo.username != data.myfollowingObj.username
+                "
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="flat-primary"
+                class="btn-icon ml-auto"
+                size="default"
+                @click="test()"
+              >
+                Follow
+              </b-button>
+            </div>
+          </div>
+
+          <div v-else>
+            <span>Such emptiness </span>
           </div>
         </div>
-
-        <div v-else>
-          <span>Such emptiness </span>
-        </div>
+        <div v-else><b-spinner label="Loading..." /></div>
       </b-modal>
 
       <b-modal
@@ -252,7 +258,11 @@
       >
         <div v-if="packagesList.length">
           <div v-if="packagesList.length">
-            <b-card v-for="packages in packagesList" :key="packages.id" class="card-apply-job">
+            <b-card
+              v-for="packages in packagesList"
+              :key="packages.id"
+              class="card-apply-job"
+            >
               <b-card-header class="pb-1">
                 <b-media no-body>
                   <b-media-aside class="mr-1">
@@ -306,9 +316,7 @@
             </b-card>
           </div>
         </div>
-        <div v-else>
-          No packages...
-           </div>
+        <div v-else>No packages...</div>
       </b-modal>
     </b-card>
   </div>
@@ -333,6 +341,7 @@ import {
   BMedia,
   BCardHeader,
   BCardBody,
+  BSpinner
 } from "bootstrap-vue";
 import { toRefs } from "@vue/composition-api";
 import { ref, watch } from "@vue/composition-api";
@@ -369,6 +378,7 @@ export default {
     BMedia,
     BCardHeader,
     BCardBody,
+    BSpinner
   },
   directives: {
     Ripple,
@@ -387,6 +397,7 @@ export default {
       followings: null,
       packagesList: [],
       showPackagesModal: false,
+      isLoading: false,
     };
   },
 
@@ -412,17 +423,16 @@ export default {
   },
 
   methods: {
-
     async applyForPackage() {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: "Oops!",
-                icon: "BellIcon",
-                variant: "danger",
-                text: "Unfortunately, this feature is currently unavailable  "
-              },
-            });
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: "Oops!",
+          icon: "BellIcon",
+          variant: "danger",
+          text: "Unfortunately, this feature is currently unavailable  ",
+        },
+      });
     },
 
     async getPackages(id) {
@@ -443,6 +453,8 @@ export default {
     },
 
     async showFollowing(id) {
+      this.isLoading = true;
+  
       this.showFollowingModal = true;
       try {
         const data = await this.$apollo.query({
@@ -452,12 +464,16 @@ export default {
           },
         });
         this.followers = data.data.Fitness_Follow;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
 
     async showFollowers(id) {
+      this.isLoading = true;
       this.showFollowerModal = true;
       try {
         const data = await this.$apollo.query({
@@ -467,8 +483,10 @@ export default {
           },
         });
         this.followings = data.data.Fitness_Follow;
+        this.isLoading = false;
       } catch (error) {
         console.log(error);
+        this.isLoading = false;
       }
     },
 
