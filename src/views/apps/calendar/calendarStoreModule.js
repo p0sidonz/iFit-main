@@ -200,7 +200,7 @@ export default {
 
     addEvent(ctx, event) {
       let xyz = event;
-      console.log("eventt", xyz.event);
+      console.log("add event payload", xyz.event);
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
@@ -216,7 +216,8 @@ export default {
           location: xyz.event.extendedProps.location,
           relation_id: xyz.event.extendedProps.guests.traineelist.id,
         };
-        console.log(x);
+
+        console.log("after settings up the payload", x);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
@@ -225,7 +226,7 @@ export default {
              
 
               mutation MyMutation($start: date, $end: date, $relation_id: Int! $type: String,
-                $url: String, $allDay : Boolean!, $title: String!
+                $url: String, $allDay : Boolean!, $title: String!,$location: String, $description: String
                 ) {
                   insert_Fitness_userrelation_calendar(objects: {
                     start:$start, 
@@ -234,7 +235,11 @@ export default {
                     type: $type,
                     url: $url,
                     allDay: $allDay,
-                    title: $title
+                    title: $title,
+                    location: $location, 
+                    description: $description, 
+
+
                   }) {
                     returning {
                       id
@@ -261,11 +266,9 @@ export default {
 
     updateEvent(ctx, event) {
       let xyz = event;
-      console.log(event);
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
-
         let x = {
           id: event.event.id,
           title: event.event.title,
@@ -278,7 +281,6 @@ export default {
           location: event.event.extendedProps.location,
           relation_id: xyz.event.extendedProps.guests.traineelist.id,
         };
-        console.log("X UPDATED ", x);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
