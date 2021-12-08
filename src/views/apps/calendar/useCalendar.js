@@ -97,7 +97,7 @@ export default function userCalendar() {
       },
     });
 
-    const existingEvent = calendarApi.getEventById(updatedEventData.id);
+    // const existingEvent = calendarApi.getEventById(updatedEventData.id);
 
     // --- Set event properties except date related ----- //
     // ? Docs: https://fullcalendar.io/docs/Event-setProp
@@ -185,7 +185,7 @@ export default function userCalendar() {
       .then((response) => {
         console.log(response);
         // eslint-disable-next-line no-use-before-define
-        // refetchEvents();
+        refetchEvents();
       });
   };
 
@@ -196,21 +196,37 @@ export default function userCalendar() {
     store
       .dispatch("calendar/updateEvent", { event: eventData })
       .then((response) => {
-        const updatedEvent = response.data.event;
+        if (
+          response.data.data.update_Fitness_userrelation_calendar.returning[0]
+            .id
+        ) {
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Event Updated",
+              icon: "CheckIcon",
+              variant: "success",
+            },
+          });
 
-        const propsToUpdate = ["id", "title", "url"];
-        const extendedPropsToUpdate = [
-          "calendar",
-          "guests",
-          "location",
-          "description",
-        ];
+          // const updatedEvent = response.data.event;
 
-        updateEventInCalendar(
-          updatedEvent,
-          propsToUpdate,
-          extendedPropsToUpdate
-        );
+          // const propsToUpdate = ["id", "title", "url"];
+          // const extendedPropsToUpdate = [
+          //   "calendar",
+          //   "guests",
+          //   "location",
+          //   "description",
+          // ];
+
+          // updateEventInCalendar(
+          //   updatedEvent,
+          //   propsToUpdate,
+          //   extendedPropsToUpdate
+          // );
+
+          refetchEvents();
+        }
       });
   };
 
@@ -309,7 +325,12 @@ export default function userCalendar() {
               if (item.type === "diet") {
                 ok.extendedProps = { calendar: "diet" };
               }
-
+              if (item.description) {
+                ok.extendedProps = { description: item.description };
+              }
+              if (item.location) {
+                ok.extendedProps = { location: item.location };
+              }
               if (item.workout) {
                 ok.title = item.workout.title;
               }
@@ -320,7 +341,7 @@ export default function userCalendar() {
               if (item.url === null && item.workout) {
                 ok.url = `workout/view/${item.workout.id}`;
               }
-
+              console.log("fetchevents", ok);
               return ok;
             });
 
@@ -377,6 +398,12 @@ export default function userCalendar() {
               if (item.workout) {
                 ok.title = item.workout.title;
               }
+              if (item.description) {
+                ok.extendedProps = { description: item.description };
+              }
+              if (item.location) {
+                ok.extendedProps = { location: item.location };
+              }
 
               if (item.url === null && !item.workout) {
                 ok.url = `#`;
@@ -385,11 +412,13 @@ export default function userCalendar() {
                 ok.url = `workout/view/${item.workout.id}`;
               }
 
+              console.log("fetchevents", ok);
               return ok;
             });
 
-            console.log(response);
-            successCallback(res);
+            console.log(haha);
+
+            successCallback(haha);
           })
           .catch(() => {
             toast({

@@ -96,25 +96,25 @@
               }}</small>
             </b-media-body>
           </b-media>
-        <hr class="invoice-spacing" />
+          <hr class="invoice-spacing" />
 
           <b-button
-          v-if="event.extendedProps.type === 'Other'"
+            v-if="event.extendedProps.type === 'Other'"
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             block
             variant="primary"
             target="_blank"
-            :href='event.url'
+            :href="event.url"
           >
-          Visit the website
+            Visit the website
           </b-button>
           <b-button
-          v-if="event.extendedProps.type === 'program'"
+            v-if="event.extendedProps.type === 'program'"
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             block
             variant="primary"
           >
-          View Program
+            View Program
           </b-button>
           <b-media no-body> </b-media>
         </b-card-body>
@@ -131,6 +131,8 @@ import calendarStoreModule from "./calendarStoreModule";
 import CalendarSidebar from "./calendar-sidebar/CalendarSidebar.vue";
 import CalendarEventHandler from "./calendar-event-handler/CalendarEventHandler.vue";
 import useCalendar from "./useCalendar";
+import Ripple from "vue-ripple-directive";
+
 import {
   BCard,
   BImg,
@@ -164,6 +166,7 @@ export default {
   },
   directives: {
     "b-tooltip": VBTooltip,
+    Ripple,
   },
 
   setup() {

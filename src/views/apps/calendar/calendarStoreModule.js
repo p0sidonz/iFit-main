@@ -212,6 +212,7 @@ export default {
           start: event.event.start,
           end: event.event.end,
           allDay: event.event.allDay,
+          description: event.event.extendedProps.description,
           relation_id: xyz.event.extendedProps.guests.traineelist.id,
         };
         axios
@@ -256,14 +257,66 @@ export default {
       });
     },
 
-    updateEvent(ctx, { event }) {
+    updateEvent(ctx, event) {
+      let xyz = event;
+      console.log(event);
       return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+
+        let x = {
+          id: event.event.id,
+          title: event.event.title,
+          url: event.event.url,
+          type: event.event.extendedProps.type,
+          start: event.event.start,
+          end: event.event.end,
+          allDay: event.event.allDay,
+          description: event.event.extendedProps.description,
+          location: event.event.extendedProps.location,
+          relation_id: xyz.event.extendedProps.guests.traineelist.id,
+        };
+        console.log("X UPDATED ",x)
         axios
-          .post(`/apps/calendar/events/${event.id}`, { event })
+          .post(
+            process.env.VUE_APP_GRAPHQL_HTTP,
+            {
+              query: `
+              mutation MyMutation( $id: Int!, $start: date, $end: date, $relation_id: Int!, $type: String, $url: String, $allDay: Boolean!, $title: String!, $location: String, $description: String) {
+                update_Fitness_userrelation_calendar( where:
+                   {id: {_eq: $id}},
+                    _set: {
+                      url: $url,
+                       type: $type, 
+                       title: $title,
+                        start: $start, 
+                        relation_id: $relation_id, 
+                        location: $location, 
+                        end: $end, 
+                        description: $description, 
+                        allDay: $allDay}) {
+                  returning {
+                    id
+                  }
+                }
+              }
+          `,
+              variables: {
+                ...x,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
     },
+
     removeEvent(ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios

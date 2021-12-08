@@ -152,6 +152,7 @@ export default function userCalendar() {
       title,
       start,
       end,
+      url,
       // eslint-disable-next-line object-curly-newline
       extendedProps: { calendar, guests, location, description, type },
       allDay,
@@ -161,6 +162,7 @@ export default function userCalendar() {
       id,
       title,
       start,
+      url,
       end,
       extendedProps: {
         type,
@@ -176,11 +178,15 @@ export default function userCalendar() {
   // ------------------------------------------------
   // addEvent
   // ------------------------------------------------
+
   const addEvent = (eventData) => {
-    store.dispatch("calendar/addEvent", { event: eventData }).then(() => {
-      // eslint-disable-next-line no-use-before-define
-      refetchEvents();
-    });
+    store
+      .dispatch("calendar/addEvent", { event: eventData })
+      .then((response) => {
+        console.log(response);
+        // eslint-disable-next-line no-use-before-define
+        // refetchEvents();
+      });
   };
 
   // ------------------------------------------------
@@ -352,55 +358,51 @@ export default function userCalendar() {
         selectedUsers.value.length ||
         Object.keys(selectedUsers.value).length
       ) {
-
         store
-        .dispatch("calendar/fetchEvents", {
-          userlist: selectedUsers.value,
-          type: selectedCalendars.value,
-        })
-        .then((response) => {
-          let res = response.data.data.Fitness_userrelation_calendar;
-          let haha = res.map((item, index) => {
-            let ok = item;
-            if (item.type === "program") {
-              ok.extendedProps = { calendar: "program" };
-            }
-            if (item.type === "diet") {
-              ok.extendedProps = { calendar: "diet" };
-            }
+          .dispatch("calendar/fetchEvents", {
+            userlist: selectedUsers.value,
+            type: selectedCalendars.value,
+          })
+          .then((response) => {
+            let res = response.data.data.Fitness_userrelation_calendar;
+            let haha = res.map((item, index) => {
+              let ok = item;
+              if (item.type === "program") {
+                ok.extendedProps = { calendar: "program" };
+              }
+              if (item.type === "diet") {
+                ok.extendedProps = { calendar: "diet" };
+              }
 
-            if (item.workout) {
-              ok.title = item.workout.title;
-            }
+              if (item.workout) {
+                ok.title = item.workout.title;
+              }
 
-            if (item.url === null && !item.workout) {
-              ok.url = `#`;
-            }
-            if (item.url === null && item.workout) {
-              ok.url = `workout/view/${item.workout.id}`;
-            }
+              if (item.url === null && !item.workout) {
+                ok.url = `#`;
+              }
+              if (item.url === null && item.workout) {
+                ok.url = `workout/view/${item.workout.id}`;
+              }
 
-            return ok;
+              return ok;
+            });
+
+            console.log(response);
+            successCallback(res);
+          })
+          .catch(() => {
+            toast({
+              component: ToastificationContent,
+              props: {
+                title: "Error fetching calendar events",
+                icon: "AlertTriangleIcon",
+                variant: "danger",
+              },
+            });
           });
-
-          console.log(response);
-          successCallback(res);
-        })
-        .catch(() => {
-          toast({
-            component: ToastificationContent,
-            props: {
-              title: "Error fetching calendar events",
-              icon: "AlertTriangleIcon",
-              variant: "danger",
-            },
-          });
-        });
-
 
         console.log("idk ab kya krna", selectedUsers);
-
-
       }
     }
   };
@@ -458,12 +460,29 @@ export default function userCalendar() {
         `bg-light-${colorName}`,
       ];
     },
-    eventClick({ event: clickedEvent }) {
+    eventClick({ event: clickedEvent, jsEvent }) {
+      jsEvent.preventDefault();
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
       event.value = grabEventDataFromEventApi(clickedEvent);
+      console.log(event);
       // eslint-disable-next-line no-use-before-define
-      // isEventHandlerSidebarActive.value = false
+      if (
+        userInformation.value.role === "trainer" &&
+        event.value.extendedProps.type != "Other"
+      ) {
+        isEventHandlerSidebarActive.value = false;
+      }
+      if (
+        userInformation.value.role === "trainer" &&
+        event.value.extendedProps.type === "Other"
+      ) {
+        isEventHandlerSidebarActive.value = true;
+      }
+
+      if (userInformation.value.role === "user") {
+        showEventDetailModal.value = true;
+      }
     },
 
     customButtons: {
@@ -489,7 +508,10 @@ export default function userCalendar() {
         JSON.stringify(Object.assign(event.value, { start: info.date }))
       );
       // eslint-disable-next-line no-use-before-define
-      isEventHandlerSidebarActive.value = false;
+
+      if (userInformation.value.role === "trainer") {
+        isEventHandlerSidebarActive.value = true;
+      }
     },
 
     /*
@@ -524,6 +546,8 @@ export default function userCalendar() {
 
   const isCalendarOverlaySidebarActive = ref(false);
 
+  const showEventDetailModal = ref(false);
+
   return {
     refCalendar,
     isCalendarOverlaySidebarActive,
@@ -538,5 +562,6 @@ export default function userCalendar() {
 
     // ----- UI ----- //
     isEventHandlerSidebarActive,
+    showEventDetailModal,
   };
 }

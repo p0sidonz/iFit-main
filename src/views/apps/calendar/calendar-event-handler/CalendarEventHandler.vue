@@ -13,16 +13,26 @@
     >
       <template #default="{ hide }">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center content-sidebar-header px-2 py-1">
-          <h5 class="mb-0">
-            {{ eventLocal.id ? 'Update': 'Add' }} Event
-          </h5>
+        <div
+          class="
+            d-flex
+            justify-content-between
+            align-items-center
+            content-sidebar-header
+            px-2
+            py-1
+          "
+        >
+          <h5 class="mb-0">{{ eventLocal.id ? "Update" : "Add" }} Event</h5>
           <div>
             <feather-icon
               v-if="eventLocal.id"
               icon="TrashIcon"
               class="cursor-pointer"
-              @click="$emit('remove-event'); hide();"
+              @click="
+                $emit('remove-event');
+                hide();
+              "
             />
             <feather-icon
               class="ml-1 cursor-pointer"
@@ -34,28 +44,20 @@
         </div>
 
         <!-- Body -->
-        <validation-observer
-          #default="{ handleSubmit }"
-          ref="refFormObserver"
-        >
-
+        <validation-observer #default="{ handleSubmit }" ref="refFormObserver">
           <!-- Form -->
           <b-form
             class="p-2"
             @submit.prevent="handleSubmit(onSubmit)"
             @reset.prevent="resetForm"
           >
-
             <!-- Title -->
             <validation-provider
               #default="validationContext"
               name="Title"
               rules="required"
             >
-              <b-form-group
-                label="Title"
-                label-for="event-title"
-              >
+              <b-form-group label="Title" label-for="event-title">
                 <b-form-input
                   id="event-title"
                   v-model="eventLocal.title"
@@ -74,10 +76,9 @@
             <!-- Calendar -->
             <validation-provider
               #default="validationContext"
-              name="Calendar"
+              name="type"
               rules="required"
             >
-
               <b-form-group
                 label="Type"
                 label-for="calendar"
@@ -88,11 +89,13 @@
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="eventType"
                   label="label"
-                  input-id="calendar"
+                  input-id="type"
                 >
                 </v-select>
 
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
@@ -104,7 +107,6 @@
               name="Start Date"
               rules="required"
             >
-
               <b-form-group
                 label="Start Date"
                 label-for="start-date"
@@ -113,9 +115,11 @@
                 <flat-pickr
                   v-model="eventLocal.start"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
@@ -127,7 +131,6 @@
               name="End Date"
               rules="required"
             >
-
               <b-form-group
                 label="End Date"
                 label-for="end-date"
@@ -136,9 +139,11 @@
                 <flat-pickr
                   v-model="eventLocal.end"
                   class="form-control"
-                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i'}"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
@@ -160,46 +165,64 @@
             <validation-provider
               #default="validationContext"
               name="Event URL"
-              rules="url"
+              rules="required"
             >
-
-              <b-form-group
-                label="Event URL"
-                label-for="event-url"
-              >
+              <b-form-group label="Event URL" label-for="event-url">
                 <b-form-input
                   id="event-url"
-                  v-model="eventLocal.eventUrl"
+                  v-model="eventLocal.url"
                   type="url"
                   :state="getValidationState(validationContext)"
                   placeholder="htttps://www.google.com"
                   trim
                 />
-                <b-form-invalid-feedback :state="getValidationState(validationContext)">
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </b-form-group>
             </validation-provider>
 
             <!-- Guests -->
-            <b-form-group
-              label="Add Guests"
-              label-for="add-guests"
+            <validation-provider
+              #default="validationContext"
+              name="Add Guests"
+              rules="required"
             >
-              <v-select
-                v-model="eventLocal.extendedProps.guests"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :close-on-select="true"
-                :options="guestsOptions"
-                label="fullname"
-                input-id="add-guests"
+              <b-form-group
+                label="Add Guests"
+                label-for="add-guests"
+                
+                :state="getValidationState(validationContext)"
               >
-              </v-select>
-            </b-form-group>
+                <v-select
+                  v-model="eventLocal.extendedProps.guests"
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  :close-on-select="true"
+                  :options="guestsOptions"
+                  label="fullname"
+                  input-id="add-guests"
+                >
+                </v-select>
+                <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+            </validation-provider>
+
+                        <validation-provider
+              #default="validationContext"
+              name="Location"
+              rules="required"
+            >
 
             <!-- Location -->
             <b-form-group
               label="Location"
+              rules="required"
               label-for="event-location"
             >
               <b-form-input
@@ -208,10 +231,26 @@
                 trim
                 placeholder="Event Location"
               />
+                              <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+
             </b-form-group>
+            </validation-provider>
 
             <!-- Textarea -->
+            
+                                    <validation-provider
+              #default="validationContext"
+              name="Description"
+              rules="required"
+            >
+
+
             <b-form-group
+              rules="required"
               label="Description"
               label-for="event-description"
             >
@@ -219,7 +258,15 @@
                 id="event-description"
                 v-model="eventLocal.extendedProps.description"
               />
+
+                                            <b-form-invalid-feedback
+                  :state="getValidationState(validationContext)"
+                >
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
+
             </b-form-group>
+            </validation-provider>
 
             <!-- Form Actions -->
             <div class="d-flex mt-2">
@@ -229,7 +276,7 @@
                 class="mr-2"
                 type="submit"
               >
-                {{ eventLocal.id ? 'Update' : 'Add ' }}
+                {{ eventLocal.id ? "Update" : "Add " }}
               </b-button>
               <b-button
                 v-ripple.400="'rgba(186, 191, 199, 0.15)'"
@@ -248,16 +295,24 @@
 
 <script>
 import {
-  BSidebar, BForm, BFormGroup, BFormInput, BFormCheckbox, BAvatar, BFormTextarea, BButton, BFormInvalidFeedback,
-} from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import flatPickr from 'vue-flatpickr-component'
-import Ripple from 'vue-ripple-directive'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { required, email, url } from '@validations'
-import formValidation from '@core/comp-functions/forms/form-validation'
-import { ref, toRefs } from '@vue/composition-api'
-import useCalendarEventHandler from './useCalendarEventHandler'
+  BSidebar,
+  BForm,
+  BFormGroup,
+  BFormInput,
+  BFormCheckbox,
+  BAvatar,
+  BFormTextarea,
+  BButton,
+  BFormInvalidFeedback,
+} from "bootstrap-vue";
+import vSelect from "vue-select";
+import flatPickr from "vue-flatpickr-component";
+import Ripple from "vue-ripple-directive";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
+import { required, email, url } from "@validations";
+import formValidation from "@core/comp-functions/forms/form-validation";
+import { ref, toRefs } from "@vue/composition-api";
+import useCalendarEventHandler from "./useCalendarEventHandler";
 
 export default {
   components: {
@@ -279,8 +334,8 @@ export default {
     Ripple,
   },
   model: {
-    prop: 'isEventHandlerSidebarActive',
-    event: 'update:is-event-handler-sidebar-active',
+    prop: "isEventHandlerSidebarActive",
+    event: "update:is-event-handler-sidebar-active",
   },
   props: {
     isEventHandlerSidebarActive: {
@@ -301,8 +356,8 @@ export default {
       required,
       email,
       url,
-      eventType: ['Other']
-    }
+      eventType: ["Other"],
+    };
   },
   setup(props, { emit }) {
     /*
@@ -318,7 +373,7 @@ export default {
      ? When we passed it to `useCalendarEventHandler` for first time it will be null but right after it we are getting correct value (which is `clearForm`) and assigning that correct value.
      ? As `clearFormData` is reactive it is being changed from `null` to corrent value and thanks to reactivity it is also update in `useCalendarEventHandler` composition function and it is getting correct value in second time and can work w/o any issues.
     */
-    const clearFormData = ref(null)
+    const clearFormData = ref(null);
 
     const {
       eventLocal,
@@ -328,16 +383,12 @@ export default {
       // UI
       onSubmit,
       guestsOptions,
-    } = useCalendarEventHandler(toRefs(props), clearFormData, emit)
+    } = useCalendarEventHandler(toRefs(props), clearFormData, emit);
 
-    const {
-      refFormObserver,
-      getValidationState,
-      resetForm,
-      clearForm,
-    } = formValidation(resetEventLocal, props.clearEventData)
+    const { refFormObserver, getValidationState, resetForm, clearForm } =
+      formValidation(resetEventLocal, props.clearEventData);
 
-    clearFormData.value = clearForm
+    clearFormData.value = clearForm;
 
     return {
       // Add New Event
@@ -350,12 +401,12 @@ export default {
       resetForm,
       refFormObserver,
       getValidationState,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
-@import '@core/scss/vue/libs/vue-flatpicker.scss';
+@import "@core/scss/vue/libs/vue-select.scss";
+@import "@core/scss/vue/libs/vue-flatpicker.scss";
 </style>
