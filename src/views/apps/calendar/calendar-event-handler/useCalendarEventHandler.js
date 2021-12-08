@@ -18,6 +18,9 @@ export default function useCalendarEventHandler(props, clearForm, emit) {
   // * Clear form if sidebar is closed
   // ------------------------------------------------
   watch(props.isEventHandlerSidebarActive, val => {
+    if(val === true && props.event.value.extendedProps.type != "Other") {
+      clearForm.value()
+    }
     // ? Don't reset event till transition is finished
     if (!val) {
       setTimeout(() => {
@@ -25,6 +28,7 @@ export default function useCalendarEventHandler(props, clearForm, emit) {
       }, 350)
     }
   })
+
   // ------------------------------------------------
   // calendarOptions
   // ------------------------------------------------
@@ -32,7 +36,7 @@ export default function useCalendarEventHandler(props, clearForm, emit) {
 
   const onSubmit = () => {
     const eventData = JSON.parse(JSON.stringify(eventLocal))
-
+    
     // * If event has id => Edit Event
     // Emit event for add/update event
     if (props.event.value.id) emit('update-event', eventData.value)
