@@ -20,89 +20,90 @@
           Add Event
         </b-button>
         <hr class="invoice-spacing" />
-              <div class="mt-3">
-        <h5 class="app-label section-label mb-1 text-primary">
-          <span class="align-middle"
-            >Select the client to fetch the schedule</span
-          >
-        </h5>
-        <b-form-group>
-          <v-select
-            v-model="selectedUsers"
-            label="fullname"
-            :options="userOption"
-          />
-        </b-form-group>
-
-        <h5 class="app-label section-label mb-1">
-          <span class="align-middle">Calendar options</span>
-        </h5>
-        <b-form-checkbox v-model="checkAll" class="mb-1">
-          View All
-        </b-form-checkbox>
-        <b-form-group>
-          <b-form-checkbox-group
-            v-model="selectedCalendars"
-            name="event-filter"
-            stacked
-          >
-            <b-form-checkbox
-              v-for="item in calendarOptions"
-              :key="item.label"
-              name="event-filter"
-              :value="item.label"
-              class="mb-1"
-              :class="`custom-control-${item.color}`"
+        <div class="mt-3">
+          <h5 class="app-label section-label mb-1 text-primary">
+            <span class="align-middle"
+              >Select the client to fetch the schedule</span
             >
-              {{ item.label.toUpperCase() }}
-            </b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-      </div>
+          </h5>
+          <b-form-group>
+            <v-select
+              v-model="selectedUsers"
+              label="fullname"
+              :options="userOption"
+              :clearable="false"
+            />
+          </b-form-group>
 
+          <h5 class="app-label section-label mb-1">
+            <span class="align-middle">Calendar options</span>
+          </h5>
+          <b-form-checkbox v-model="checkAll" class="mb-1">
+            View All
+          </b-form-checkbox>
+          <b-form-group>
+            <b-form-checkbox-group
+              v-model="selectedCalendars"
+              name="event-filter"
+              stacked
+            >
+              <b-form-checkbox
+                v-for="item in calendarOptions"
+                :key="item.label"
+                name="event-filter"
+                :value="item.label"
+                class="mb-1"
+                :class="`custom-control-${item.color}`"
+              >
+                {{ item.label.toUpperCase() }}
+              </b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </div>
       </div>
       <!-- Spacer -->
-     <div v-else> 
-      <div class="mt-3">
-        <h5 class="app-label section-label mb-1 text-primary">
-          <span class="align-middle"
-            >Select the trainer to get your schedule</span
-          >
-        </h5>
-        <b-form-group>
-          <v-select
-            v-model="selectedTrainers"
-            label="fullname"
-            :options="trainerOptions"
-          />
-        </b-form-group>
-
-        <h5 class="app-label section-label mb-1">
-          <span class="align-middle">Calendar options</span>
-        </h5>
-        <b-form-checkbox v-model="checkAll" class="mb-1">
-          View All
-        </b-form-checkbox>
-        <b-form-group>
-          <b-form-checkbox-group
-            v-model="selectedCalendars"
-            name="event-filter"
-            stacked
-          >
-            <b-form-checkbox
-              v-for="item in calendarOptions"
-              :key="item.label"
-              name="event-filter"
-              :value="item.label"
-              class="mb-1"
-              :class="`custom-control-${item.color}`"
+      <div v-else>
+        <div class="mt-3">
+          <h5 class="app-label section-label mb-1 text-primary">
+            <span class="align-middle"
+              >Select the trainer to get your schedule</span
             >
-              {{ item.label.toUpperCase() }}
-            </b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
+          </h5>
+          <b-form-group>
+            <v-select
+              v-model="selectedTrainers"
+              label="fullname"
+              :options="trainerOptions"
+              :clearable="false"
+            />
+          </b-form-group>
+
+          <h5 class="app-label section-label mb-1">
+            <span class="align-middle">Calendar options</span>
+          </h5>
+          <b-form-checkbox v-model="checkAll" class="mb-1">
+            View All
+          </b-form-checkbox>
+          <b-form-group>
+            <b-form-checkbox-group
+              v-model="selectedCalendars"
+              name="event-filter"
+              stacked
+            >
+              <b-form-checkbox
+                v-for="item in calendarOptions"
+                :key="item.label"
+                name="event-filter"
+                :value="item.label"
+                class="mb-1"
+                :class="`custom-control-${item.color}`"
+              >
+                {{ item.label.toUpperCase() }}
+              </b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </div>
       </div>
-       </div> 
     </div>
     <b-img :src="require('@/assets/images/pages/calendar-illustration.png')" />
   </div>

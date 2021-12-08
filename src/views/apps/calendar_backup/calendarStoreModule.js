@@ -1,6 +1,5 @@
 import axios from "@axios";
 import { computed } from "@vue/composition-api";
-import { BIconX } from "bootstrap-vue";
 
 export default {
   namespaced: true,
@@ -44,7 +43,7 @@ export default {
   },
   actions: {
     fetchEvents(ctx, payload) {
-      console.log("payload", payload);
+      console.log("payload",payload)
       let searchType = payload.type[0];
       let rid = null;
       if (payload.trainerlist) {
@@ -79,8 +78,6 @@ export default {
                   end
                   allDay
                   type
-                  location
-                  description
                   workout {
                     id
                     title
@@ -198,64 +195,16 @@ export default {
       });
     },
 
-    addEvent(ctx, event) {
-      let xyz = event;
-      console.log("eventt", xyz.event);
+    addEvent(ctx, { event }) {
+      console.log(event);
+
       return new Promise((resolve, reject) => {
-        const token = localStorage.getItem("apollo-token");
-        const freshTocken = token.replace(/['"]+/g, "");
-
-        let x = {
-          title: event.event.title,
-          url: event.event.eventUrl,
-          type: event.event.extendedProps.type,
-          start: event.event.start,
-          end: event.event.end,
-          allDay: event.event.allDay,
-          relation_id: xyz.event.extendedProps.guests.traineelist.id,
-        };
         axios
-          .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
-            {
-              query: `
-             
-
-              mutation MyMutation($start: date, $end: date, $relation_id: Int! $type: String,
-                $url: String, $allDay : Boolean!, $title: String!
-                ) {
-                  insert_Fitness_userrelation_calendar(objects: {
-                    start:$start, 
-                    end: $end, 
-                    relation_id: $relation_id,
-                    type: $type,
-                    url: $url,
-                    allDay: $allDay,
-                    title: $title
-                  }) {
-                    returning {
-                      id
-                    }
-                  }
-                }
-          
-          `,
-              variables: {
-                ...x,
-              },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: freshTocken,
-              },
-            }
-          )
+          .post("/apps/calendar/events", { event })
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
     },
-
     updateEvent(ctx, { event }) {
       return new Promise((resolve, reject) => {
         axios

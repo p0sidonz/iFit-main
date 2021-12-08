@@ -68,7 +68,7 @@ export default {
         }
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery($where: Fitness_userrelation_calendar_bool_exp = {}) {
                 Fitness_userrelation_calendar(where: $where) {
@@ -79,8 +79,6 @@ export default {
                   end
                   allDay
                   type
-                  location
-                  description
                   workout {
                     id
                     title
@@ -113,7 +111,7 @@ export default {
         let where = { traineelist: {} };
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -148,7 +146,7 @@ export default {
         let where = { trainer_list_arr: {} };
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
@@ -200,7 +198,7 @@ export default {
 
     addEvent(ctx, event) {
       let xyz = event;
-      console.log("eventt", xyz.event);
+      console.log("eventt", xyz.event.extendedProps.guests.id);
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
@@ -212,11 +210,11 @@ export default {
           start: event.event.start,
           end: event.event.end,
           allDay: event.event.allDay,
-          relation_id: xyz.event.extendedProps.guests.traineelist.id,
+          relation_id: xyz.event.extendedProps.guests.id,
         };
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `
              

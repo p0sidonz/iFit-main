@@ -84,12 +84,31 @@
                 :state="getValidationState(validationContext)"
               >
                 <v-select
-                  v-model="eventLocal.extendedProps.type"
+                  v-model="eventLocal.extendedProps.calendar"
                   :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                   :options="eventType"
                   label="label"
+                  :reduce="calendar => calendar.label"
                   input-id="calendar"
                 >
+
+                  <template #option="{ color, label }">
+                    <div
+                      class="rounded-circle d-inline-block mr-50"
+                      :class="`bg-${color}`"
+                      style="height:10px;width:10px"
+                    />
+                    <span> {{ label }}</span>
+                  </template>
+
+                  <template #selected-option="{ color, label }">
+                    <div
+                      class="rounded-circle d-inline-block mr-50"
+                      :class="`bg-${color}`"
+                      style="height:10px;width:10px"
+                    />
+                    <span> {{ label }}</span>
+                  </template>
                 </v-select>
 
                 <b-form-invalid-feedback :state="getValidationState(validationContext)">
@@ -189,11 +208,29 @@
               <v-select
                 v-model="eventLocal.extendedProps.guests"
                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :close-on-select="true"
+                multiple
+                :close-on-select="false"
                 :options="guestsOptions"
-                label="fullname"
+                label="name"
                 input-id="add-guests"
               >
+
+                <template #option="{ avatar, fullname }">
+                  <b-avatar
+                    size="sm"
+                    :src="avatar"
+                  />
+                  <span class="ml-50 align-middle"> {{ fullname }}</span>
+                </template>
+
+                <template #selected-option="{ avatar, fullname }">
+                  <b-avatar
+                    size="sm"
+                    class="border border-white"
+                    :src="avatar"
+                  />
+                  <span class="ml-50 align-middle"> {{ fullname }}</span>
+                </template>
               </v-select>
             </b-form-group>
 
