@@ -212,9 +212,11 @@ export default {
           start: event.event.start,
           end: event.event.end,
           allDay: event.event.allDay,
-          description: event.event.extendedProps.description,
+          description: xyz.event.extendedProps.description,
+          location: xyz.event.extendedProps.location,
           relation_id: xyz.event.extendedProps.guests.traineelist.id,
         };
+        console.log(x);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
@@ -276,7 +278,7 @@ export default {
           location: event.event.extendedProps.location,
           relation_id: xyz.event.extendedProps.guests.traineelist.id,
         };
-        console.log("X UPDATED ",x)
+        console.log("X UPDATED ", x);
         axios
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
