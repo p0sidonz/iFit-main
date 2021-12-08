@@ -465,10 +465,21 @@ export default function userCalendar() {
       // * Only grab required field otherwise it goes in infinity loop
       // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
       event.value = grabEventDataFromEventApi(clickedEvent);
+      console.log(event);
       // eslint-disable-next-line no-use-before-define
-      if (userInformation.value.role === "trainer") {
+      if (
+        userInformation.value.role === "trainer" &&
+        event.value.extendedProps.type != "Other"
+      ) {
+        isEventHandlerSidebarActive.value = false;
+      }
+      if (
+        userInformation.value.role === "trainer" &&
+        event.value.extendedProps.type === "Other"
+      ) {
         isEventHandlerSidebarActive.value = true;
       }
+
       if (userInformation.value.role === "user") {
         showEventDetailModal.value = true;
       }

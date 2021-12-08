@@ -5,7 +5,7 @@
       <b-link class="brand-logo">
         <vuexy-logo />
 
-        <h2 class="brand-text text-primary ml-1">iFit</h2>
+        <h2 class="brand-text text-primary ml-1">Fetch.fit</h2>
       </b-link>
       <!-- /Brand logo-->
 
@@ -24,7 +24,7 @@
         <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
           <b-card-title class="mb-1"> Adventure starts here 🚀 </b-card-title>
           <b-card-text class="mb-2">
-            Make your app management easy and fun!
+            Make Fitness your next habbit!
           </b-card-text>
 
           <!-- form -->
