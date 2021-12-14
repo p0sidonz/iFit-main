@@ -17,7 +17,6 @@
         <account-setting-general v-if="options" :general-data="options" />
       </div>
 
-      <div v-else><b-spinner label="Loading..." /></div>
     </b-tab>
     <!--/ general tab -->
 
@@ -37,24 +36,39 @@
       <!-- title -->
       <template #title>
         <feather-icon icon="InfoIcon" size="18" class="mr-50" />
-        <span class="font-weight-bold">BodyMeasurements</span>
+        <span class="font-weight-bold">Payments</span>
       </template>
       <div v-if="options">
-        <account-setting-information
+        <account-payment-history
           v-if="options"
           :information-data="options"
         />
       </div>
-      <div v-else><b-spinner label="Loading..." /></div>
     </b-tab>
+    <b-tab>
+      <!-- title -->
+      <template #title>
+        <feather-icon icon="InfoIcon" size="18" class="mr-50" />
+        <span class="font-weight-bold">Plan</span>
+      </template>
+      <div v-if="options">
+        <account-plan
+          v-if="options"
+          :information-data="options"
+        />
+      </div>
+    </b-tab>
+
   </b-tabs>
 </template>
 
 <script>
-import { BTabs, BTab,BSpinner } from "bootstrap-vue";
+import { BTabs, BTab, BSpinner } from "bootstrap-vue";
 import AccountSettingGeneral from "./AccountSettingGeneral.vue";
 import AccountSettingPassword from "./AccountSettingPassword.vue";
 import AccountSettingInformation from "./AccountSettingInformation.vue";
+import AccountPaymentHistory from "./AccountPaymentHistory.vue";
+import AccountPlan from './AccountPlan.vue'
 import gql from "graphql-tag";
 import store from "@/store";
 import { ref, onUnmounted } from "@vue/composition-api";
@@ -67,7 +81,9 @@ export default {
     AccountSettingGeneral,
     AccountSettingPassword,
     AccountSettingInformation,
-    BSpinner
+    AccountPaymentHistory,
+    BSpinner,
+    AccountPlan
   },
 
   data() {
