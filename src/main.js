@@ -2,6 +2,7 @@ import Vue from "vue";
 import { ToastPlugin, ModalPlugin } from "bootstrap-vue";
 import VueCompositionAPI from "@vue/composition-api";
 import VueSweetalert2 from "vue-sweetalert2";
+import LoadScript from 'vue-plugin-load-script';
 
 import router from "./router";
 import store from "./store";
@@ -20,6 +21,7 @@ Vue.use(ToastPlugin);
 Vue.use(ModalPlugin);
 Vue.use(VueSweetalert2);
 Vue.use(require('vue-moment'));
+Vue.use(LoadScript);
 
 // Composition API
 Vue.use(VueCompositionAPI);
