@@ -539,7 +539,6 @@ import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
 import Ripple from "vue-ripple-directive";
 import gql from "graphql-tag";
-import { loadStripe } from "@stripe/stripe-js";
 import axios from "@axios";
 import store from "@/store";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
@@ -658,8 +657,6 @@ export default {
     const success_order_id = ref(123456);
     const showModal = ref(false);
     let elements = null;
-    let stripe = null;
-    let stripeCardValid = ref(false);
 
     const displayRazorPay = async () => {
       const token = localStorage.getItem("apollo-token");

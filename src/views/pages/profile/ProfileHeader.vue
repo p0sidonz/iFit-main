@@ -356,7 +356,6 @@ import {
   UNFOLLOW_USER,
   GET_PACKAGES,
 } from "@/queries/";
-import { BSpinner } from "bootstrap-vue";
 
 export default {
   components: {
@@ -378,7 +377,6 @@ export default {
     BMedia,
     BCardHeader,
     BCardBody,
-    BSpinner
   },
   directives: {
     Ripple,
