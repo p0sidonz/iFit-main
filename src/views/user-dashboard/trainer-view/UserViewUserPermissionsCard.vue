@@ -3,8 +3,7 @@
     <b-card-body>
 
       <b-card-title>Currently Assigned Diets</b-card-title>
-
-      <app-collapse hover>
+<div v-if="userData.length">       <app-collapse hover>
         <app-collapse-item
           v-for="diets in userData.diet_assigned_clients"
           :key="diets.id"
@@ -22,7 +21,11 @@
             <span class="align-middle">View</span>
           </b-button>
         </app-collapse-item>
-      </app-collapse>
+      </app-collapse></div>
+      <div v-else>
+        <div class="text-center"> 
+        <small class="text-muted ">No diet assigned yet </small> </div>
+      </div>
     </b-card-body>
   </b-card>
 </template>

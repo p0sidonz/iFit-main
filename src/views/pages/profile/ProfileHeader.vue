@@ -308,7 +308,7 @@
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                   block
                   variant="primary"
-                  @click="applyForPackage"
+                  @click="modelswitch(packages.title, packages.id)"
                 >
                   Apply For This Package
                 </b-button>
@@ -319,6 +319,265 @@
         <div v-else>No packages...</div>
       </b-modal>
     </b-card>
+
+
+    <b-modal
+      v-model="xshowModal"
+      size="lg"
+      hide-footer
+      no-close-on-backdrop
+      lazy
+      @hide="doSometing"
+    >
+      <div v-if="!payment_done">
+        <div class="modal-body px-sm-5 mx-30">
+          <h1 class="text-center mb-1" id="addNewCardTitle">Billing Detail</h1>
+          <!-- <p class="text-center">Add card for future billing</p> -->
+        </div>
+        <validation-observer v-slot="{ invalid }" ref="refFormObserver">
+          <b-form class="p-2" @submit.prevent="onSubmit;">
+            <b-row>
+              <b-col md="3" xl="3">
+                <validation-provider
+                  #default="validationContext"
+                  name="First Name"
+                  rules="required"
+                >
+                  <b-form-group label="First Name" label-for="v-first-name">
+                    <b-form-input
+                      id="v-first-name"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                      placeholder="Jon"
+                      v-model="billingData.firstName"
+                    />
+
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+
+              <b-col md="3" xl="3">
+                <validation-provider
+                  #default="validationContext"
+                  name="Last Name"
+                  rules="required"
+                >
+                  <b-form-group label="Last Name" label-for="v-last-name">
+                    <b-form-input
+                      id="v-last-name"
+                      placeholder="Doe"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                      v-model="billingData.lastName"
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="Email"
+                  rules="required|email"
+                >
+                  <b-form-group label="Email address" label-for="email">
+                    <b-form-input
+                      id="email"
+                      placeholder="john.doe@gmail.com"
+                      v-model="billingData.email"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+
+              <b-col cols="12">
+                <validation-provider
+                  #default="validationContext"
+                  name="Address line"
+                  rules="required"
+                >
+                  <b-form-group label="Address line" label-for="v-address-1">
+                    <b-form-input
+                      id="v-address-1"
+                      placeholder="123 New York Street"
+                      v-model="billingData.address_line_1"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+              <b-col cols="6">
+                <b-form-group label="Address line 2" label-for="v-address-2">
+                  <b-form-input
+                    id="v-address-2"
+                    v-model="billingData.address_line_2"
+                  />
+                </b-form-group>
+              </b-col>
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="Mobile"
+                  rules="required"
+                >
+                  <b-form-group label="Mobile" label-for="Mobile">
+                    <b-form-input
+                      id="Mobile"
+                      placeholder="7000799192"
+                      v-model="billingData.contact"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="City"
+                  rules="required"
+                >
+                  <b-form-group label="City" label-for="v-city">
+                    <b-form-input
+                      id="v-city"
+                      placeholder="NY"
+                      v-model="billingData.city"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="Zip Code"
+                  rules="required"
+                >
+                  <b-form-group label="Zip Code" label-for="v-zip">
+                    <b-form-input
+                      id="v-zip"
+                      placeholder="90102"
+                      v-model="billingData.zip"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="State"
+                  rules="required"
+                >
+                  <b-form-group label="State" label-for="v-state">
+                    <b-form-input
+                      id="v-state"
+                      placeholder="New York"
+                      v-model="billingData.state"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+              <b-col md="6" xl="6">
+                <validation-provider
+                  #default="validationContext"
+                  name="Country"
+                  rules="required"
+                >
+                  <b-form-group label="Country" label-for="v-country">
+                    <b-form-input
+                      id="v-country"
+                      placeholder="USA"
+                      v-model="billingData.country"
+                      autofocus
+                      :state="getValidationState(validationContext)"
+                      trim
+                    />
+                    <b-form-invalid-feedback>
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+            </b-row>
+          </b-form>
+          <div class="d-flex justify-content-center">
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              variant="relief-primary"
+              :disabled="invalid || disableButton"
+              @click="displayRazorPay()"
+            >
+              Pay
+            </b-button>
+          </div>
+        </validation-observer>
+      </div>
+      <div v-else>
+        <div class="modal-body px-sm-5 mx-30">
+          <h1 class="text-center mb-1 text-success" id="addNewCardTitle">
+            Success! 🎉
+          </h1>
+          <p class="text-center">
+            Your order number is
+            <b-badge pill variant="success">
+              {{ success_order_id }}
+            </b-badge>
+            Keep it for future reference.
+          </p>
+          <p class="text-center">
+            Payment reciept has been sent to your registered email. Click
+            <b-badge href="/dashboard" pill variant="light-primary">
+              here
+            </b-badge>
+            to visit the traning dashboard.
+          </p>
+        </div>
+      </div>
+    </b-modal>
+
+
   </div>
 </template>
 
@@ -346,9 +605,13 @@ import {
 import { toRefs } from "@vue/composition-api";
 import { ref, watch } from "@vue/composition-api";
 import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+import axios from "@axios";
 
 import Ripple from "vue-ripple-directive";
 import gql from "graphql-tag";
+import formValidation from "@core/comp-functions/forms/form-validation";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
+
 import {
   GET_FOLLOWERS,
   GET_FOLLOWINGS,
@@ -356,6 +619,8 @@ import {
   UNFOLLOW_USER,
   GET_PACKAGES,
 } from "@/queries/";
+import { required, email } from "@validations";
+import { min, max, numeric } from "vee-validate/dist/rules";
 
 export default {
   components: {
@@ -381,6 +646,19 @@ export default {
   directives: {
     Ripple,
   },
+
+    mounted() {
+    console.log("mounted haha");
+    // As an instance method inside a component
+    this.$loadScript("https://checkout.razorpay.com/v1/checkout.js")
+      .then(() => {
+        console.log("RezorPay has been initiated");
+      })
+      .catch(() => {
+        console.log("Failed to fetch script");
+      });
+  },
+
   data() {
     return {
       temp: null,
@@ -555,6 +833,150 @@ export default {
     //     console.log(error);
     //   }
     // },
+  },
+
+    setup() {
+    const userData = JSON.parse(localStorage.getItem("userInfo"));
+    console.log(userData);
+
+    const current_package_id = ref();
+    const current_package_name = ref();
+    const current_package_description = ref();
+    const payment_done = ref(false);
+    const xshowModal = ref(false);
+    const disableButton = ref(false);
+    const success_order_id = ref()
+    const billingData = ref({
+      email: "sdfhj@gjhds.com",
+      firstName: "ankit",
+      lastName: "singh",
+      address_line_1: "123 fdjfjhdj",
+      address_line_2: "null",
+      city: "bhopal",
+      state: "MP",
+      zip: "462021",
+      country: "India",
+      contact: "8989004426",
+    });
+    const doSometing = () => {
+      console.log("oops i am closed");
+      disableButton.value = false;
+    };
+    const modelswitch = (pkg_name, pkg_id) => {
+      current_package_name.value = pkg_name;
+      current_package_id.value = pkg_id;
+      xshowModal.value = true;
+    };
+
+    const { refFormObserver, getValidationState, resetForm, clearForm } =
+      formValidation();
+    const displayRazorPay = async () => {
+      disableButton.value = true;
+      const token = localStorage.getItem("apollo-token");
+      const freshTocken = token.replace(/['"]+/g, "");
+      axios
+        .post(
+          "http://127.0.0.1:8080/v1/graphql",
+          {
+            query: `
+          mutation MyMutation(
+            $package_id: Int!
+
+          ) {
+            rzrCreateOrderPackage(
+              package_id: $package_id
+
+            ) {
+              amount
+              order_id
+              currency
+              status
+              error
+            }
+          }
+              
+              `,
+            variables: {
+              package_id: current_package_id.value,
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: freshTocken,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response);
+
+          var options = {
+            key: "rzp_test_HpykQ62iu1zvDf",
+            amount: response.data.data.rzrCreateOrderPackage.amount,
+            currency: response.data.data.rzrCreateOrderPackage.currency,
+            name: `Plan type: ${current_package_name.value}`,
+            description: "none",
+            order_id: response.data.data.rzrCreateOrderPackage.order_id,
+            prefill: {
+              name:
+                billingData.value.firstName + " " + billingData.value.lastName,
+              email: billingData.value.email,
+              contact: billingData.value.contact,
+            },
+            handler: function (response) {
+              payment_done.value = true;
+              success_order_id.value = response.razorpay_order_id;
+              // alert(response.razorpay_payment_id);
+              // alert(response.razorpay_order_id);
+              // alert(response.razorpay_signature);
+            },
+
+            notify: {
+              sms: true,
+              email: true,
+            },
+            notes: {
+              packageName: current_package_name.value,
+              packageId: current_package_id.value,
+              userId: userData.id,
+              ...billingData.value,
+              ptype: "dXNlcl9hbmRfdHJhaW5lcg==",
+            },
+            theme: {
+              color: "#7367f0",
+            },
+          };
+          const paymentObject = new window.Razorpay(options);
+          paymentObject.open();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    return {
+      //const
+      current_package_id,
+      current_package_name,
+      current_package_description,
+      payment_done,
+      xshowModal,
+      billingData,
+      payment_done,
+
+      //modal
+      modelswitch,
+
+      //form validation
+      refFormObserver,
+      getValidationState,
+      displayRazorPay,
+      formValidation,
+      disableButton,
+
+      doSometing,
+      success_order_id
+    };
   },
 };
 </script>

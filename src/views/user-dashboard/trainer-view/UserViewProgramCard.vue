@@ -1,27 +1,33 @@
 <template>
   <b-card no-body>
     <b-card-body>
-
       <b-card-title>Currently Assigned Programs</b-card-title>
-
-      <app-collapse hover>
-        <app-collapse-item
-          v-for="program in userData.program_assigned_clients"
-          :key="program.id"
-          :title="program.program_details.title"
-        >
-
-          <b-button
-          :to="{name: 'user-program-view' , params: {id: program.program_details.id, rid: userData.id}}"
-            class="float-right"
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="primary"
-            size="sm"
+      <div v-if="userData.length">
+        <app-collapse hover>
+          <app-collapse-item
+            v-for="program in userData.program_assigned_clients"
+            :key="program.id"
+            :title="program.program_details.title"
           >
-            <span class="align-middle">View</span>
-          </b-button>
-        </app-collapse-item>
-      </app-collapse>
+            <b-button
+              :to="{
+                name: 'user-program-view',
+                params: { id: program.program_details.id, rid: userData.id },
+              }"
+              class="float-right"
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="primary"
+              size="sm"
+            >
+              <span class="align-middle">View</span>
+            </b-button>
+          </app-collapse-item>
+        </app-collapse>
+      </div>
+      <div v-else>
+        <div class="text-center"> 
+        <small class="text-muted ">No program assigned yet </small> </div>
+      </div>
     </b-card-body>
   </b-card>
 </template>
@@ -35,7 +41,7 @@ import {
   BCardSubTitle,
   BFormCheckbox,
   BButton,
-  BCardHeader
+  BCardHeader,
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
@@ -52,7 +58,7 @@ export default {
     AppCollapse,
     AppCollapseItem,
     BButton,
-    BCardHeader
+    BCardHeader,
   },
   directives: {
     Ripple,
