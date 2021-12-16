@@ -249,12 +249,15 @@ export default {
           );
 
           localStorage.setItem("userInfo", JSON.stringify(response));
-          if (response.role === "trainer") {
-            this.$router.replace({ path: "/dashboard" });
-          }
-          if (response.role === "user") {
+
+          // if (response.role === "trainer") {
+          //   this.$router.replace({ path: "/dashboard" });
+          // }
+          // if (response.role === "user") {
+          //               this.$router.replace({ path: `/user/${response.username}` });
+
+          // }
             this.$router.replace({ path: `/user/${response.username}` });
-          }
 
           this.isloading = false;
           this.$toast({
