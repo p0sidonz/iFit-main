@@ -341,7 +341,7 @@ export default {
       });
     },
 
-    createProgram(ctx, workoutdata) {
+    createProgramx(ctx, workoutdata) {
       console.log("package store dta", workoutdata);
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");

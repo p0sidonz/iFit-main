@@ -344,16 +344,17 @@
 
             <b-form-group
               label="Package Amount"
-              label-for="package-amount"
+              label-for="pkkg"
               required
               class="mb-2"
             >
               <cleave
-                id="bpackage-amount"
+                id="pkkg"
                 v-model.number="createPackage.amount"
                 class="form-control"
                 :raw="false"
                 placeholder="10,000"
+                :options="number"
               />
             </b-form-group>
 
@@ -472,9 +473,9 @@
       scrollable:true
     >
       <div v-if="isLoading">
-      <div class="text-center">
-        <b-spinner variant="primary" label="Loading..." />
-      </div>
+        <div class="text-center">
+          <b-spinner variant="primary" label="Loading..." />
+        </div>
       </div>
 
       <div v-if="!isLoading">
@@ -841,12 +842,47 @@ export default {
         this.createPackage.title === "" ||
         this.createPackage.description === ""
       ) {
-        this.isLoading = false;
-
         return this.$toast({
           component: ToastificationContent,
           props: {
             title: "Please fill all the details",
+            icon: "AlertTriangleIcon",
+            variant: "danger",
+          },
+        });
+      }
+      if (this.createPackage.days < 28) {
+        return this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: "Subscription Days should be greater than 28",
+            icon: "AlertTriangleIcon",
+            variant: "danger",
+          },
+        });
+      }
+      if (
+        this.createPackage.currency === "₹ INR" &&
+        this.createPackage.amount < 150
+      ) {
+        return this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: "INR price should be greater then 150",
+            icon: "AlertTriangleIcon",
+            variant: "danger",
+          },
+        });
+      }
+
+      if (
+        this.createPackage.currency === "$ US Dollar" &&
+        this.createPackage.amount < 3
+      ) {
+        return this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: "USD price should be greater then 3",
             icon: "AlertTriangleIcon",
             variant: "danger",
           },
