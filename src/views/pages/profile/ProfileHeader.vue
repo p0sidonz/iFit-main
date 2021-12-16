@@ -840,7 +840,7 @@ export default {
     const payment_done = ref(false);
     const xshowModal = ref(false);
     const disableButton = ref(false);
-    const success_order_id = ref()
+    const success_order_id = ref();
     const billingData = ref({
       email: "sdfhj@gjhds.com",
       firstName: "ankit",
@@ -871,7 +871,7 @@ export default {
       const freshTocken = token.replace(/['"]+/g, "");
       axios
         .post(
-          "http://127.0.0.1:8080/v1/graphql",
+          process.env.VUE_APP_GRAPHQL_HTTP,
           {
             query: `
           mutation MyMutation(
@@ -970,7 +970,7 @@ export default {
       disableButton,
 
       doSometing,
-      success_order_id
+      success_order_id,
     };
   },
 };
