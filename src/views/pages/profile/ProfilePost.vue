@@ -94,124 +94,118 @@
       scrollable:false
       title="Post"
     >
-      <div v-if="currentPost">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-8">
-              <b-img
-                rounded
-                center
-                class="d-inline-block mr-1 mb-1"
-                :src="currentPost.photo"
-                fluid
+      <div v-if="currentPost" class="container">
+        <div class="row">
+          <div class="col-sm-8">
+            <b-img
+              rounded
+              center
+              class="d-inline-block mr-1 mb-1"
+              :src="currentPost.photo"
+              fluid
+            />
+          </div>
+          <div class="col-sm">
+            <div class="d-flex justify-content-start align-items-center mb-1">
+              <b-avatar
+                size="50"
+                class="mr-1"
+                :src="currentPost.author.avatar"
               />
+
+              <div class="profile-user-info">
+                <h6 class="mb-0">{{ currentPost.author.username }}</h6>
+                <small class="text-muted">
+                  {{
+                    currentPost.created_at | moment("MMMM Do YYYY,  h:mm a")
+                  }}</small
+                >
+              </div>
             </div>
-            <div class="col-sm">
-              <div class="d-flex justify-content-start align-items-center mb-1">
+            <b-card-text>
+              {{ currentPost.content }}
+            </b-card-text>
+
+            <b-link class="d-flex align-items-center text-muted text-nowrap">
+              <feather-icon
+                icon="HeartIcon"
+                class="mr-50"
+                :class="currentPost.youLiked ? 'profile-likes' : 'profile-icon'"
+                size="18"
+                @click="
+                  currentPost.youLiked
+                    ? unlike(currentPost.id)
+                    : addnewliketoPost(currentPost.id)
+                "
+              />
+            </b-link>
+            <div class="d-flex align-item-center">
+              <b-avatar-group size="26" class="ml-1">
                 <b-avatar
-                  size="50"
-                  class="mr-1"
-                  :src="currentPost.author.avatar"
+                  v-for="(avatarData, i) in currentPost.likedby"
+                  :key="i"
+                  v-b-tooltip.hover.bottom="avatarData.authorOBJ.username"
+                  class="pull-up"
+                  :src="avatarData.authorOBJ.avatar"
                 />
-
-                <div class="profile-user-info">
-                  <h6 class="mb-0">{{ currentPost.author.username }}</h6>
-                  <small class="text-muted">
-                    {{
-                      currentPost.created_at | moment("MMMM Do YYYY,  h:mm a")
-                    }}</small
-                  >
-                </div>
-              </div>
-              <b-card-text>
-                {{ currentPost.content }}
-              </b-card-text>
-
-              <b-link class="d-flex align-items-center text-muted text-nowrap">
-                <feather-icon
-                  icon="HeartIcon"
-                  class="mr-50"
-                  :class="
-                    currentPost.youLiked ? 'profile-likes' : 'profile-icon'
-                  "
-                  size="18"
-                  @click="
-                    currentPost.youLiked
-                      ? unlike(currentPost.id)
-                      : addnewliketoPost(currentPost.id)
-                  "
-                />
-              </b-link>
-              <div class="d-flex align-item-center">
-                <b-avatar-group size="26" class="ml-1">
-                  <b-avatar
-                    v-for="(avatarData, i) in currentPost.likedby"
-                    :key="i"
-                    v-b-tooltip.hover.bottom="avatarData.authorOBJ.username"
-                    class="pull-up"
-                    :src="avatarData.authorOBJ.avatar"
-                  />
-                </b-avatar-group>
-                <b-link
-                  v-if="currentPost.likedby_aggregate.aggregate.count"
-                  class="text-muted text-nowrap mt-50 ml-50"
-                  >{{
-                    currentPost.likedby_aggregate.aggregate.count
-                  }}
-                  Likes</b-link
-                >
-              </div>
-
-              <br />
-              <div v-if="currentPost.comments.length" class="commentx">
-                <div
-                  v-for="commentx in currentPost.comments"
-                  :key="commentx.id"
-                  class="d-flex align-items-start mb-1"
-                >
-                  <b-avatar
-                    :src="commentx.owner.avatar"
-                    size="34"
-                    class="mt-25 mr-75"
-                  />
-                  <div class="profile-user-info w-100">
-                    <div
-                      class="d-flex align-items-center justify-content-between"
-                    >
-                      <h6 class="mb-0">{{ commentx.owner.username }}</h6>
-                    </div>
-                    <small>{{ commentx.text }}</small>
-                  </div>
-                </div>
-              </div>
-
-              <div v-else>
-                <small class="text-muted"> No comments</small>
-              </div>
-              <br />
-              <b-form-group>
-                <b-form-textarea
-                  rows="1"
-                  placeholder="Add Comment"
-                  v-model="AddNewCommentData.text"
-                />
-              </b-form-group>
-              <!--/ comment box -->
-
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                size="sm"
-                variant="primary"
-                @click="addNewComment(currentPost.id)"
+              </b-avatar-group>
+              <b-link
+                v-if="currentPost.likedby_aggregate.aggregate.count"
+                class="text-muted text-nowrap mt-50 ml-50"
+                >{{
+                  currentPost.likedby_aggregate.aggregate.count
+                }}
+                Likes</b-link
               >
-                Add a comment
-              </b-button>
             </div>
+
+            <br />
+            <div v-if="currentPost.comments.length" class="commentx">
+              <div
+                v-for="commentx in currentPost.comments"
+                :key="commentx.id"
+                class="d-flex align-items-start mb-1"
+              >
+                <b-avatar
+                  :src="commentx.owner.avatar"
+                  size="34"
+                  class="mt-25 mr-75"
+                />
+                <div class="profile-user-info w-100">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <h6 class="mb-0">{{ commentx.owner.username }}</h6>
+                  </div>
+                  <small>{{ commentx.text }}</small>
+                </div>
+              </div>
+            </div>
+
+            <div v-else>
+              <small class="text-muted"> No comments</small>
+            </div>
+            <br />
+            <b-form-group>
+              <b-form-textarea
+                rows="1"
+                placeholder="Add Comment"
+                v-model="AddNewCommentData.text"
+              />
+            </b-form-group>
+            <!--/ comment box -->
+
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              size="sm"
+              variant="primary"
+              @click="addNewComment(currentPost.id)"
+            >
+              Add a comment
+            </b-button>
           </div>
         </div>
       </div>
-    <div v-else><b-spinner label="Loading..." /></div>
-
     </b-modal>
 
     <b-modal
@@ -223,7 +217,7 @@
       scrollable:false
       title="Add new post"
     >
-      <create-post> </create-post>
+      <create-post @close-post="closeModal" /> 
     </b-modal>
     <div class="btn-new-post">
       <!-- We have wrapper because ripple effect give position relative to this absolute positioned btn -->
@@ -266,7 +260,6 @@ import {
   BDropdownItem,
   BCardGroup,
   BImgLazy,
-  BSpinner
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import { kFormatter } from "@core/utils/filter";
@@ -304,7 +297,6 @@ export default {
     VBModal,
     BImgLazy,
     CreatePost,
-    BSpinner
   },
 
   directives: {
@@ -410,7 +402,6 @@ export default {
       },
       Fitness_Posts: [],
       addnewPostx: "",
-      isLoading: false,
     };
   },
 
@@ -422,6 +413,9 @@ export default {
   },
 
   methods: {
+    closeModal() {
+      this.showNewPostModal = false;
+    },
     newPostModal() {
       this.showNewPostModal = true;
     },

@@ -1,59 +1,57 @@
 <template>
   <b-card>
     <!-- media -->
+    <!-- media -->
     <b-media no-body>
       <b-media-aside>
         <b-link>
           <b-img
             ref="previewEl"
             rounded
-            :src="generalData.avatar"
+            :src="optionsLocal.avatar"
             height="80"
           />
         </b-link>
         <!--/ avatar -->
       </b-media-aside>
-
       <b-media-body class="mt-75 ml-75">
         <!-- upload button -->
         <b-button
-          v-if="!profileFile"
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="outline-secondary"
+          variant="primary"
           size="sm"
           class="mb-75 mr-75"
           @click="$refs.refInputEl.$el.click()"
         >
-          Select
-        </b-button>
+          <b-spinner v-if="isImageLoading" small class="mr-1" variant="light" />
 
+          Upload
+        </b-button>
         <b-form-file
           ref="refInputEl"
           v-model="profileFile"
           accept=".jpg, .png, .gif"
           :hidden="true"
-          type="file"
           plain
-          @input="inputImageRenderer"
+          @input="idk"
         />
-
         <!--/ upload button -->
 
         <!-- reset -->
         <b-button
-          v-if="profileFile"
           v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-          variant="primary"
+          variant="outline-secondary"
           size="sm"
           class="mb-75 mr-75"
-          @click="UploadPic"
         >
-          Upload
+          Reset
         </b-button>
         <!--/ reset -->
         <b-card-text>Allowed JPG, GIF or PNG. Max size of 800kB</b-card-text>
       </b-media-body>
     </b-media>
+    <!-- media -->
+
     <!--/ media -->
 
     <!-- form -->
@@ -248,6 +246,10 @@ import gql from "graphql-tag";
 import vSelect from "vue-select";
 import Cleave from "vue-cleave-component";
 import flatPickr from "vue-flatpickr-component";
+import Compressor from "compressorjs";
+import { BSpinner } from "bootstrap-vue";
+import axios from "@axios";
+import Vue from "vue";
 
 export default {
   components: {
@@ -270,6 +272,8 @@ export default {
     vSelect,
     flatPickr,
     Cleave,
+    Compressor,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -541,11 +545,103 @@ export default {
       optionsLocal: this.generalData,
       profileFile: null,
       isUploaded: false,
+      base64compressed: null,
+      isImageLoading: false,
       // UpdatedData: generalData,
     };
   },
 
   methods: {
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          const result = reader.result;
+          return resolve(result);
+        };
+
+        reader.onerror = function (error) {
+          return reject(error);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    },
+
+    compressImage(image) {
+      return new Promise((resolve, reject) => {
+        const reader = new Compressor(image, {
+          quality: 0.6,
+          maxWidth: 300,
+          maxHeight: 200,
+          success(result) {
+            return resolve(result);
+          },
+          error(error) {
+            return reject(error);
+          },
+        });
+      });
+    },
+    async idk() {
+      if(!this.profileFile) {
+        return
+      }
+      this.isImageLoading = true;
+      const compressed_img = await this.compressImage(this.profileFile);
+      if (compressed_img) {
+        const rawFile = await this.getBase64(compressed_img);
+
+        try {
+          const data = await this.$apollo.mutate({
+            mutation: gql`
+              mutation profileImageUpload(
+                $base64file: String!
+                $fileName: String!
+              ) {
+                profileImageUpload(
+                  base64file: $base64file
+                  fileName: $fileName
+                ) {
+                  ok
+                  message
+                }
+              }
+            `,
+            variables: {
+              base64file: rawFile,
+              fileName: compressed_img.name,
+            },
+          });
+          console.log(data);
+          this.isImageLoading = false;
+
+          if (data.data.profileImageUpload.ok) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Avatar Updated!",
+                icon: "EditIcon",
+                variant: "success",
+              },
+            });
+          }
+        } catch (error) {
+          this.isImageLoading = false;
+
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Please try again",
+              icon: "EditIcon",
+              variant: "danger",
+            },
+          });
+        }
+      }
+    },
+
     async UploadPic() {
       {
         try {
@@ -647,9 +743,13 @@ export default {
   setup() {
     const refInputEl = ref(null);
     const previewEl = ref(null);
+    const okGoogle = () => {
+      console.log("OkGoogle");
+    };
 
     const { inputImageRenderer } = useInputImageRenderer(
       refInputEl,
+
       (base64) => {
         previewEl.value.src = base64;
       }
@@ -659,6 +759,7 @@ export default {
       refInputEl,
       previewEl,
       inputImageRenderer,
+      okGoogle,
     };
   },
 };

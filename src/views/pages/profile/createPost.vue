@@ -51,6 +51,8 @@
             class="mb-75 mr-75"
             @click="addnewPost"
           >
+            <b-spinner v-if="isLoading" small class="mr-1" variant="light" />
+
             Add post
           </b-button>
 
@@ -105,6 +107,9 @@ import gql from "graphql-tag";
 import { useInputImageRenderer } from "@core/comp-functions/forms/form-utils";
 import { ref } from "@vue/composition-api";
 import { BFormFile } from "bootstrap-vue";
+import Compressor from "compressorjs";
+import { BSpinner } from "bootstrap-vue";
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   components: {
@@ -120,6 +125,8 @@ export default {
     BFormFile,
     BLink,
     BImg,
+    Compressor,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -132,10 +139,27 @@ export default {
       newPostInput: {
         content: "",
       },
+      isLoading: false,
     };
   },
 
   methods: {
+    compressImage(image) {
+      return new Promise((resolve, reject) => {
+        const reader = new Compressor(image, {
+          quality: 0.6,
+          // maxWidth: 300,
+          // maxHeight: 200,
+          success(result) {
+            return resolve(result);
+          },
+          error(error) {
+            return reject(error);
+          },
+        });
+      });
+    },
+
     getBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -154,25 +178,58 @@ export default {
     },
 
     async addnewPost() {
-      console.log(this.postFile)
-      const fileBase64 = await this.getBase64(this.postFile);
+      this.isLoading = true;
+      let compressed_img = await this.compressImage(this.postFile);
+      console.log("compressed image", compressed_img);
+
+      const fileBase64 = await this.getBase64(compressed_img);
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
             mutation ($content: String!, $base64str: String!, $name: String!) {
-              createPost(content: $content, base64str: $base64str, name: $name) {
-                id
+              createPost(
+                content: $content
+                base64str: $base64str
+                name: $name
+              ) {
+                ok
               }
             }
           `,
           variables: {
             content: this.newPostInput.content,
             base64str: fileBase64,
-            name: this.postFile.name
+            name: this.postFile.name,
           },
         });
-        this.$emit("refresh-posts");
+        if (data.data.createPost.ok) {
+          this.isLoading = false;
+          
+          this.$emit("refresh-posts");
+                      this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Post added!",
+                icon: "EditIcon",
+                variant: "success",
+              },
+            });
+
+          this.$emit("close-post");
+        }
       } catch (error) {
+        this.$emit("close-post");
+        this.isLoading = false;
+
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Please try again",
+              icon: "EditIcon",
+              variant: "danger",
+            },
+          });
+          
         console.log(error);
       }
     },
