@@ -180,10 +180,10 @@ try {
        changePassword(
         oldPassword: $oldPassword,
         newPassword: $newPassword,
-        newPasswordAgain: $newPasswordAgain
+        reNewPassword: $newPasswordAgain
         ) {
          ok
-         error
+         message
          
        }
       }
@@ -215,7 +215,7 @@ else  {
               this.$toast({
             component: ToastificationContent,
             props: {
-              title: `${response.error}`,
+              title: `${response.message}`,
               icon: 'EditIcon',
               variant: 'danger',
             },
