@@ -319,7 +319,7 @@ router.beforeEach((to, from, next) => {
   if (isLoggedIn) {
     return next();
   }
-  if (!isLoggedIn && to.path !== "/login") {
+  if (!isLoggedIn && to.path !== "/login" && to.path !== "/register") {
     return next("/login");
   }
   return next();
