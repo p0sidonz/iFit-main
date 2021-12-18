@@ -5,10 +5,7 @@
       <b-row>
         <!-- old password -->
         <b-col md="6">
-          <b-form-group
-            label="Old Password"
-            label-for="account-old-password"
-          >
+          <b-form-group label="Old Password" label-for="account-old-password">
             <b-input-group class="input-group-merge">
               <b-form-input
                 id="account-old-password"
@@ -32,10 +29,7 @@
       <b-row>
         <!-- new password -->
         <b-col md="6">
-          <b-form-group
-            label-for="account-new-password"
-            label="New Password"
-          >
+          <b-form-group label-for="account-new-password" label="New Password">
             <b-input-group class="input-group-merge">
               <b-form-input
                 id="account-new-password"
@@ -90,6 +84,8 @@
             class="mt-1 mr-1"
             @click.prevent="changePassword"
           >
+            <b-spinner v-if="isLoading" small class="mr-1" variant="light" />
+
             Save changes
           </b-button>
           <b-button
@@ -109,11 +105,20 @@
 
 <script>
 import {
-  BButton, BForm, BFormGroup, BFormInput, BRow, BCol, BCard, BInputGroup, BInputGroupAppend,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import gql from 'graphql-tag'
+  BButton,
+  BForm,
+  BFormGroup,
+  BFormInput,
+  BRow,
+  BCol,
+  BCard,
+  BInputGroup,
+  BInputGroupAppend,
+  BSpinner,
+} from "bootstrap-vue";
+import Ripple from "vue-ripple-directive";
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+import gql from "graphql-tag";
 export default {
   components: {
     BButton,
@@ -125,116 +130,127 @@ export default {
     BCard,
     BInputGroup,
     BInputGroupAppend,
+    BSpinner,
   },
   directives: {
     Ripple,
   },
   data() {
     return {
-      passwordValueOld: '',
-      newPasswordValue: '',
-      RetypePassword: '',
-      passwordFieldTypeOld: 'password',
-      passwordFieldTypeNew: 'password',
-      passwordFieldTypeRetype: 'password',
-    }
+      passwordValueOld: "",
+      newPasswordValue: "",
+      RetypePassword: "",
+      passwordFieldTypeOld: "password",
+      passwordFieldTypeNew: "password",
+      passwordFieldTypeRetype: "password",
+      isLoading: false,
+    };
   },
   computed: {
     passwordToggleIconOld() {
-      return this.passwordFieldTypeOld === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+      return this.passwordFieldTypeOld === "password"
+        ? "EyeIcon"
+        : "EyeOffIcon";
     },
     passwordToggleIconNew() {
-      return this.passwordFieldTypeNew === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+      return this.passwordFieldTypeNew === "password"
+        ? "EyeIcon"
+        : "EyeOffIcon";
     },
     passwordToggleIconRetype() {
-      return this.passwordFieldTypeRetype === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+      return this.passwordFieldTypeRetype === "password"
+        ? "EyeIcon"
+        : "EyeOffIcon";
     },
   },
   methods: {
-
-
     togglePasswordOld() {
-      this.passwordFieldTypeOld = this.passwordFieldTypeOld === 'password' ? 'text' : 'password'
+      this.passwordFieldTypeOld =
+        this.passwordFieldTypeOld === "password" ? "text" : "password";
     },
     togglePasswordNew() {
-      this.passwordFieldTypeNew = this.passwordFieldTypeNew === 'password' ? 'text' : 'password'
+      this.passwordFieldTypeNew =
+        this.passwordFieldTypeNew === "password" ? "text" : "password";
     },
     togglePasswordRetype() {
-      this.passwordFieldTypeRetype = this.passwordFieldTypeRetype === 'password' ? 'text' : 'password'
+      this.passwordFieldTypeRetype =
+        this.passwordFieldTypeRetype === "password" ? "text" : "password";
     },
 
     async changePassword() {
-
-try {
-  
-
-      const data = await this.$apollo.mutate({
-            mutation: gql`
-      mutation changePassword(
-      $oldPassword: String!,
-      $newPassword: String!,
-      $newPasswordAgain: String!
-
-
-      ){
-       changePassword(
-        oldPassword: $oldPassword,
-        newPassword: $newPassword,
-        reNewPassword: $newPasswordAgain
-        ) {
-         ok
-         message
-         
-       }
+      if (!this.passwordValueOld) {
+        return this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: `Please fill all the fields`,
+            icon: "EditIcon",
+            variant: "danger",
+          },
+        });
       }
-      `,
-      variables: {
-        oldPassword: this.passwordValueOld,
-        newPassword: this.newPasswordValue,
-        newPasswordAgain: this.RetypePassword
+      this.isLoading = true;
 
-  },
-  
-    
-    })
-const response = data.data.changePassword
+      try {
+        const data = await this.$apollo.mutate({
+          mutation: gql`
+            mutation changePassword(
+              $oldPassword: String!
+              $newPassword: String!
+              $newPasswordAgain: String!
+            ) {
+              changePassword(
+                oldPassword: $oldPassword
+                newPassword: $newPassword
+                reNewPassword: $newPasswordAgain
+              ) {
+                ok
+                message
+              }
+            }
+          `,
+          variables: {
+            oldPassword: this.passwordValueOld,
+            newPassword: this.newPasswordValue,
+            newPasswordAgain: this.RetypePassword,
+          },
+        });
+        const response = data.data.changePassword;
 
-if (response.ok) {
-              this.$toast({
+        if (response.ok) {
+          this.isLoading = false;
+
+          this.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Password Updated!',
-              icon: 'EditIcon',
-              variant: 'success',
+              title: "Password Updated!",
+              icon: "EditIcon",
+              variant: "success",
             },
-          })
-                    this.$router.push({ name: 'home' })
-
-}
-else  {
-              this.$toast({
+          });
+          this.$router.push({ name: "home" });
+        } else {
+          this.$toast({
             component: ToastificationContent,
             props: {
               title: `${response.message}`,
-              icon: 'EditIcon',
-              variant: 'danger',
+              icon: "EditIcon",
+              variant: "danger",
             },
-          })
-          }
-} catch (error) {
-              this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: `${error}`,
-              icon: 'EditIcon',
-              variant: 'danger',
-            },
-          })
+          });
+        }
+      } catch (error) {
+        this.isLoading = false;
 
-}
-
-},
-
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: `${error}`,
+            icon: "EditIcon",
+            variant: "danger",
+          },
+        });
+      }
+    },
   },
-}
+};
 </script>

@@ -1,16 +1,20 @@
 <template>
-  <b-card>
+  <b-card v-if="optionsLocal">
     <!-- media -->
     <!-- media -->
     <b-media no-body>
       <b-media-aside>
         <b-link>
-          <b-img
-            ref="previewEl"
-            rounded
-            :src="optionsLocal.avatar"
-            height="80"
-          />
+          <div class="profile-image-wrapper">
+            <div class="profile-image p-0">
+              <b-avatar
+                ref="previewEl"
+                size="114"
+                variant="light"
+                :src="optionsLocal.avatar"
+              />
+            </div>
+          </div>
         </b-link>
         <!--/ avatar -->
       </b-media-aside>
@@ -47,7 +51,7 @@
           Reset
         </b-button>
         <!--/ reset -->
-        <b-card-text>Allowed JPG, GIF or PNG. Max size of 800kB</b-card-text>
+        <b-card-text>Allowed JPG, GIF or PNG. Max size of 8Mb</b-card-text>
       </b-media-body>
     </b-media>
     <!-- media -->
@@ -61,7 +65,7 @@
           <b-form-group label="Username" label-for="account-username">
             <b-form-input
               id="readOnlyInput"
-              v-model="generalData.username"
+              v-model="optionsLocal.username"
               readonly
             />
           </b-form-group>
@@ -69,7 +73,7 @@
         <b-col sm="6">
           <b-form-group label="Name" label-for="account-name">
             <b-form-input
-              v-model="generalData.fullname"
+              v-model="optionsLocal.fullname"
               name="name"
               placeholder="Name"
               readonly
@@ -80,7 +84,7 @@
         <b-col sm="6">
           <b-form-group label="First Name" label-for="first-name">
             <b-form-input
-              v-model="generalData.firstName"
+              v-model="optionsLocal.firstName"
               name="First Name"
               placeholder="john"
             />
@@ -89,7 +93,7 @@
         <b-col sm="6">
           <b-form-group label="Last Name" label-for="last-name">
             <b-form-input
-              v-model="generalData.lastName"
+              v-model="optionsLocal.lastName"
               name="Last Name"
               placeholder="Cena"
             />
@@ -99,7 +103,7 @@
         <b-col sm="6">
           <b-form-group label="E-mail" label-for="account-e-mail">
             <b-form-input
-              v-model="generalData.email"
+              v-model="optionsLocal.email"
               name="email"
               placeholder="Email"
             />
@@ -109,7 +113,7 @@
           <b-form-group label="Gender" label-for="account-company">
             <v-select
               id="countryList"
-              v-model="generalData.gender"
+              v-model="optionsLocal.gender"
               :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
               label="title"
               :options="genderOption"
@@ -121,7 +125,7 @@
           <b-form-group label="Bio" label-for="bio-area">
             <b-form-textarea
               id="bio-area"
-              v-model="generalData.about"
+              v-model="optionsLocal.about"
               rows="4"
               placeholder="Your bio data here..."
             />
@@ -133,7 +137,7 @@
         <b-col md="6">
           <b-form-group label-for="example-datepicker" label="Birth date">
             <flat-pickr
-              v-model="generalData.dob"
+              v-model="optionsLocal.dob"
               class="form-control"
               name="date"
               placeholder="Birth date"
@@ -147,7 +151,7 @@
           <b-form-group label-for="countryList" label="Country">
             <v-select
               id="countryList"
-              v-model="generalData.country"
+              v-model="optionsLocal.country"
               :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
               label="title"
               :options="countryOption"
@@ -161,7 +165,7 @@
           <b-form-group label-for="website" label="Website">
             <b-form-input
               id="website"
-              v-model="generalData.website"
+              v-model="optionsLocal.website"
               placeholder="Website address"
             />
           </b-form-group>
@@ -173,7 +177,7 @@
           <b-form-group label-for="phone" label="Phone">
             <cleave
               id="phone"
-              v-model="generalData.phone"
+              v-model="optionsLocal.phonenumber"
               class="form-control"
               :raw="false"
               :options="clevePhone"
@@ -202,6 +206,8 @@
             class="mt-2 mr-1"
             @click.prevent="UpdateGeneralProfile"
           >
+              <b-spinner  v-if="isLoading" small class="mr-1" variant="light" />
+
             Save changes
           </b-button>
           <!-- <b-button
@@ -217,6 +223,9 @@
       </b-row>
     </b-form>
   </b-card>
+  <div v-else>
+    <b-spinner small class="mr-1" variant="light" />
+  </div>
 </template>
 
 <script>
@@ -237,6 +246,8 @@ import {
   BMediaBody,
   BLink,
   BImg,
+  BSpinner,
+  BAvatar,
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import { useInputImageRenderer } from "@core/comp-functions/forms/form-utils";
@@ -247,7 +258,6 @@ import vSelect from "vue-select";
 import Cleave from "vue-cleave-component";
 import flatPickr from "vue-flatpickr-component";
 import Compressor from "compressorjs";
-import { BSpinner } from "bootstrap-vue";
 import axios from "@axios";
 import Vue from "vue";
 
@@ -274,6 +284,7 @@ export default {
     Cleave,
     Compressor,
     BSpinner,
+    BAvatar,
   },
   directives: {
     Ripple,
@@ -547,6 +558,7 @@ export default {
       isUploaded: false,
       base64compressed: null,
       isImageLoading: false,
+      isLoading: false,
       // UpdatedData: generalData,
     };
   },
@@ -572,7 +584,7 @@ export default {
     compressImage(image) {
       return new Promise((resolve, reject) => {
         const reader = new Compressor(image, {
-          quality: 0.6,
+          quality: 0.3,
           maxWidth: 300,
           maxHeight: 200,
           success(result) {
@@ -585,8 +597,8 @@ export default {
       });
     },
     async idk() {
-      if(!this.profileFile) {
-        return
+      if (!this.profileFile) {
+        return;
       }
       this.isImageLoading = true;
       const compressed_img = await this.compressImage(this.profileFile);
@@ -606,6 +618,7 @@ export default {
                 ) {
                   ok
                   message
+                  avatar
                 }
               }
             `,
@@ -618,6 +631,7 @@ export default {
           this.isImageLoading = false;
 
           if (data.data.profileImageUpload.ok) {
+            this.optionsLocal.avatar = data.data.profileImageUpload.avatar;
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -626,6 +640,7 @@ export default {
                 variant: "success",
               },
             });
+            this.$emit("refresh-data");
           }
         } catch (error) {
           this.isImageLoading = false;
@@ -638,97 +653,55 @@ export default {
               variant: "danger",
             },
           });
-        }
-      }
-    },
-
-    async UploadPic() {
-      {
-        try {
-          // const fd = new FormData();
-          // fd.append("filename", this.profileFile, this.profileFile.name);
-          // console.log(fd.get('filename'));
-          // console.log(fd)
-          const Avatar = await this.$apollo.mutate({
-            mutation: gql`
-              mutation editProfile($avatar: Upload) {
-                editProfile(avatar: $avatar) {
-                  ok
-                  error
-                }
-              }
-            `,
-            variables: {
-              avatar: this.profileFile,
-            },
-          });
-          const response = Avatar.data.editProfile;
-          if (response.ok) {
-            this.$toast({
-              component: ToastificationContent,
-              position: "top-right",
-              props: {
-                title: `YAY! `,
-                icon: "CoffeeIcon",
-                variant: "success",
-                text: `Avatar Updated!`,
-              },
-            });
-          } else {
-            this.$toast({
-              component: ToastificationContent,
-              position: "top-right",
-              props: {
-                title: `Error `,
-                icon: "AlertOctagonIcon",
-                variant: "danger",
-                text: `Please try again`,
-              },
-            });
-          }
-        } catch (error) {
-          console.log(error);
+          this.$emit("refresh-data");
         }
       }
     },
 
     async UpdateGeneralProfile() {
+      this.isLoading = true;
+      let finalSet = this.optionsLocal;
+      delete finalSet.avatar;
+      delete finalSet.fullname;
+      delete finalSet.__typename;
+      delete finalSet.id;
+      delete finalSet.username;
+
+      let objectx = {
+        id: 18,
+        _set: {
+          ...finalSet,
+        },
+      };
+
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
-            mutation editProfile(
-              $firstName: String
-              $lastName: String
-              $username: String
-              $email: String
-            ) {
-              editProfile(
-                firstName: $firstName
-                lastName: $lastName
-                username: $username
-                email: $email
-              ) {
-                ok
-                error
+            mutation MyMutation($id: Int, $_set: Fitness_User_set_input = {}) {
+              update_Fitness_User(where: { id: { _eq: $id } }, _set: $_set) {
+                affected_rows
               }
             }
           `,
           variables: {
-            firstName: this.generalData.firstName,
-            lastName: this.generalData.lastName,
-            username: this.generalData.username,
-            email: this.generalData.username,
+            ...objectx,
           },
         });
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: "Profile Updated!",
-            icon: "EditIcon",
-            variant: "success",
-          },
-        });
+        if (data.data.update_Fitness_User.affected_rows) {
+          this.isLoading = false;
+
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Profile Updated!",
+              icon: "EditIcon",
+              variant: "success",
+            },
+          });
+        }
       } catch (error) {
+        this.isLoading = false;
+
         this.$toast({
           component: ToastificationContent,
           props: {

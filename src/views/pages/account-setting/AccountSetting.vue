@@ -1,5 +1,6 @@
 <template>
   <b-tabs
+  v-if="options"
     vertical
     content-class="col-12 col-md-9 mt-1 mt-md-0"
     pills
@@ -14,9 +15,12 @@
         <span class="font-weight-bold">General</span>
       </template>
       <div v-if="options">
-        <account-setting-general v-if="options" :general-data="options" />
+        <account-setting-general
+          v-if="options"
+          :general-data="options"
+          @refresh-data="refetchData"
+        />
       </div>
-
     </b-tab>
     <!--/ general tab -->
 
@@ -39,10 +43,7 @@
         <span class="font-weight-bold">Payments</span>
       </template>
       <div v-if="options">
-        <account-payment-history
-          v-if="options"
-          :information-data="options"
-        />
+        <account-payment-history v-if="options" :information-data="options" />
       </div>
     </b-tab>
     <b-tab>
@@ -52,14 +53,14 @@
         <span class="font-weight-bold">Plan</span>
       </template>
       <div v-if="options">
-        <account-plan
-          v-if="options"
-          :information-data="options"
-        />
+        <account-plan v-if="options" :information-data="options" />
       </div>
     </b-tab>
-
   </b-tabs>
+  <div v-else>
+              <b-spinner small class="mr-1" variant="light" />
+
+     </div>
 </template>
 
 <script>
@@ -68,7 +69,7 @@ import AccountSettingGeneral from "./AccountSettingGeneral.vue";
 import AccountSettingPassword from "./AccountSettingPassword.vue";
 import AccountSettingInformation from "./AccountSettingInformation.vue";
 import AccountPaymentHistory from "./AccountPaymentHistory.vue";
-import AccountPlan from './AccountPlan.vue'
+import AccountPlan from "./AccountPlan.vue";
 import gql from "graphql-tag";
 import store from "@/store";
 import { ref, onUnmounted } from "@vue/composition-api";
@@ -83,7 +84,7 @@ export default {
     AccountSettingInformation,
     AccountPaymentHistory,
     BSpinner,
-    AccountPlan
+    AccountPlan,
   },
 
   data() {
@@ -346,36 +347,49 @@ export default {
       ],
     };
   },
+  methods: {
+    refetchData() {
+      console.log("yes i am triggered");
+      this.fetchtheData();
+    },
 
-  async mounted() {
-    try {
-      const data = await this.$apollo.query({
-        query: gql`
-          query MyQuery($id: Int!) {
-            Fitness_User_by_pk(id: $id) {
-              id
-              firstName
-              lastName
-              dob
-              about
-              email
-              fullname
-              username
-              avatar
-              gender
+    async fetchtheData() {
+      console.log("done");
+      try {
+        const data = await this.$apollo.query({
+          query: gql`
+            query MyQuery($id: Int!) {
+              Fitness_User_by_pk(id: $id) {
+                id
+                firstName
+                lastName
+                dob
+                about
+                email
+                fullname
+                username
+                avatar
+                gender
+                website
+                country
+                phonenumber
+              }
             }
-          }
-        `,
-        variables: {
-          id: this.userInfo.id,
-        },
-      });
+          `,
+          variables: {
+            id: this.userInfo.id,
+          },
+        });
 
-      this.options = data.data.Fitness_User_by_pk;
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
+        this.options = data.data.Fitness_User_by_pk;
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+  async mounted() {
+    this.fetchtheData();
   },
 
   computed: {
