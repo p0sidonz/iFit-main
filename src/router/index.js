@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
+import store from "../store";
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -25,6 +25,14 @@ const router = new VueRouter({
       },
     },
 
+    /*-----calendar-----*/
+
+    {
+      path: "/apps/calendar",
+      name: "apps-calendar",
+      props: true,
+      component: () => import("@/views/apps/calendar/Calendar.vue"),
+    },
 
     /*-----LOGIN and REGISTER-----*/
     {
@@ -46,17 +54,6 @@ const router = new VueRouter({
 
     /*-----END OF LOGIN and REGISTER-----*/
 
-
-        /*-----calendar-----*/
-
-        {
-          path: '/apps/calendar',
-          name: 'apps-calendar',
-          component: () => import('@/views/apps/calendar/Calendar.vue'),
-        },
-
-        
-        
     /*-----ACCOUNT SETTINGS-----*/
     {
       path: "/accounts/edit",
@@ -109,6 +106,9 @@ const router = new VueRouter({
       props: true,
       name: "postid",
       component: () => import("@/views/pages/profile/postById.vue"),
+      meta: {
+        layout: "boxed",
+      },
     },
 
     {
@@ -127,11 +127,35 @@ const router = new VueRouter({
       path: "/apps/users/list",
       name: "apps-users-list",
       component: () => import("@/views/apps/user/users-list/UsersList.vue"),
+      meta: {
+        pageTitle: "Clients",
+        breadcrumb: [
+          {
+            text: "Dashboard",
+          },
+          {
+            text: "Client List",
+            active: true,
+          },
+        ],
+      },
     },
     {
       path: "/apps/users/view/:id",
       name: "apps-users-view",
       component: () => import("@/views/apps/user/users-view/UsersView.vue"),
+      meta: {
+        pageTitle: "Client Info",
+        breadcrumb: [
+          {
+            text: "Dashboard",
+          },
+          {
+            text: "Client View",
+            active: true,
+          },
+        ],
+      },
     },
     {
       path: "/apps/users/edit/:id",
@@ -152,28 +176,53 @@ const router = new VueRouter({
     {
       path: "/apps/trainers/list",
       name: "apps-trainers-list",
-      component: () => import("@/views/user-dashboard/trainers-list/UsersList.vue"),
+      component: () =>
+        import("@/views/user-dashboard/trainers-list/UsersList.vue"),
+      meta: {
+        pageTitle: "Trainers List",
+        breadcrumb: [
+          {
+            text: "Dashboard",
+          },
+          {
+            text: "Trainer List",
+            active: true,
+          },
+        ],
+      },
     },
     {
       path: "/apps/trainers/view/:id",
       name: "apps-trainers-view",
-      component: () => import("@/views/user-dashboard/trainer-view/UsersView.vue"),
+      component: () =>
+        import("@/views/user-dashboard/trainer-view/UsersView.vue"),
+      meta: {
+        pageTitle: "Trainers Info",
+        breadcrumb: [
+          {
+            text: "Dashboard",
+          },
+          {
+            text: "Trainer List",
+            active: true,
+          },
+        ],
+      },
     },
 
     {
       path: "/apps/trainers/view/program/:id",
       name: "user-program-view",
-      component: () => import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
       props: true,
 
+      component: () =>
+        import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
     },
     {
       path: "/apps/trainers/view/diet/:id",
       name: "trainer-diet-view",
       component: () => import("@/views/user-dashboard/diet-view/dietView.vue"),
     },
-
-
 
     // *===============================================---*
     // *--------- NUTRITION ---- ---------------------------------------*
@@ -211,6 +260,12 @@ const router = new VueRouter({
       component: () => import("@/views/apps/workout/edit.vue"),
     },
 
+    {
+      path: "/apps/workout/view/:id",
+      name: "workout-view",
+      component: () => import("@/views/apps/workout/view.vue"),
+    },
+
     // *===============================================---*
     // *--------- PROGRAMS ---- ---------------------------------------*
     // // *===============================================---*
@@ -224,6 +279,9 @@ const router = new VueRouter({
       path: "/apps/programs/edit/:id",
       name: "program-edit",
       component: () => import("@/views/apps/program/edit.vue"),
+      meta: {
+        layout: "boxed",
+      },
     },
 
     // *===============================================---*
@@ -239,7 +297,6 @@ const router = new VueRouter({
     // *--------- CREATE PACKAGES ---- ---------------------------------------*
     // // *===============================================---*
 
-
     {
       path: "/trainer-packages",
       name: "trainer-packages",
@@ -250,7 +307,6 @@ const router = new VueRouter({
     //   name: "packages-view",
     //   component: () => import("@/views/apps/packages/view.vue"),
     // },
-
 
     // *===============================================---*
     // *--------- CHAT  ---------------------------------------*
@@ -310,6 +366,18 @@ const router = new VueRouter({
       redirect: "error-404",
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = store.state.auth.isUserLoggedIn;
+  console.log(isLoggedIn);
+  if (isLoggedIn) {
+    return next();
+  }
+  if (!isLoggedIn && to.path !== "/login") {
+    return next("/login");
+  }
+  return next();
 });
 
 // ? For splash screen
