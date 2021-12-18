@@ -1,17 +1,14 @@
 <template>
   <div id="user-profile">
-    <div v-if="profileData">
-      <profile-header :header-data="profileData" @refresh-data="ok" />
-      <section id="profile-info">
-        <profile-post />
-      </section>
-    </div>
-    <div v-else><b-spinner label="Loading..." /></div>
+    <profile-header :header-data="profileData" @refresh-data="ok" />
+    <section id="profile-info">
+      <profile-post />
+    </section>
   </div>
 </template>
 
 <script>
-import { BRow, BCol, BSpinner } from "bootstrap-vue";
+import { BRow, BCol } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
 import ProfilePost from "./ProfilePost.vue";
 
@@ -24,7 +21,6 @@ export default {
     BCol,
     ProfileHeader,
     ProfilePost,
-    BSpinner,
   },
   data() {
     return {
@@ -82,8 +78,13 @@ export default {
             username: ReUsername,
           },
         });
-        console.log(newProfile);
-        this.profileData = newProfile.data.Fitness_User[0];
+        console.log(newProfile.data.Fitness_User.length);
+        if (!newProfile.data.Fitness_User.length) {
+          this.$router.push("/error-404");
+        }
+        if (newProfile.data.Fitness_User.length) {
+          this.profileData = newProfile.data.Fitness_User[0];
+        }
       } catch (error) {
         console.log(error);
       }
@@ -133,7 +134,15 @@ export default {
           username: tempUsername,
         },
       });
-      this.profileData = data.data.Fitness_User[0];
+
+      console.log(data.data.Fitness_User.length);
+      if (!data.data.Fitness_User.length) {
+        this.$router.push("/error-404");
+      }
+      if (data.data.Fitness_User.length) {
+        this.profileData = data.data.Fitness_User[0];
+      }
+
       console.log("created", this.profileData);
     } catch (error) {
       console.log(error);
