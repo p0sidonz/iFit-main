@@ -65,7 +65,7 @@
           <b-form-group label="Username" label-for="account-username">
             <b-form-input
               id="readOnlyInput"
-              v-model="optionsLocal.username"
+              v-model="generalData.username"
               readonly
             />
           </b-form-group>
@@ -73,9 +73,8 @@
         <b-col sm="6">
           <b-form-group label="Name" label-for="account-name">
             <b-form-input
-              v-model="optionsLocal.fullname"
               name="name"
-              placeholder="Name"
+              :placeholder="optionsLocal.firstName + ' ' + optionsLocal.lastName"
               readonly
             />
           </b-form-group>
@@ -206,7 +205,7 @@
             class="mt-2 mr-1"
             @click.prevent="UpdateGeneralProfile"
           >
-              <b-spinner  v-if="isLoading" small class="mr-1" variant="light" />
+            <b-spinner v-if="isLoading" small class="mr-1" variant="light" />
 
             Save changes
           </b-button>
@@ -553,7 +552,7 @@ export default {
         phoneRegionCode: "US",
       },
       genderOption: ["Male", "Female", "Other"],
-      optionsLocal: this.generalData,
+      optionsLocal: {...this.generalData},
       profileFile: null,
       isUploaded: false,
       base64compressed: null,
@@ -659,14 +658,17 @@ export default {
     },
 
     async UpdateGeneralProfile() {
+      console.log("optionslocal",this.generalData);
       this.isLoading = true;
-      let finalSet = this.optionsLocal;
+      let finalSet = null;
+      finalSet = {...this.optionsLocal};
       delete finalSet.avatar;
       delete finalSet.fullname;
       delete finalSet.__typename;
       delete finalSet.id;
       delete finalSet.username;
-
+       delete finalSet.fullname;
+      console.log(this.generalData)
       let objectx = {
         id: 18,
         _set: {
