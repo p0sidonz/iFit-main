@@ -1,7 +1,13 @@
+import { t } from "@/@core/libs/i18n/utils";
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from "../store";
-
+// Routes
+import { canNavigate } from "@/libs/acl/routeProtection";
+import {
+  isUserLoggedIn,
+  getUserData,
+  getHomeRouteForLoggedInUser,
+} from "@/auth/utils";
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -16,6 +22,8 @@ const router = new VueRouter({
       name: "home",
       component: () => import("@/views/Home.vue"),
       meta: {
+        requiresAuth: false,
+        role: ["user", "trainer"],
         pageTitle: "Home",
         breadcrumb: [
           {
@@ -26,7 +34,6 @@ const router = new VueRouter({
       },
     },
 
-
     /*-----LOGIN and REGISTER-----*/
     {
       path: "/login",
@@ -34,6 +41,8 @@ const router = new VueRouter({
       component: () => import("@/views/auth/Login.vue"),
       meta: {
         layout: "full",
+        requiresAuth: false,
+        redirectIfLoggedIn: true,
       },
     },
     {
@@ -42,28 +51,29 @@ const router = new VueRouter({
       component: () => import("@/views/auth/Register.vue"),
       meta: {
         layout: "full",
+        redirectIfLoggedIn: true,
+        requiresAuth: false,
       },
     },
 
     /*-----END OF LOGIN and REGISTER-----*/
 
+    /*-----calendar-----*/
 
-        /*-----calendar-----*/
+    {
+      path: "/apps/calendar",
+      name: "apps-calendar",
+      component: () => import("@/views/apps/calendar/Calendar.vue"),
+    },
 
-        {
-          path: '/apps/calendar',
-          name: 'apps-calendar',
-          component: () => import('@/views/apps/calendar/Calendar.vue'),
-        },
-
-        
-        
     /*-----ACCOUNT SETTINGS-----*/
     {
       path: "/accounts/edit",
       name: "account-settings",
       component: () => import("@/views/pages/account-setting/AccountSetting"),
       meta: {
+        role: ["user", "trainer"],
+        requiresAuth: true,
         pageTitle: "Account Settings",
         breadcrumb: [
           {
@@ -84,6 +94,10 @@ const router = new VueRouter({
       name: "trainer-pricing",
       component: () => import("@/views/pages/pricing/Pricing.vue"),
       meta: {
+        role: ["user", "trainer"],
+        resource: "ACL",
+        requiresAuth: true,
+
         breadcrumb: [
           {
             text: "Upgrade to trainer",
@@ -101,12 +115,16 @@ const router = new VueRouter({
       name: "profile",
       component: () => import("@/views/pages/profile/Profile.vue"),
       meta: {
+        role: ["user", "trainer"],
+        requiresAuth: true,
         pageTitle: "Profile",
       },
     },
 
     {
       path: "/user/:username/:post_id",
+      requiresAuth: true,
+
       props: true,
       name: "postid",
       component: () => import("@/views/pages/profile/postById.vue"),
@@ -128,22 +146,37 @@ const router = new VueRouter({
       path: "/apps/users/list",
       name: "apps-users-list",
       component: () => import("@/views/apps/user/users-list/UsersList.vue"),
+      meta: {
+        requiresAuth: true,
+        role: ["trainer"],
+      },
     },
     {
       path: "/apps/users/view/:id",
       name: "apps-users-view",
       component: () => import("@/views/apps/user/users-view/UsersView.vue"),
+      meta: {
+        requiresAuth: true,
+        role: ["trainer"],
+      },
     },
     {
       path: "/apps/users/edit/:id",
       name: "apps-users-edit",
       component: () => import("@/views/apps/user/users-edit/UsersEdit.vue"),
+      meta: {
+        requiresAuth: true,
+        role: ["trainer"],
+      },
     },
     {
       path: "/apps/users/diet/:id",
       name: "apps-diet-view",
       component: () =>
         import("@/views/apps/user/users-create-diet/usersDiet.vue"),
+      meta: {
+        requiresAuth: true,
+      },
     },
 
     // *===============================================---*
@@ -153,28 +186,48 @@ const router = new VueRouter({
     {
       path: "/apps/trainers/list",
       name: "apps-trainers-list",
-      component: () => import("@/views/user-dashboard/trainers-list/UsersList.vue"),
+      component: () =>
+        import("@/views/user-dashboard/trainers-list/UsersList.vue"),
+      meta: {
+        layout: "full",
+        requiresAuth: true,
+        role: ["user"],
+      },
     },
     {
       path: "/apps/trainers/view/:id",
       name: "apps-trainers-view",
-      component: () => import("@/views/user-dashboard/trainer-view/UsersView.vue"),
+      component: () =>
+        import("@/views/user-dashboard/trainer-view/UsersView.vue"),
+      meta: {
+        role: ["user"],
+
+        requiresAuth: true,
+      },
     },
 
     {
       path: "/apps/trainers/view/program/:id",
       name: "user-program-view",
-      component: () => import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
-      props: true,
+      component: () =>
+        import("@/views/user-dashboard/program-view/ProgramvVew.vue"),
+      meta: {
+        role: ["user"],
 
+        requiresAuth: true,
+      },
+      props: true,
     },
     {
       path: "/apps/trainers/view/diet/:id",
       name: "trainer-diet-view",
       component: () => import("@/views/user-dashboard/diet-view/dietView.vue"),
+      meta: {
+        role: ["user"],
+
+        requiresAuth: true,
+      },
     },
-
-
 
     // *===============================================---*
     // *--------- NUTRITION ---- ---------------------------------------*
@@ -183,12 +236,20 @@ const router = new VueRouter({
       path: "/apps/nutrition/edit/:id",
       name: "nutrition-edit",
       component: () => import("@/views/apps/nutrition/Todo.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
 
     {
       path: "/apps/nutrition/list/",
       name: "nutrition-list",
       component: () => import("@/views/apps/nutrition/Nlist.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
 
     // *===============================================---*
@@ -205,11 +266,19 @@ const router = new VueRouter({
       path: "/apps/workout/list/",
       name: "workout-list",
       component: () => import("@/views/apps/workout/list.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
     {
       path: "/apps/workout/edit/:id",
       name: "workout-edit",
       component: () => import("@/views/apps/workout/edit.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
 
     // *===============================================---*
@@ -220,11 +289,19 @@ const router = new VueRouter({
       path: "/apps/programs/list/",
       name: "program-list",
       component: () => import("@/views/apps/program/list.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
     {
       path: "/apps/programs/edit/:id",
       name: "program-edit",
       component: () => import("@/views/apps/program/edit.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
 
     // *===============================================---*
@@ -235,23 +312,29 @@ const router = new VueRouter({
       path: "/dashboard",
       name: "dashboard",
       component: () => import("@/views/dashboard/dashboard.vue"),
+      meta: {
+        requiresAuth: true,
+        role: ["trainer"],
+      },
     },
     // *===============================================---*
     // *--------- CREATE PACKAGES ---- ---------------------------------------*
     // // *===============================================---*
 
-
     {
       path: "/trainer-packages",
       name: "trainer-packages",
       component: () => import("@/views/apps/packages/list.vue"),
+      meta: {
+        role: ["trainer"],
+        requiresAuth: true,
+      },
     },
     // {
     //   path: "/trainer-packages/view/:id",
     //   name: "packages-view",
     //   component: () => import("@/views/apps/packages/view.vue"),
     // },
-
 
     // *===============================================---*
     // *--------- CHAT  ---------------------------------------*
@@ -264,6 +347,21 @@ const router = new VueRouter({
         contentRenderer: "sidebar-left",
         contentClass: "chat-application",
       },
+      meta: {
+        requiresAuth: true,
+      },
+    },
+
+    {
+      path: "/not-authorized",
+      name: "misc-not-authorized",
+      component: () => import("@/views/pages/miscellaneous/NotAuthorized.vue"),
+      meta: {
+        layout: "full",
+      },
+      meta: {
+        requiresAuth: false,
+      },
     },
 
     {
@@ -272,6 +370,7 @@ const router = new VueRouter({
       component: () => import("@/views/pages/faq/Faq.vue"),
       meta: {
         pageTitle: "FAQ",
+
         breadcrumb: [
           {
             text: "Pages",
@@ -313,21 +412,33 @@ const router = new VueRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const isLoggedIn = store.state.auth.isUserLoggedIn;
-  console.log(isLoggedIn);
-  if (isLoggedIn) {
-    return next();
+router.beforeEach((to, _, next) => {
+  const userData = getUserData();
+
+  const isLoggedIn = isUserLoggedIn();
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const lacksRole = to.matched.some((record) => {
+    return record.meta.role && !record.meta.role.includes(userData.role);
+  });
+  console.log(lacksRole);
+  if (requiresAuth && !isLoggedIn && to.name !== "login") {
+    next({ name: "login" });
+  } else if (isLoggedIn && to.meta.redirectIfLoggedIn) {
+    console.log("one", to);
+    next({ name: "home" });
+  } else if (requiresAuth && isLoggedIn && lacksRole) {
+    console.log("two", to);
+    next({ name: "misc-not-authorized" });
+  } else {
+    console.log("three", to);
+
+    next();
   }
-  if (!isLoggedIn && to.path !== "/login" && to.path !== "/register") {
-    return next("/login");
-  }
-  return next();
-})
+});
 
 // ? For splash screen
 // Remove afterEach hook if you are not using splash screen
-router.afterEach(() => {
+router.afterEach((to, from, next) => {
   // Remove initial loading
   const appLoading = document.getElementById("loading-bg");
   if (appLoading) {

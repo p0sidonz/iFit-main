@@ -154,6 +154,7 @@ import ToastificationContent from "@core/components/toastification/Toastificatio
 import gql from "graphql-tag";
 import { data } from "vue-echarts";
 import jwt from "jsonwebtoken";
+import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 // import LOGIN_MUTATION from '../graphql/auth.gql'
 
@@ -257,7 +258,7 @@ export default {
           //               this.$router.replace({ path: `/user/${response.username}` });
 
           // }
-            this.$router.replace({ path: `/user/${response.username}` });
+              this.$router.replace(getHomeRouteForLoggedInUser(response.role))
 
           this.isloading = false;
           this.$toast({
