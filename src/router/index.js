@@ -414,12 +414,14 @@ const router = new VueRouter({
 
 router.beforeEach((to, _, next) => {
   const userData = getUserData();
-
+  let lacksRole = null;
   const isLoggedIn = isUserLoggedIn();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const lacksRole = to.matched.some((record) => {
-    return record.meta.role && !record.meta.role.includes(userData.role);
-  });
+  if (userData) {
+    lacksRole = to.matched.some((record) => {
+      return record.meta.role && !record.meta.role.includes(userData.role);
+    });
+  }
   console.log(lacksRole);
   if (requiresAuth && !isLoggedIn && to.name !== "login") {
     next({ name: "login" });
