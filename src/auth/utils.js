@@ -7,10 +7,10 @@ import useJwt from '@/auth/jwt/useJwt'
  */
 // eslint-disable-next-line arrow-body-style
 export const isUserLoggedIn = () => {
-  return localStorage.getItem('userData') && localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)
+  return localStorage.getItem('userInfo') && localStorage.getItem("apollo-token")
 }
 
-export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
+export const getUserData = () => JSON.parse(localStorage.getItem('userInfo'))
 
 /**
  * This function is used for demo purpose route navigation
@@ -21,7 +21,7 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = userRole => {
-  if (userRole === 'user') return '/'
-  if (userRole === 'trainer') return { name: 'dashboard' }
+  if (userRole === 'trainer') return '/dashboard'
+  if (userRole === 'user') return { name: 'home' }
   return { name: 'login' }
 }
