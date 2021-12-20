@@ -123,8 +123,10 @@ const router = new VueRouter({
 
     {
       path: "/user/:username/:post_id",
-      requiresAuth: true,
-
+      meta: {
+        role: ["user", "trainer"],
+        requiresAuth: true,
+      },
       props: true,
       name: "postid",
       component: () => import("@/views/pages/profile/postById.vue"),
@@ -346,10 +348,10 @@ const router = new VueRouter({
       meta: {
         contentRenderer: "sidebar-left",
         contentClass: "chat-application",
-      },
-      meta: {
         requiresAuth: true,
+        role: ["trainer", "user"],
       },
+
     },
 
     {
@@ -358,9 +360,8 @@ const router = new VueRouter({
       component: () => import("@/views/pages/miscellaneous/NotAuthorized.vue"),
       meta: {
         layout: "full",
-      },
-      meta: {
         requiresAuth: false,
+
       },
     },
 
@@ -426,14 +427,10 @@ router.beforeEach((to, _, next) => {
   if (requiresAuth && !isLoggedIn && to.name !== "login") {
     next({ name: "login" });
   } else if (isLoggedIn && to.meta.redirectIfLoggedIn) {
-    console.log("one", to);
     next({ name: "home" });
   } else if (requiresAuth && isLoggedIn && lacksRole) {
-    console.log("two", to);
     next({ name: "misc-not-authorized" });
   } else {
-    console.log("three", to);
-
     next();
   }
 });
