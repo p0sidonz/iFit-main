@@ -16,7 +16,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_Diet_by_pk(id: $id) {
@@ -64,7 +64,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            "http://localhost:8080/v1/graphql",
+            process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!, $serving_size: Int!, $carbs: Int!, $fat: Int!, $kals: Int!, $protein: Int! ){
               update_Fitness_FoodList_by_pk( pk_columns: {id: $id}, _set: {serving_size: $serving_size, carbs: $carbs, fat: $fat, kals: $kals, protein: $protein}) {

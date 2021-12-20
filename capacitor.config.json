@@ -1,0 +1,6 @@
+{
+  "appId": "com.fetch.fit",
+  "appName": "fetch-fit",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
