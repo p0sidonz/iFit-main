@@ -15,7 +15,7 @@
         <feather-icon icon="SearchIcon" />
       </div>
       <!-- <input type="text" placeholder="Explore Vuexy...." class="form-control-input"> -->
-      <!-- @keyup.esc="escPressed" -->
+      
       <!-- @keyup.enter="suggestionSelected" -->
       <b-form-input
         v-if="showSearchBar"
@@ -35,46 +35,58 @@
       </div>
 
       <!-- Suggestions List -->
+
+      <div v-if="isLoading">
+        <b-spinner small class="mr-1" variant="primary" />
+      </div>
       <vue-perfect-scrollbar
+        v-else
         :settings="perfectScrollbarSettings"
         class="search-list search-list-main scroll-area overflow-hidden"
         :class="{ show: searchQuery }"
         tagname="ul"
       >
-        <li
-          v-for="(suggestion_list, grp_index) in filteredData"
-          :key="grp_index"
-          class="suggestions-groups-list"
-        >
-          <!-- Suggestion List of each group -->
-          <ul>
-            <li
-              @click="clicked(suggestion_list.username)"
-              class="suggestion-group-suggestion cursor-pointer"
-            >
-              <template>
-                <div class="d-flex align-items-center">
-                  <b-avatar
-                    :src="suggestion_list.avatar"
-                    class="mr-1"
-                    size="52"
-                  />
-                  <div>
-                    <h6>{{ suggestion_list.fullname }}</h6>
-                    <small>{{ suggestion_list.username }}</small>
+        <div v-if="filteredData.length">
+          <li
+            v-for="(suggestion_list, grp_index) in filteredData"
+            :key="grp_index"
+            class="suggestions-groups-list"
+          >
+            <!-- Suggestion List of each group -->
+            <ul>
+              <li
+                @click="clicked(suggestion_list.username)"
+                class="suggestion-group-suggestion cursor-pointer"
+              >
+                <template>
+                  <div class="d-flex align-items-center">
+                    <b-avatar
+                      :src="suggestion_list.avatar"
+                      class="mr-1"
+                      size="52"
+                    />
+                    <div>
+                      <h6>{{ suggestion_list.fullname }}</h6>
+                      <small>{{ suggestion_list.username }}</small>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </li>
+                </template>
+              </li>
+            </ul>
+          </li>
+        </div>
+        <div v-else>
+          <ul>
+            <li>No Result</li>
           </ul>
-        </li>
+        </div>
       </vue-perfect-scrollbar>
     </div>
   </li>
 </template>
 
 <script>
-import { BFormInput, BLink, BImg, BAvatar } from "bootstrap-vue";
+import { BFormInput, BLink, BImg, BAvatar, BSpinner } from "bootstrap-vue";
 import { ref, watch } from "@vue/composition-api";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import useAutoSuggest from "@core/components/app-auto-suggest/useAutoSuggest";
@@ -90,11 +102,13 @@ export default {
     BImg,
     BAvatar,
     VuePerfectScrollbar,
+    BSpinner,
   },
   setup() {
     const showSearchBar = ref(false);
     const searchQuery = ref("");
     const filteredData = ref({});
+    const isLoading = ref(false);
 
     const perfectScrollbarSettings = {
       maxScrollbarLength: 60,
@@ -114,6 +128,7 @@ export default {
       resetsearchQuery();
     };
     const searchAPI = () => {
+      isLoading.value = true;
       let where = {
         _or: {
           firstName: { _ilike: `%${searchQuery.value}%` },
@@ -152,9 +167,13 @@ export default {
           }
         )
         .then((response) => {
+          isLoading.value = false;
+
           filteredData.value = response.data.data.Fitness_User;
         })
         .catch((error) => {
+          isLoading.value = false;
+
           console.log(error);
         });
     };
@@ -168,6 +187,9 @@ export default {
       filteredData,
       resetsearchQuery,
       clicked,
+
+      //loading
+      isLoading,
     };
   },
 };
