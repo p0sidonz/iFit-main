@@ -6,12 +6,9 @@
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
-
         <b-link class="nav-link" @click="toggleVerticalMenuActive">
           <feather-icon icon="MenuIcon" size="21" />
         </b-link>
-
-
       </li>
     </ul>
 
@@ -19,11 +16,10 @@
     <div
       class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex"
     >
+      <dark-Toggler class="d-none d-lg-block" />
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
-                    <dark-Toggler class="d-none d-lg-block" />
-
       <search-bar />
       <notification-dropdown />
 
@@ -35,11 +31,11 @@
         <template #button-content>
           <div class="d-sm-flex d-none user-nav">
             <p class="user-name font-weight-bolder mb-0">
-              {{ userInfo.username || user.username }}
+              {{ userInfo.username }}
             </p>
             <span class="user-status">
               <b-badge pill variant="light-primary">{{
-                userInfo.role.toUpperCase() || user.role.toUpperCase()
+                userInfo.role.toUpperCase()
               }}</b-badge>
             </span>
           </div>
@@ -47,7 +43,7 @@
             size="40"
             variant="light-primary"
             badge
-            :src="userInfo.avatar || user.avatar"
+            :src="userInfo.avatar"
             class="badge-minimal"
             badge-variant="success"
           />
@@ -55,7 +51,7 @@
 
         <b-dropdown-item
           link-class="d-flex align-items-center"
-          :to="`/user/${userInfo.username || user.username}`"
+          :to="`/user/${userInfo.username}`"
         >
           <feather-icon size="16" icon="UserIcon" class="mr-50" />
           <span>Profile</span> <div class="text-right"> <b-badge pill variant="info" class="badge-glow ">BETA</b-badge></div>
@@ -81,7 +77,7 @@
         </b-dropdown-item>
 
         <b-dropdown-item
-          v-if="userInfo.role || user.role === 'trainer'"
+          v-if="userInfo.role === 'trainer'"
           :to="{ name: 'dashboard' }"
           link-class="d-flex align-items-center"
         >
@@ -89,7 +85,7 @@
           <span>Dashboard</span>
         </b-dropdown-item>
         <b-dropdown-item
-          v-if="userInfo.role || user.role === 'user'"
+          v-if="userInfo.role === 'user'"
           :to="{ name: 'apps-trainers-list' }"
           link-class="d-flex align-items-center"
         >
@@ -148,6 +144,7 @@
     </b-navbar-nav>
   </div>
 </template>
+
 <script>
 import {
   BLink,
@@ -163,6 +160,11 @@ import DarkToggler from "@core/layouts/components/app-navbar/components/DarkTogg
 import SearchBar from "./SearchBar.vue";
 import NotificationDropdown from "./NotificationDropdown.vue";
 import Ripple from "vue-ripple-directive";
+import {
+  isUserLoggedIn,
+  getUserData,
+  getHomeRouteForLoggedInUser,
+} from "@/auth/utils";
 
 export default {
   components: {
@@ -186,9 +188,10 @@ export default {
 
   data() {
     return {
-      uInfo: null
-    }
+      isLoggedIn: isUserLoggedIn(),
+    };
   },
+
   props: {
     toggleVerticalMenuActive: {
       type: Function,
@@ -209,12 +212,9 @@ export default {
     userInfo() {
       return this.$store.getters.userInfo;
     },
-    isUserLoggedIn() {
-      return this.$store.getters.isUserLoggedIn;
-    },
+    // isUserLoggedIn() {
+    //   return this.$store.getters.isUserLoggedIn;
+    // },
   },
-
-
-
 };
 </script>

@@ -420,6 +420,7 @@ router.beforeEach((to, _, next) => {
   if (appLoading) {
     appLoading.style.display = "boxed";
   }
+
   let chkState = store.getters.appLoading
   console.log(chkState)
   const userData = getUserData();
