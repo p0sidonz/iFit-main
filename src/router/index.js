@@ -24,7 +24,7 @@ const router = new VueRouter({
       name: "home",
       component: () => import("@/views/Home.vue"),
       meta: {
-        requiresAuth: false,
+        requiresAuth: true,
         role: ["user", "trainer"],
         pageTitle: "Home",
         breadcrumb: [

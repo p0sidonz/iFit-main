@@ -168,12 +168,31 @@
             </b-form>
           </validation-observer>
 
-          <p class="text-center mt-2">
+          <!-- <p class="text-center mt-2">
             <span>Already have an account?</span>
             <b-link :to="{ name: 'login' }">
               <span>&nbsp;Sign in instead</span>
             </b-link>
-          </p>
+          </p> -->
+
+          <b-card-text class="text-center mt-1">
+            <span>Already have an account? </span></b-card-text
+          >
+          <!-- 
+          <b-card-text class="text-center mt-2">
+            <span>New on our platform? </span>
+            <b-link :to="{ name: 'page-auth-register-v2' }">
+              <span>&nbsp;Create an account</span>
+            </b-link>
+          </b-card-text> -->
+          <b-button
+            type="submit"
+            variant="outline-primary"
+            block
+            :to="{ name: 'login' }"
+          >
+            Sign in
+          </b-button>
         </b-col>
       </b-col>
       <!-- /Register-->
@@ -199,7 +218,7 @@ import {
   BImg,
   BCardTitle,
   BCardText,
-  BSpinner
+  BSpinner,
 } from "bootstrap-vue";
 import { required, email } from "@validations";
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
@@ -226,7 +245,7 @@ export default {
     // validations
     ValidationProvider,
     ValidationObserver,
-    BSpinner
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   data() {

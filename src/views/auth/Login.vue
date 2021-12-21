@@ -112,13 +112,23 @@
             </b-form>
           </validation-observer>
 
+         
+<b-card-text  class="text-center mt-1">  <span>Or </span></b-card-text>
+<!-- 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
-            <b-link :to="{ name: 'register' }">
+            <b-link :to="{ name: 'page-auth-register-v2' }">
               <span>&nbsp;Create an account</span>
             </b-link>
-          </b-card-text>
-
+          </b-card-text> -->
+              <b-button
+                type="submit"
+                variant="outline-primary"
+                block
+                :to="{ name: 'register' }"
+              >
+              Create an account 
+              </b-button>
           <!-- social buttons -->
         </b-col>
       </b-col>
