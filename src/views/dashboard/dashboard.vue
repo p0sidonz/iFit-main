@@ -53,9 +53,9 @@
             @click="$router.push({ name: item.category})"
           >
             <h4>{{ item.title }}</h4>
-            <b-card-text class="mt-1">
+            <!-- <b-card-text class="mt-1">
               {{ item.desc }}
-            </b-card-text>
+            </b-card-text> -->
           </b-card>
         </b-col>
         <b-col
@@ -98,21 +98,21 @@ export default {
       category: 'apps-users-list',
       img: require('@/assets/images/illustration/sales.svg'),
       title: 'Client Dashboard',
-      desc: 'There is perhaps no better demonstration of the folly of image of our tiny world.',
+      desc: 'List of all the clients',
     },
     {
       id: 2,
       category: 'nutrition-list',
       img: require('@/assets/images/illustration/marketing.svg'),
       title: 'Diet Dashboard',
-      desc: 'Look again at that dot. That’s here. That’s home. That’s us. On it everyone you love.',
+      desc: 'Manage all your diet in one place',
     },
     {
       id: 3,
       category: 'workout-list',
       img: require('@/assets/images/illustration/api.svg'),
       title: 'Workout Dashboard',
-      desc: 'every hero and coward, every creator and destroyer of civilization.',
+      desc: 'Create your ',
     },
     {
       id: 4,

@@ -28,8 +28,9 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         size="sm"
+         :to="{ name: 'account-settings' }"
       >
-        <feather-icon icon="EditIcon" class="mr-50" />
+        <feather-icon icon="EditIcon" class="mr-50" /> 
         <span class="align-middle">Edit Profile</span>
       </b-button>
       <b-button
