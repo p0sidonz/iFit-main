@@ -57,6 +57,16 @@ const router = new VueRouter({
         requiresAuth: false,
       },
     },
+    {
+      path: "/forgot-password",
+      name: "forgot-password",
+      component: () => import("@/views/auth/ForgotPassword.vue"),
+      meta: {
+        layout: "full",
+        requiresAuth: false,
+        redirectIfLoggedIn: true,
+      },
+    },
 
     /*-----END OF LOGIN and REGISTER-----*/
 
