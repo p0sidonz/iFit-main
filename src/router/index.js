@@ -1,6 +1,8 @@
 import { t } from "@/@core/libs/i18n/utils";
 import Vue from "vue";
+import Vuex from 'vuex'
 import VueRouter from "vue-router";
+import store from "../store"
 // Routes
 import { canNavigate } from "@/libs/acl/routeProtection";
 import {
@@ -414,6 +416,12 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, _, next) => {
+  const appLoading = document.getElementById("loading-bg");
+  if (appLoading) {
+    appLoading.style.display = "boxed";
+  }
+  let chkState = store.getters.appLoading
+  console.log(chkState)
   const userData = getUserData();
   let lacksRole = null;
   const isLoggedIn = isUserLoggedIn();
@@ -423,7 +431,6 @@ router.beforeEach((to, _, next) => {
       return record.meta.role && !record.meta.role.includes(userData.role);
     });
   }
-  console.log(lacksRole);
   if (requiresAuth && !isLoggedIn && to.name !== "login") {
     next({ name: "login" });
   } else if (isLoggedIn && to.meta.redirectIfLoggedIn) {
