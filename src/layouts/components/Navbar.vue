@@ -1,11 +1,16 @@
 <template>
-  <div v-if="isUserLoggedIn" class="navbar-container d-flex content align-items-center">
+  <div
+    v-if="isLoggedIn"
+    class="navbar-container d-flex content align-items-center"
+  >
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
+
         <b-link class="nav-link" @click="toggleVerticalMenuActive">
           <feather-icon icon="MenuIcon" size="21" />
         </b-link>
+
 
       </li>
     </ul>
@@ -14,20 +19,11 @@
     <div
       class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex"
     >
-      <dark-Toggler class="d-none d-lg-block" />
     </div>
 
-                              <b-link
-                              :to="{name: 'apps-calendar'}"
-          class="nav-link"
-        >
-          <feather-icon
-            icon="CalendarIcon"
-            size="21"
-          />
-        </b-link>
     <b-navbar-nav class="nav align-items-center ml-auto">
-      
+                    <dark-Toggler class="d-none d-lg-block" />
+
       <search-bar />
       <notification-dropdown />
 
@@ -39,17 +35,19 @@
         <template #button-content>
           <div class="d-sm-flex d-none user-nav">
             <p class="user-name font-weight-bolder mb-0">
-              {{ userInfo.username }}
+              {{ userInfo.username || user.username }}
             </p>
-            <span class="user-status">    <b-badge pill variant="light-primary">{{ userInfo.role.toUpperCase() }}</b-badge>
-</span>
-
+            <span class="user-status">
+              <b-badge pill variant="light-primary">{{
+                userInfo.role.toUpperCase() || user.role.toUpperCase()
+              }}</b-badge>
+            </span>
           </div>
           <b-avatar
             size="40"
             variant="light-primary"
             badge
-            :src="userInfo.avatar"
+            :src="userInfo.avatar || user.avatar"
             class="badge-minimal"
             badge-variant="success"
           />
@@ -57,13 +55,12 @@
 
         <b-dropdown-item
           link-class="d-flex align-items-center"
-          :to="`/user/${userInfo.username}`"
+          :to="`/user/${userInfo.username || user.username}`"
         >
           <feather-icon size="16" icon="UserIcon" class="mr-50" />
-          <span>Profile</span>
+          <span>Profile</span> <div class="text-right"> <b-badge pill variant="info" class="badge-glow ">BETA</b-badge></div>
+
         </b-dropdown-item>
-
-
 
         <b-dropdown-item
           link-class="d-flex align-items-center"
@@ -84,7 +81,7 @@
         </b-dropdown-item>
 
         <b-dropdown-item
-        v-if="userInfo.role === 'trainer'"
+          v-if="userInfo.role || user.role === 'trainer'"
           :to="{ name: 'dashboard' }"
           link-class="d-flex align-items-center"
         >
@@ -92,15 +89,13 @@
           <span>Dashboard</span>
         </b-dropdown-item>
         <b-dropdown-item
-        v-if="userInfo.role === 'user'"
+          v-if="userInfo.role || user.role === 'user'"
           :to="{ name: 'apps-trainers-list' }"
           link-class="d-flex align-items-center"
         >
           <feather-icon size="16" icon="SettingsIcon" class="mr-50" />
           <span>Dashboard</span>
         </b-dropdown-item>
-
-
 
         <b-dropdown-item
           :to="{ name: 'trainer-pricing' }"
@@ -119,47 +114,40 @@
     </b-navbar-nav>
   </div>
 
-  <div  v-else class="navbar-container d-flex content align-items-center">
-
+  <div v-else class="navbar-container d-flex content align-items-center">
     <!-- Nav Menu Toggler -->
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item">
-        <b-link
-          class="nav-link"
-          @click="toggleVerticalMenuActive"
-        >
-          <feather-icon
-            icon="MenuIcon"
-            size="21"
-          />
+        <b-link class="nav-link" @click="toggleVerticalMenuActive">
+          <feather-icon icon="MenuIcon" size="21" />
         </b-link>
       </li>
     </ul>
 
     <!-- Left Col -->
-    <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
+    <div
+      class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex"
+    >
       <dark-Toggler class="d-none d-lg-block" />
 
       <!-- Bookmarks Container -->
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
+      <b-link class="nav-link">
+        <feather-icon icon="CalendarIcon" size="21" />
+      </b-link>
 
-
-
-          <b-button
-      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-      variant="flat-primary"
-              :to="{ name: 'login' }"
-
-    >
-      Login / Register
-    </b-button>
+      <b-button
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="flat-primary"
+        :to="{ name: 'login' }"
+      >
+        Login / Register
+      </b-button>
     </b-navbar-nav>
   </div>
-
 </template>
-
 <script>
 import {
   BLink,
@@ -169,12 +157,12 @@ import {
   BDropdownDivider,
   BAvatar,
   BBadge,
-  BButton
+  BButton,
 } from "bootstrap-vue";
 import DarkToggler from "@core/layouts/components/app-navbar/components/DarkToggler.vue";
 import SearchBar from "./SearchBar.vue";
 import NotificationDropdown from "./NotificationDropdown.vue";
-import Ripple from 'vue-ripple-directive'
+import Ripple from "vue-ripple-directive";
 
 export default {
   components: {
@@ -192,8 +180,14 @@ export default {
     // Navbar Components
     DarkToggler,
   },
-    directives: {
+  directives: {
     Ripple,
+  },
+
+  data() {
+    return {
+      uInfo: null
+    }
   },
   props: {
     toggleVerticalMenuActive: {
@@ -215,9 +209,12 @@ export default {
     userInfo() {
       return this.$store.getters.userInfo;
     },
-        isUserLoggedIn() {
+    isUserLoggedIn() {
       return this.$store.getters.isUserLoggedIn;
     },
   },
+
+
+
 };
 </script>

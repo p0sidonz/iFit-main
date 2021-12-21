@@ -249,8 +249,11 @@ export default {
             JSON.stringify(response.accessToken)
           );
 
-          localStorage.setItem("userInfo", JSON.stringify(response));
+          // Update when logged in
+         
+          this.$store.dispatch('loginState', response)
 
+          localStorage.setItem("userInfo", JSON.stringify(response));
           // if (response.role === "trainer") {
           //   this.$router.replace({ path: "/dashboard" });
           // }
