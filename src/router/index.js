@@ -203,7 +203,6 @@ const router = new VueRouter({
       component: () =>
         import("@/views/user-dashboard/trainers-list/UsersList.vue"),
       meta: {
-        layout: "full",
         requiresAuth: true,
         role: ["user"],
       },

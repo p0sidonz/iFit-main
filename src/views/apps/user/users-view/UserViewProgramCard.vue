@@ -3,6 +3,7 @@
     <b-card-body>
 
       <b-card-title>Currently Assigned Programs</b-card-title>
+   <div v-if="userData">
 
       <app-collapse hover>
         <app-collapse-item
@@ -22,6 +23,13 @@
           </b-button>
         </app-collapse-item>
       </app-collapse>
+          </div>
+
+                <div v-else>
+        <div class="text-center"> 
+        <small class="text-muted ">No program assigned yet </small> </div>
+      </div>
+
     </b-card-body>
   </b-card>
 </template>
