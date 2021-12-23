@@ -644,6 +644,7 @@ export default {
     const { route, router } = useRouter();
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
     const fetchExcercise = () => {
+      console.log("hahah")
       store
         .dispatch("app-program/getWorkout", {
           id: router.currentRoute.params.id,
