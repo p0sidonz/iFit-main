@@ -6,12 +6,81 @@ export default {
   getters: {},
   mutations: {},
   actions: {
+
+
+    deleteExcercise(ctx, id) {
+      console.log("delete excercise")
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        axios
+          .post(
+            "http://127.0.0.1:8080/v1/graphql",
+            {
+              query: `mutation MyMutation ($id: Int!){
+                delete_Fitness_workout_exercise_by_pk(id: $id) {
+                  id
+                }
+              }
+              `,
+              variables: {
+                id: id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
+    deleteWorkout(ctx, id) {
+      console.log("delete workout")
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        axios
+          .post(
+            "http://127.0.0.1:8080/v1/graphql",
+            {
+              query: `mutation MyMutation ($id: Int!){
+                delete_Fitness_workout_by_pk(id: $id) {
+                  id
+                }
+              }
+              `,
+              variables: {
+                id: id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
     saveExcercise(ctx, context) {
+      console.log("context",context)
       // console.log("context", context)
       let test = context.data.filter((item, items) => {
-        return delete item.exercise
+        if(item.exercise) {
+          return delete item.exercise
+
+        }
         })
-      //   console.log("test",test)
+
+         console.log("test",test)
         
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
@@ -19,7 +88,7 @@ export default {
 
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `mutation MyMutation($objects: [Fitness_workout_exercise_insert_input!] = {}) {
                 insert_Fitness_workout_exercise(objects: $objects, on_conflict: {constraint: workout_exercise_pkey, update_columns: json_sets}) {
@@ -52,7 +121,7 @@ export default {
 
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `mutation MyMutation($exercise_id: Int!, $workout_id: Int!) {
                 insert_Fitness_workout_exercise_one(object: {workout_id: $workout_id, exercise_id: $exercise_id}) {
@@ -89,7 +158,7 @@ export default {
         }
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery($where: Fitness_exercise_bool_exp = {}) {
                 Fitness_exercise(where: $where){
@@ -123,7 +192,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `mutation MyMutation ($title: String!, $description: String!){
                 insert_Fitness_workout_one(object: {title: $title, description: $description}) {
@@ -159,7 +228,7 @@ export default {
         };
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery {
                 Fitness_workout {
@@ -193,7 +262,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-            process.env.VUE_APP_GRAPHQL_HTTP,
+            "http://127.0.0.1:8080/v1/graphql",
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_workout_by_pk(id: $id) {

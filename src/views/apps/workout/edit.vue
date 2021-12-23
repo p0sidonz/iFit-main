@@ -23,7 +23,7 @@
             >
               <b-card-body class="text-center">
                 <h2 class="text-primary">
-                  {{ excercises.title.toUpperCase() }}
+                  {{ excercises.title }}
                 </h2>
 
                 <b-card-text class="mb-2">
@@ -48,7 +48,7 @@
               action-collapse
               action-close
               class="text-primary"
-              @close="removeExcercise(index)"
+              @close="removeExcercise(index, data)"
               :title="data.exercise.title"
             >
               <!-- <b-row>
@@ -230,7 +230,6 @@
                 <span> Save</span>
               </div>
             </b-button>
-
             <!-- Button: Add Payment -->
           </b-card>
 
@@ -407,6 +406,18 @@ export default {
   methods: {
     saveExcercise() {
       this.isLoading = true;
+      if (!this.excercies_and_sets.length) {
+        this.isLoading = false;
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: "Sorry!",
+            variant: "danger",
+            text: `You must need to add atleast one excercise.`,
+          },
+        });
+        return;
+      }
       store
         .dispatch("app-workout/saveExcercise", {
           data: this.excercies_and_sets,
@@ -441,9 +452,39 @@ export default {
         });
     },
 
-    removeExcercise(index) {
-      console.log(index);
-      this.excercies_and_sets.splice(index, 1);
+    removeExcercise(index, data) {
+      this.isLoading = true;
+      console.log(index, data);
+      store
+        .dispatch("app-workout/deleteExcercise", data.id)
+        .then((response) => {
+          if (response.data.data.delete_Fitness_workout_exercise_by_pk.id) {
+            this.isLoading = false;
+
+            this.fetchExcercise();
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: "Excercise deleted",
+                icon: "BellIcon",
+                variant: "success",
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry!",
+              variant: "danger",
+              text: `${error}`,
+            },
+          });
+        });
+
+      // this.excercies_and_sets.splice(index, 1);
     },
 
     AddExcercise(ex_data) {
