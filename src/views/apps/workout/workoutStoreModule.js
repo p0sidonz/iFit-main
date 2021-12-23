@@ -9,7 +9,7 @@ export default {
 
 
     deleteExcercise(ctx, id) {
-      console.log("delete excercise")
+      console.log("delete excercise",)
       return new Promise((resolve, reject) => {
         const token = localStorage.getItem("apollo-token");
         const freshTocken = token.replace(/['"]+/g, "");
@@ -17,7 +17,7 @@ export default {
           .post(
              process.env.VUE_APP_GRAPHQL_HTTP,
             {
-              query: `mutation MyMutation ($id: Int!){
+              query: `mutation MyMutation ($id: Int){
                 delete_Fitness_workout_exercise_by_pk(id: $id) {
                   id
                 }
