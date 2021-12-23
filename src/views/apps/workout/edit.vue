@@ -458,8 +458,8 @@ export default {
       store
         .dispatch("app-workout/deleteExcercise", data.id)
         .then((response) => {
-          console.log(response)
-          if (response.data.data.delete_Fitness_workout_exercise_by_pk.id) {
+          console.log(response.data.data.delete_Fitness_workout_exercise_by_pk)
+          if (response.data.data.delete_Fitness_workout_exercise_by_pk) {
             this.isLoading = false;
             this.fetchExcercise();
             this.$toast({
