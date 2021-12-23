@@ -2,7 +2,7 @@
   <b-card no-body>
     <b-card-body>
       <b-card-title>Currently Assigned Programs</b-card-title>
-      <div v-if="userData.length">
+      <div v-if="userData.program_assigned_clients.length">
         <app-collapse hover>
           <app-collapse-item
             v-for="program in userData.program_assigned_clients"
@@ -12,7 +12,7 @@
             <b-button
               :to="{
                 name: 'user-program-view',
-                params: { id: program.program_details.id, rid: userData.id },
+                params: { id: program.program_details.id },
               }"
               class="float-right"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -24,9 +24,18 @@
           </app-collapse-item>
         </app-collapse>
       </div>
+
       <div v-else>
-        <div class="text-center"> 
-        <small class="text-muted ">No program assigned yet </small> </div>
+        <div class="text-center">
+          <small class="text-muted"
+            >No program assigned yet
+            <b-nav align="center">
+              <b-nav-item :to="{ name: 'nutrition-list' }">
+                Add program
+              </b-nav-item>
+            </b-nav>
+          </small>
+        </div>
       </div>
     </b-card-body>
   </b-card>
@@ -41,6 +50,8 @@ import {
   BCardSubTitle,
   BFormCheckbox,
   BButton,
+  BNav,
+  BNavItem,
   BCardHeader,
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
@@ -59,6 +70,8 @@ export default {
     AppCollapseItem,
     BButton,
     BCardHeader,
+    BNav,
+    BNavItem,
   },
   directives: {
     Ripple,

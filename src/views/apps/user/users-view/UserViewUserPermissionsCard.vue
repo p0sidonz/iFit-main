@@ -2,7 +2,7 @@
   <b-card no-body>
     <b-card-body>
       <b-card-title>Currently Assigned Diets</b-card-title>
-      <div v-if="userData.length">
+      <div v-if="userData.diet_assigned_clients.length">
         <app-collapse hover>
           <app-collapse-item
             v-for="diets in userData.diet_assigned_clients"
@@ -28,7 +28,12 @@
       </div>
       <div v-else>
         <div class="text-center">
-          <small class="text-muted">No diet assigned yet </small>
+          <small class="text-muted"
+            >No diet assigned yet
+            <b-nav align="center">
+              <b-nav-item :to="{name: 'nutrition-list'}"> Add diet </b-nav-item>
+            </b-nav>
+          </small>
         </div>
       </div>
     </b-card-body>
@@ -45,6 +50,8 @@ import {
   BFormCheckbox,
   BButton,
   BCardHeader,
+  BNav,
+  BNavItem,
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
@@ -62,6 +69,8 @@ export default {
     AppCollapseItem,
     BButton,
     BCardHeader,
+    BNav,
+    BNavItem,
   },
   directives: {
     Ripple,

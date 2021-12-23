@@ -1,30 +1,40 @@
 <template>
   <b-card no-body>
     <b-card-body>
-
       <b-card-title>Currently Assigned Diets</b-card-title>
-<div v-if="userData.length">       <app-collapse hover>
-        <app-collapse-item
-          v-for="diets in userData.diet_assigned_clients"
-          :key="diets.id"
-          :title="diets.diet_details.diet_name"
-        >
-          {{ diets.diet_details.diet_description }}
-
-          <b-button
-          :to="{name: 'trainer-diet-view' , params: {id: diets.diet_details.id}}"
-            class="float-right"
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="primary"
-            size="sm"
+      <div v-if="userData.diet_assigned_clients.length">
+        <app-collapse hover>
+          <app-collapse-item
+            v-for="diets in userData.diet_assigned_clients"
+            :key="diets.id"
+            :title="diets.diet_details.diet_name"
           >
-            <span class="align-middle">View</span>
-          </b-button>
-        </app-collapse-item>
-      </app-collapse></div>
+            {{ diets.diet_details.diet_description }}
+
+            <b-button
+              :to="{
+                name: 'trainer-diet-view',
+                params: { id: diets.diet_details.id },
+              }"
+              class="float-right"
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="primary"
+              size="sm"
+            >
+              <span class="align-middle">View</span>
+            </b-button>
+          </app-collapse-item>
+        </app-collapse>
+      </div>
       <div v-else>
-        <div class="text-center"> 
-        <small class="text-muted ">No diet assigned yet </small> </div>
+        <div class="text-center">
+          <small class="text-muted"
+            >No diet assigned yet
+            <b-nav align="center">
+              <b-nav-item :to="{name: 'nutrition-list'}"> Add diet </b-nav-item>
+            </b-nav>
+          </small>
+        </div>
       </div>
     </b-card-body>
   </b-card>
@@ -39,7 +49,9 @@ import {
   BCardSubTitle,
   BFormCheckbox,
   BButton,
-  BCardHeader
+  BCardHeader,
+  BNav,
+  BNavItem,
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
@@ -56,7 +68,9 @@ export default {
     AppCollapse,
     AppCollapseItem,
     BButton,
-    BCardHeader
+    BCardHeader,
+    BNav,
+    BNavItem,
   },
   directives: {
     Ripple,

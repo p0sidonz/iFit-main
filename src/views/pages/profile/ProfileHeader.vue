@@ -562,7 +562,7 @@
           </p>
           <p class="text-center">
             Payment reciept has been sent to your registered email. Click
-            <b-badge href="/dashboard" pill variant="light-primary">
+            <b-badge href="/apps/trainers/list" pill variant="light-primary">
               here
             </b-badge>
             to visit the traning dashboard.
