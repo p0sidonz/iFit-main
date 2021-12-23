@@ -178,7 +178,7 @@
               <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">Edit</span>
             </b-dropdown-item>
-            <b-dropdown-item @click="confirmText(data.item.id)">
+            <!-- <b-dropdown-item @click="confirmText(data.item.id)">
               <feather-icon
                 @click="confirmText(data.item.id)"
                 icon="TrashIcon"
@@ -188,7 +188,7 @@
                 class="align-middle ml-50"
                 >Delete</span
               >
-            </b-dropdown-item>
+            </b-dropdown-item> -->
           </b-dropdown>
         </div>
       </template>
@@ -344,12 +344,12 @@
 
             <b-form-group
               label="Package Amount"
-              label-for="pkkg"
+              label-for="pkk2g"
               required
               class="mb-2"
             >
               <cleave
-                id="pkkg"
+                id="pkk2g"
                 v-model.number="createPackage.amount"
                 class="form-control"
                 :raw="false"
@@ -703,7 +703,6 @@ export default {
       CreateNewPackageModal: false,
       number: {
         numeral: true,
-        numeralThousandsGroupStyle: "thousand",
       },
 
       createPackage: {
@@ -747,6 +746,7 @@ export default {
           }
         })
         .catch((error) => {
+          console.log(error)
           this.$toast({
             component: ToastificationContent,
             props: {

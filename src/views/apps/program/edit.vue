@@ -32,7 +32,8 @@
 
               <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ programs.updated_at | moment("from", "now") }}</b-badge
+                  >Last Updated:
+                  {{ programs.updated_at | moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -58,20 +59,18 @@
       >
         <b-card-body>
           <div class="container">
-                          <div class="meetup-day">
-                <h6 class="mb-0">WEEK</h6>
-                <h3 class="mb-0">{{ week_index + 1 }}</h3>
-              </div>
+            <div class="meetup-day">
+              <h6 class="mb-0">WEEK</h6>
+              <h3 class="mb-0">{{ week_index + 1 }}</h3>
+            </div>
             <div class="row">
-
-
               <div
                 v-for="(days, day_index) in week.program_days"
                 :key="day_index"
                 class="col-sm"
               >
                 <div class="justify-content-around">
-                  <div class="bg-light-secondary position-relative  p-1">
+                  <div class="bg-light-secondary position-relative p-1">
                     <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
 
                     <div v-if="days.workout">
@@ -126,7 +125,6 @@
             </div>
           </div>
         </b-card-body>
-
 
         <template #footer>
           <b-button
@@ -433,6 +431,8 @@ export default {
       this.weeks_days.push(test);
     },
     removeWeek(week_index) {
+      this.isLoadingx = true;
+
       if (this.weeks_days[week_index].id) {
         this.$swal({
           title: "Are you sure?",
@@ -455,8 +455,8 @@ export default {
               .then((response) => {
                 console.log("DIET DELETE RESPONSE", response);
                 // totalInvoices.value = total
-              })
-              .then(
+                this.isLoadingx = false;
+
                 this.$swal({
                   icon: "success",
                   title: "Deleted!",
@@ -464,8 +464,9 @@ export default {
                   customClass: {
                     confirmButton: "btn btn-success",
                   },
-                })
-              );
+                });
+              });
+
             this.fetchExcercise();
           }
         });
@@ -644,7 +645,7 @@ export default {
     const { route, router } = useRouter();
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
     const fetchExcercise = () => {
-      console.log("hahah")
+      console.log("hahah");
       store
         .dispatch("app-program/getWorkout", {
           id: router.currentRoute.params.id,
@@ -681,8 +682,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
-
 .repeater-form {
   overflow: hidden;
   transition: 0.35s height;
