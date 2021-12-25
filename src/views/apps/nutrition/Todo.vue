@@ -1,159 +1,163 @@
 <template>
   <div>
-    <!-- Alert: No item found -->
-    <b-alert variant="danger" :show="tasks === undefined">
-      <h4 class="alert-heading">Error fetching Diet</h4>
-      <div class="alert-body">
-        Pleae hit back
-        <b-link class="alert-link" :to="{ name: 'apps-users-list' }">
-          User List
-        </b-link>
-        for other users.
-      </div>
-    </b-alert>
+    <div v-if="isLoading">
+      <b-spinner small class="mr-1" variant="primary" />
+    </div>
+    <div v-else>
+      <!-- Alert: No item found -->
+      <b-alert variant="danger" :show="tasks === undefined">
+        <h4 class="alert-heading">Error fetching Diet</h4>
+        <div class="alert-body">
+          Pleae hit back
+          <b-link class="alert-link" :to="{ name: 'apps-users-list' }">
+            User List
+          </b-link>
+          for other users.
+        </div>
+      </b-alert>
 
-    <template v-if="tasks">
-      <!-- First Row -->
-      <b-row cols="12">
-        <b-col cols="12">
-          <section id="diet">
-            <b-card
-              no-body
-              class="diet"
-              :style="{
-                backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
-              }"
-            >
-              <b-card-header>
-                <b-card-title></b-card-title>
+      <template v-if="tasks">
+        <!-- First Row -->
+        <b-row cols="12">
+          <b-col cols="12">
+            <section id="diet">
+              <b-card
+                no-body
+                class="diet"
+                :style="{
+                  backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
+                }"
+              >
+                <b-card-header>
+                  <b-card-title></b-card-title>
 
-                <b-dropdown variant="link" no-caret right toggle-class="p-0">
-                  <template #button-content>
-                    <feather-icon
-                      icon="MoreVerticalIcon"
-                      size="18"
-                      class="text-body cursor-pointer"
-                    />
-                  </template>
+                  <b-dropdown variant="link" no-caret right toggle-class="p-0">
+                    <template #button-content>
+                      <feather-icon
+                        icon="MoreVerticalIcon"
+                        size="18"
+                        class="text-body cursor-pointer"
+                      />
+                    </template>
 
-                  <b-dropdown-item href="#" @click="addTask(tasks.id)">
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="18"
-                      class="text-body cursor-pointer"
-                    />
-                    Add New Meal
-                  </b-dropdown-item>
+                    <b-dropdown-item href="#" @click="addTask(tasks.id)">
+                      <feather-icon
+                        icon="PlusIcon"
+                        size="18"
+                        class="text-body cursor-pointer"
+                      />
+                      Add New Meal
+                    </b-dropdown-item>
 
-                  <b-dropdown-item href="#">
-                    <feather-icon
-                      icon="EditIcon"
-                      size="18"
-                      class="text-body cursor-pointer"
-                    />
-                    Edit Meal
-                  </b-dropdown-item>
-                  <b-dropdown-item href="#">
-                    <feather-icon
-                      icon="XIcon"
-                      size="18"
-                      class="text-body cursor-pointer"
-                    />
-                    Delete Meal
-                  </b-dropdown-item>
-                </b-dropdown>
-              </b-card-header>
+                    <b-dropdown-item href="#">
+                      <feather-icon
+                        icon="EditIcon"
+                        size="18"
+                        class="text-body cursor-pointer"
+                      />
+                      Edit Meal
+                    </b-dropdown-item>
+                    <b-dropdown-item href="#">
+                      <feather-icon
+                        icon="XIcon"
+                        size="18"
+                        class="text-body cursor-pointer"
+                      />
+                      Delete Meal
+                    </b-dropdown-item>
+                  </b-dropdown>
+                </b-card-header>
 
-              <b-card-body class="text-center">
-                <h2 class="text-primary">
-                  {{ tasks.diet_name }}
-                </h2>
-                <b-card-text class="mb-2">
-                  {{ tasks.diet_description }}
-                </b-card-text>
-              </b-card-body>
-            </b-card>
+                <b-card-body class="text-center">
+                  <h2 class="text-primary">
+                    {{ tasks.diet_name }}
+                  </h2>
+                  <b-card-text class="mb-2">
+                    {{ tasks.diet_description }}
+                  </b-card-text>
+                </b-card-body>
+              </b-card>
 
-            <macros v-if="tasks" :macronutrients="tasks" @update-macronutrient="updateMicronutrient">
-            </macros>
+              <macros
+                v-if="tasks"
+                :macronutrients="tasks"
+                @update-macronutrient="updateMicronutrient"
+              >
+              </macros>
 
-            <b-card-actions
-              v-for="data in tasks.meals"
-              :key="data.index"
-              action-collapse
-              action-close
-              class="text-primary"
-              @close="removeMeal(data.id)"
-              :title="data.meal_title.toUpperCase()"
-            >
-            
-              <!-- <b-card-title class="mt-1 mb-75">
+              <b-card-actions
+                v-for="data in tasks.meals"
+                :key="data.index"
+                action-collapse
+                action-close
+                class="text-primary"
+                @close="removeMeal(data.id)"
+                :title="data.meal_title.toUpperCase()"
+              >
+                <!-- <b-card-title class="mt-1 mb-75">
                 {{ data.meal_title.toUpperCase() }}
 
       </b-card-title> -->
 
-              <b-row>
-                <!-- User Info: Left col -->
-                <b-col
-                  cols="21"
-                  xl="12"
-                  class="d-flex justify-content-between flex-column"
-                >
-
-                  <!-- User Avatar & Action Buttons -->
-                  <b-table
-                    responsive
-                    :items="data.FoodLists"
-                    :fields="fields"
-                    v-model="visibleRows"
-                    class="mb-0"
+                <b-row>
+                  <!-- User Info: Left col -->
+                  <b-col
+                    cols="21"
+                    xl="12"
+                    class="d-flex justify-content-between flex-column"
                   >
-
-                  
-                    <!-- Optional default data cell scoped slot -->
-                    <template #cell(action)="data">
-                      <b-dropdown
-                        variant="link"
-                        toggle-class="text-decoration-none"
-                        no-caret
-                      >
-                        <template v-slot:button-content>
-                          <feather-icon
-                            icon="MoreVerticalIcon"
-                            size="16"
-                            class="text-body align-middle mr-25"
-                          />
-                        </template>
-                        <b-dropdown-item @click="handleTaskClick(data.item)">
-                          <feather-icon icon="Edit2Icon" class="mr-50" />
-                          <span>Edit</span>
-                        </b-dropdown-item>
-                        <b-dropdown-item
-                          @click="removeSingleFood(data.item.id)"
+                    <!-- User Avatar & Action Buttons -->
+                    <b-table
+                      responsive
+                      :items="data.FoodLists"
+                      :fields="fields"
+                      v-model="visibleRows"
+                      class="mb-0"
+                    >
+                      <!-- Optional default data cell scoped slot -->
+                      <template #cell(action)="data">
+                        <b-dropdown
+                          variant="link"
+                          toggle-class="text-decoration-none"
+                          no-caret
                         >
-                          <feather-icon icon="TrashIcon" class="mr-50" />
-                          <span>Delete</span>
-                        </b-dropdown-item>
-                      </b-dropdown>
-                    </template>
-                  </b-table>
-                  <b-card-footer> </b-card-footer>
-                  <b-button
-                    variant="outline-primary"
-                    @click="addFood(data.id)"
-                    :task="data"
-                  >
-                    Add Food
-                  </b-button>
+                          <template v-slot:button-content>
+                            <feather-icon
+                              icon="MoreVerticalIcon"
+                              size="16"
+                              class="text-body align-middle mr-25"
+                            />
+                          </template>
+                          <b-dropdown-item @click="handleTaskClick(data.item)">
+                            <feather-icon icon="Edit2Icon" class="mr-50" />
+                            <span>Edit</span>
+                          </b-dropdown-item>
+                          <b-dropdown-item
+                            @click="removeSingleFood(data.item.id)"
+                          >
+                            <feather-icon icon="TrashIcon" class="mr-50" />
+                            <span>Delete</span>
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </template>
+                    </b-table>
+                    <b-card-footer> </b-card-footer>
+                    <b-button
+                      variant="outline-primary"
+                      @click="addFood(data.id)"
+                      :task="data"
+                    >
+                      Add Food
+                    </b-button>
 
-                  <!-- User Stats -->
-                </b-col>
-              </b-row>
-            </b-card-actions>
-          </section>
-        </b-col>
-      </b-row>
-      <!-- 
+                    <!-- User Stats -->
+                  </b-col>
+                </b-row>
+              </b-card-actions>
+            </section>
+          </b-col>
+        </b-row>
+        <!-- 
       <b-row>
         <b-col cols="12" lg="6">
           <user-view-user-timeline-card />
@@ -162,46 +166,128 @@
           <user-view-user-permissions-card :user-data="dietData" />
         </b-col>
       </b-row> -->
-    </template>
+      </template>
 
-
-         <b-card >
-
-          <!-- Bar Chart - Orders -->
+      <b-card>
+        <!-- Bar Chart - Orders -->
         <div class="d-flex justify-content-center flex-wrap">
-          <div class="text-center colors-container bg-gradient-primary rounded text-white width-150 height-50 d-flex align-items-center justify-content-center mr-1 ml-50 my-1 shadow">
-            <span>Total Calories {{xTotal.calories || 0}}</span>
+          <div
+            class="
+              text-center
+              colors-container
+              bg-gradient-primary
+              rounded
+              text-white
+              width-150
+              height-50
+              d-flex
+              align-items-center
+              justify-content-center
+              mr-1
+              ml-50
+              my-1
+              shadow
+            "
+          >
+            <span>Total Calories {{ xTotal.calories || 0 }}</span>
           </div>
-          <div class="text-center colors-container bg-gradient-secondary rounded text-white width-150 height-50 d-flex align-items-center justify-content-center mr-1 ml-50 my-1 shadow">
-            <span>Total Protein {{xTotal.protein || 0}}</span>
+          <div
+            class="
+              text-center
+              colors-container
+              bg-gradient-secondary
+              rounded
+              text-white
+              width-150
+              height-50
+              d-flex
+              align-items-center
+              justify-content-center
+              mr-1
+              ml-50
+              my-1
+              shadow
+            "
+          >
+            <span>Total Protein {{ xTotal.protein || 0 }}</span>
           </div>
-          <div class="text-center colors-container bg-gradient-success rounded text-white width-150 height-50 d-flex align-items-center justify-content-center mr-1 ml-50 my-1 shadow">
-            <span>Total Carbs {{xTotal.carbs || 0}}</span>
+          <div
+            class="
+              text-center
+              colors-container
+              bg-gradient-success
+              rounded
+              text-white
+              width-150
+              height-50
+              d-flex
+              align-items-center
+              justify-content-center
+              mr-1
+              ml-50
+              my-1
+              shadow
+            "
+          >
+            <span>Total Carbs {{ xTotal.carbs || 0 }}</span>
           </div>
-          <div class="text-center colors-container bg-gradient-warning rounded text-white width-150 height-50 d-flex align-items-center justify-content-center mr-1 ml-50 my-1 shadow">
-            <span>Total Fat {{xTotal.fat ||0}}</span>
+          <div
+            class="
+              text-center
+              colors-container
+              bg-gradient-warning
+              rounded
+              text-white
+              width-150
+              height-50
+              d-flex
+              align-items-center
+              justify-content-center
+              mr-1
+              ml-50
+              my-1
+              shadow
+            "
+          >
+            <span>Total Fat {{ xTotal.fat || 0 }}</span>
           </div>
-          <div class="text-center colors-container bg-gradient-danger rounded text-white width-150 height-50 d-flex align-items-center justify-content-center mr-1 ml-50 my-1 shadow">
-            <span>Total Fibers {{xTotal.fiber || 0}}</span>
+          <div
+            class="
+              text-center
+              colors-container
+              bg-gradient-danger
+              rounded
+              text-white
+              width-150
+              height-50
+              d-flex
+              align-items-center
+              justify-content-center
+              mr-1
+              ml-50
+              my-1
+              shadow
+            "
+          >
+            <span>Total Fibers {{ xTotal.fiber || 0 }}</span>
           </div>
         </div>
-
-
-                  </b-card>
+      </b-card>
 
       <!-- append and pepend -->
 
-    <!-- Task Handler -->
+      <!-- Task Handler -->
 
-    <todo-task-handler-sidebar
-      v-model="isTaskHandlerSidebarActive"
-      :task="task"
-      :clear-task-data="clearTaskData"
-      @remove-task="removeTask"
-      @add-task="addTask"
-      @add-foods="addFoods"
-      @update-task="updateTask"
-    />
+      <todo-task-handler-sidebar
+        v-model="isTaskHandlerSidebarActive"
+        :task="task"
+        :clear-task-data="clearTaskData"
+        @remove-task="removeTask"
+        @add-task="addTask"
+        @add-foods="addFoods"
+        @update-task="updateTask"
+      />
+    </div>
   </div>
 </template>
 
@@ -231,6 +317,7 @@ import {
   BBadge,
   BCardFooter,
   BModal,
+  BSpinner,
 } from "bootstrap-vue";
 
 import macros from "./macros.vue";
@@ -278,7 +365,7 @@ export default {
     TodoLeftSidebar,
     TodoTaskHandlerSidebar,
     macros,
-    
+    BSpinner
   },
 
   data() {
@@ -305,29 +392,24 @@ export default {
   },
 
   computed: {
-
-      xTotal: function () {
-        let MealsTotal = {}
-          this.tasks.meals.forEach((el) => {
-          el.FoodLists.forEach((a) => {
-          MealsTotal['calories'] = (MealsTotal['calories'] || 0) + a.calories;
+    xTotal: function () {
+      let MealsTotal = {};
+      this.tasks.meals.forEach((el) => {
+        el.FoodLists.forEach((a) => {
+          MealsTotal["calories"] = (MealsTotal["calories"] || 0) + a.calories;
           MealsTotal["protein"] = (MealsTotal["protein"] || 0) + a.protein;
           MealsTotal["fat"] = (MealsTotal["fat"] || 0) + a.fat;
           MealsTotal["carbs"] = (MealsTotal["carbs"] || 0) + a.carbohydrate;
           MealsTotal["fiber"] = (MealsTotal["fiber"] || 0) + a.fiber;
         });
-      }
-     
-      );
-       return MealsTotal
-    }
-
-
+      });
+      return MealsTotal;
+    },
   },
 
   setup() {
     const TODO_APP_STORE_MODULE_NAME = "app-todo";
-
+    const isLoading = ref(false)
     // Register module
     if (!store.hasModule(TODO_APP_STORE_MODULE_NAME))
       store.registerModule(TODO_APP_STORE_MODULE_NAME, todoStoreModule);
@@ -441,10 +523,9 @@ export default {
 
     const updateMicronutrient = (val) => {
       store.dispatch("app-todo/updateMicronutrient", { val }).then(() => {
-
-       // fetchTasks();
+        // fetchTasks();
       });
-    }
+    };
 
     const perfectScrollbarSettings = {
       maxScrollbarLength: 150,
@@ -516,16 +597,17 @@ export default {
     };
 
     const fetchTasks = () => {
+      isLoading.value = true
       store
         .dispatch("app-todo/fetchTasks", { id: router.currentRoute.params.id })
         .then((response) => {
+          isLoading.value = false
           tasks.value = response.data.data.Fitness_Diet_by_pk;
         });
     };
 
-
     fetchTasks();
- 
+
     const handleTaskClick = (taskData) => {
       task.value = taskData;
       isTaskHandlerSidebarActive.value = true;
@@ -539,8 +621,6 @@ export default {
     };
 
     const { mqShallShowLeftSidebar } = useResponsiveAppLeftSidebarVisibility();
-
-
 
     // tt();
 
@@ -581,15 +661,14 @@ export default {
       //FOOD
       mealid,
       totalCounter,
-      updateMicronutrient
+      updateMicronutrient,
+      isLoading
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
-
 .draggable-task-handle {
   position: absolute;
   left: 8px;

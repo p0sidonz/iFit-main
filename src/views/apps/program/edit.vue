@@ -1,5 +1,10 @@
 <template>
   <div>
+        <div v-if="isLoading">
+      <b-spinner small class="mr-1" variant="primary" />
+    </div>
+      <div v-else>
+  
     <b-alert variant="danger" :show="!programs">
       <h4 class="alert-heading">Error fetching Programs</h4>
       <div class="alert-body">
@@ -255,6 +260,7 @@
         </b-col>
       </b-row>
     </template>
+     </div>
   </div>
 </template>
 
@@ -631,6 +637,8 @@ export default {
   },
   setup() {
     const toast = useToast();
+        const isLoading = ref(false)
+
     const TODO_APP_STORE_MODULE_NAME = "app-program";
     const programs = ref({});
     const weeks_days = ref([]);
@@ -645,19 +653,25 @@ export default {
     const { route, router } = useRouter();
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
     const fetchExcercise = () => {
+      isLoading.value = true
       console.log("hahah");
       store
         .dispatch("app-program/getWorkout", {
           id: router.currentRoute.params.id,
         })
         .then((response) => {
+           isLoading.value = false
           console.log("GET Programs", response.data.data.Fitness_program_by_pk);
           programs.value = response.data.data.Fitness_program_by_pk;
           weeks_days.value =
             response.data.data.Fitness_program_by_pk.workout_weeks;
+            
         })
         .catch((error) => {
+                   isLoading.value = false
+
           toast({
+            
             component: ToastificationContent,
             props: {
               title: error,
@@ -677,6 +691,7 @@ export default {
       statusOptions,
       weeks_days,
       printInvoice,
+      isLoading
     };
   },
 };
