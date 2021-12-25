@@ -145,7 +145,7 @@ export default {
                   trainer_list_arr{
                     id
                     status
-                    user_subscriptions{
+                    user_subscriptions(where: {is_expired: {_eq: true}}){
                       start_date
                       end_date
                       trainer_package{
