@@ -178,7 +178,7 @@
               <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">Edit</span>
             </b-dropdown-item>
-            <!-- <b-dropdown-item @click="confirmText(data.item.id)">
+            <b-dropdown-item @click="confirmText(data.item.id)">
               <feather-icon
                 @click="confirmText(data.item.id)"
                 icon="TrashIcon"
@@ -188,7 +188,7 @@
                 class="align-middle ml-50"
                 >Delete</span
               >
-            </b-dropdown-item> -->
+            </b-dropdown-item>
           </b-dropdown>
         </div>
       </template>

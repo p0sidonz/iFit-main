@@ -30,9 +30,6 @@
         <div class="text-center">
           <small class="text-muted"
             >No diet assigned yet
-            <b-nav align="center">
-              <b-nav-item :to="{name: 'nutrition-list'}"> Add diet </b-nav-item>
-            </b-nav>
           </small>
         </div>
       </div>

@@ -6,6 +6,38 @@ export default {
   getters: {},
   mutations: {},
   actions: {
+
+
+    deletePackages(ctx, id) {
+      return new Promise((resolve, reject) => {
+        const token = localStorage.getItem("apollo-token");
+        const freshTocken = token.replace(/['"]+/g, "");
+        axios
+          .post(
+             process.env.VUE_APP_GRAPHQL_HTTP,
+            {
+              query: `mutation MyMutation ($id: Int!){
+                delete_Fitness_program_by_pk(id: $id) {
+                  id
+                }
+              }
+              `,
+              variables: {
+                id: id,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+
     saveExcercise(ctx, context) {
       // console.log("context", context)
       let test = context.data.filter((item, items) => {
@@ -19,7 +51,7 @@ export default {
 
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($objects: [Fitness_workout_exercise_insert_input!] = {}) {
                 insert_Fitness_workout_exercise(objects: $objects, on_conflict: {constraint: workout_exercise_pkey, update_columns: json_sets}) {
@@ -52,7 +84,7 @@ export default {
 
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($exercise_id: Int!, $workout_id: Int!) {
                 insert_Fitness_workout_exercise_one(object: {workout_id: $workout_id, exercise_id: $exercise_id}) {
@@ -89,7 +121,7 @@ export default {
         };
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_exercise_bool_exp = {}) {
                 Fitness_exercise(where: $where){
@@ -118,6 +150,7 @@ export default {
 
 
     updatePackage(ctx, payload) {
+      console.log(payload)
       let amount = payload.data.amount.replace(/,/g, '');
         console.log(amount)
       return new Promise((resolve, reject) => {
@@ -125,7 +158,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation updatePackage($id: Int!, $title: String!, 
                 $amount: numeric!, $currency: String!, $description: String!,
@@ -176,7 +209,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($title: String!, $description: String!, $status: String!, $subscription_days: Int!, $amount: numeric!, $currency: String!) {
                 insert_Fitness_trainer_package_one(object: {title: $title, description: $description, amount: $amount, status: $status, subscription_days: $subscription_days, currency: $currency}) {
@@ -217,7 +250,7 @@ export default {
         };
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery($where: Fitness_trainer_package_bool_exp = {}) {
                 Fitness_trainer_package(where: $where) {
@@ -255,7 +288,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_trainer_package_by_pk(id: $id){
@@ -302,7 +335,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!){
                 Fitness_trainer_package_by_pk(id: $id){
@@ -348,7 +381,7 @@ export default {
         const freshTocken = token.replace(/['"]+/g, "");
         axios
           .post(
-           process.env.VUE_APP_GRAPHQL_HTTP,
+             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation($title: String!, $description: String!, $status: String!, $subscription_days: Int!, $amount: numeric!, $currency: String!) {
                 insert_Fitness_trainer_package_one(object: {title: $title, description: $description, amount: $amount, status: $status, subscription_days: $subscription_days, currency: $currency}) {
