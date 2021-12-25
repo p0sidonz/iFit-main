@@ -58,7 +58,7 @@
     </b-tab>
   </b-tabs>
   <div v-else>
-              <b-spinner small class="mr-1" variant="light" />
+              <b-spinner small class="mr-1" variant="primary" />
 
      </div>
 </template>
