@@ -1,14 +1,19 @@
 <template>
-  <div id="user-profile">
-    <profile-header :header-data="profileData" @refresh-data="ok" />
-    <section id="profile-info">
-      <profile-post />
-    </section>
+  <div>
+    <div v-if="isLoading">
+      <b-spinner small class="mr-1" variant="primary" />
+    </div>
+    <div v-else id="user-profile">
+      <profile-header :header-data="profileData" @refresh-data="ok" />
+      <section id="profile-info">
+        <profile-post />
+      </section>
+    </div>
   </div>
 </template>
 
 <script>
-import { BRow, BCol } from "bootstrap-vue";
+import { BRow, BCol, BSpinner } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
 import ProfilePost from "./ProfilePost.vue";
 
@@ -21,6 +26,7 @@ export default {
     BCol,
     ProfileHeader,
     ProfilePost,
+    BSpinner,
   },
   data() {
     return {
@@ -28,6 +34,7 @@ export default {
       username: null,
       refreshkey: 0,
       postID: null,
+      isLoading: false,
     };
   },
 
@@ -40,6 +47,7 @@ export default {
       this.refreshkey += 1;
     },
     async refetchProfile(ReUsername) {
+      this.isLoading = true;
       console.log("testing if this is even triggering", ReUsername);
       try {
         const newProfile = await this.$apollo.query({
@@ -83,15 +91,21 @@ export default {
           this.$router.push("/error-404");
         }
         if (newProfile.data.Fitness_User.length) {
+          this.isLoading = false;
+
           this.profileData = newProfile.data.Fitness_User[0];
         }
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
   },
 
   async created() {
+    this.isLoading = true;
+
     let tempUsername = this.$route.params.username;
     try {
       const data = await this.$apollo.query({
@@ -140,11 +154,15 @@ export default {
         this.$router.push("/error-404");
       }
       if (data.data.Fitness_User.length) {
+        this.isLoading = false;
+
         this.profileData = data.data.Fitness_User[0];
       }
 
       console.log("created", this.profileData);
     } catch (error) {
+      this.isLoading = false;
+
       console.log(error);
     }
 
@@ -165,5 +183,5 @@ export default {
 </script>
 
 <style lang="scss" >
-@import "@core/scss/vue/pages/page-profile.scss";
+// @import "@core/scss/vue/pages/page-profile.scss";
 </style>
