@@ -154,15 +154,19 @@
                 variant="primary"
                 block
                 type="submit"
-                :disabled="invalid"
+                :disabled="invalid || isloading"
+                :class="isloading ? 'hidden' : ''"
               >
-                <div v-if="isloading">
+                <div v-if="!isloading">
+                  <span> Sign up</span>
+                </div>
+              </b-button>
+
+              <b-button v-if="isloading" variant="primary" disabled block>
+                <div>
                   <b-spinner small />
 
                   <span class="sr-only">Loading...</span>
-                </div>
-                <div v-if="!isloading">
-                  <span> Sign up</span>
                 </div>
               </b-button>
             </b-form>

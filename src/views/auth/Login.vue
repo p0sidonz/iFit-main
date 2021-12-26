@@ -97,38 +97,45 @@
                   Remember Me
                 </b-form-checkbox>
               </b-form-group>
-
               <!-- submit buttons -->
-              <b-button type="submit" variant="primary" block @click="login">
-                <div v-if="isloading">
+              <b-button
+                type="submit"
+                variant="primary"
+                block
+                @click="login"
+                :disabled="invalid || isloading"
+                :class="isloading ? 'hidden' : ''"
+              >
+                <div v-if="!isloading">
+                  <span> Sign In</span>
+                </div>
+              </b-button>
+              <b-button v-if="isloading" variant="primary" disabled block>
+                <div>
                   <b-spinner small />
 
                   <span class="sr-only">Loading...</span>
-                </div>
-                <div v-if="!isloading">
-                  <span> Sign In</span>
                 </div>
               </b-button>
             </b-form>
           </validation-observer>
 
-         
-<b-card-text  class="text-center mt-1">  <span>Or </span></b-card-text>
-<!-- 
+          <b-card-text class="text-center mt-1"> <span>Or </span></b-card-text>
+          <!-- 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
             <b-link :to="{ name: 'page-auth-register-v2' }">
               <span>&nbsp;Create an account</span>
             </b-link>
           </b-card-text> -->
-              <b-button
-                type="submit"
-                variant="outline-primary"
-                block
-                :to="{ name: 'register' }"
-              >
-              Create an account 
-              </b-button>
+          <b-button
+            type="submit"
+            variant="outline-primary"
+            block
+            :to="{ name: 'register' }"
+          >
+            Create an account
+          </b-button>
           <!-- social buttons -->
         </b-col>
       </b-col>
@@ -164,7 +171,7 @@ import ToastificationContent from "@core/components/toastification/Toastificatio
 import gql from "graphql-tag";
 import { data } from "vue-echarts";
 import jwt from "jsonwebtoken";
-import { getHomeRouteForLoggedInUser } from '@/auth/utils'
+import { getHomeRouteForLoggedInUser } from "@/auth/utils";
 
 // import LOGIN_MUTATION from '../graphql/auth.gql'
 
@@ -260,8 +267,8 @@ export default {
           );
 
           // Update when logged in
-         
-          this.$store.dispatch('loginState', response)
+
+          this.$store.dispatch("loginState", response);
 
           localStorage.setItem("userInfo", JSON.stringify(response));
           // if (response.role === "trainer") {
@@ -271,7 +278,7 @@ export default {
           //               this.$router.replace({ path: `/user/${response.username}` });
 
           // }
-              this.$router.replace(getHomeRouteForLoggedInUser(response.role))
+          this.$router.replace(getHomeRouteForLoggedInUser(response.role));
 
           this.isloading = false;
           this.$toast({
