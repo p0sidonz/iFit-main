@@ -268,7 +268,6 @@ export default {
             postId: postId,
           },
         });
-        this.item.youLiked = false;
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
         console.log(error);
@@ -290,7 +289,6 @@ export default {
             postId: postId,
           },
         });
-        this.item.youLiked = true;
         // location.reload();
         // this.$emit("refresh");
         // this.$apollo.queries.Fitness_Posts.refetch();
@@ -299,6 +297,7 @@ export default {
       }
     },
     async addNewComment(postId) {
+      this.post_offset = 0
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
@@ -307,12 +306,6 @@ export default {
                 object: { postId: $postId, text: $text }
               ) {
                 id
-                text
-                owner {
-                  username
-                  avatar
-                  id
-                }
               }
             }
           `,
@@ -321,8 +314,6 @@ export default {
             postId: postId,
           },
         });
-        this.item.comments.push(data.data.insert_Fitness_postComment_one);
-
         // location.reload();
         // this.$emit("refresh");
         this.AddNewCommentData.text = null;

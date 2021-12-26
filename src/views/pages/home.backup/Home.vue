@@ -9,19 +9,19 @@
           <card-download-app />
         </b-col>
         <!--/ about suggested page and twitter feed -->
+
         <!-- post -->
         <b-col lg="6" cols="12" order="1" order-lg="2">
           <!-- <profile-post /> -->
-          <div v-if="Fitness_Posts.length">
+          <div>
             <post-component
-              v-for="(item, index) in Fitness_Posts"
+              v-for="(item, index) in posts"
               v-bind:item="item"
               v-bind:index="index"
               v-bind:key="item.id"
               :posts="item"
             />
           </div>
-          <div v-else>Loading...</div>
         </b-col>
 
         <!-- <b-col lg="6" order="2" >
@@ -34,7 +34,6 @@
 
         <!--/ load more  -->
       </b-row>
-      <feed-bottom @feedcount="loadMore" />
     </section>
     <!--/ profile info  -->
   </div>
@@ -49,8 +48,6 @@ import CardAdvanceMeetup from "./CardAdvanceMeetup.vue";
 import CardDownloadApp from "./CardDownloadApp.vue";
 import gql from "graphql-tag";
 import PostComponent from "./postComponent.vue";
-import FeedBottom from "./feedBottom.vue";
-import { GET_FEED, GET_POST_BY_ID } from "@/queries/";
 
 export default {
   components: {
@@ -65,13 +62,10 @@ export default {
     CardAdvanceMeetup,
     CardDownloadApp,
     PostComponent,
-    FeedBottom,
   },
   data() {
     return {
       posts: [],
-      offset: 0,
-      Fitness_Posts: [],
     };
   },
 
@@ -81,11 +75,10 @@ export default {
       // When a tag is added
       posts: {
         query: gql`
-          subscription notifyNewPosts($userId: Int!, $offset: Int) {
+          subscription notifyNewPosts($userId: Int!) {
             Fitness_Posts(
               order_by: { created_at: desc }
-              limit: 2
-              offset: $offset
+              limit: 10
               where: {
                 _or: [
                   { author: { Follow: { following_id: { _eq: $userId } } } }
@@ -136,68 +129,20 @@ export default {
         variables() {
           return {
             userId: 18,
-            offset: this.offset,
           };
         },
         // Result hook
-        result({ data }) {
-          if (this.offset === 0) {
-            this.posts = data.Fitness_Posts;
-          }
-          if (this.offset != 0) {
-            this.posts.push(...data.Fitness_Posts);
-          }
+        result(data) {
+          console.log(data);
+          this.posts = data.data.Fitness_Posts;
         },
         // Skip the subscription
-        skip() {
-          return this.skipSubscription;
-        },
+        // skip() {
+        //   return this.skipSubscription;
+        // },
       },
     },
-
-    // Fitness_Posts: {
-    //   query: GET_FEED,
-    //   variables() {
-    //     return {
-    //       userId: 18,
-    //       offset: this.offset,
-    //     };
-    //   },
-    // },
-
     // Polling interval in milliseconds
-  },
-
-  methods: {
-    async loadFeed() {
-      try {
-        const result = await this.$apollo.query({
-          query: GET_FEED,
-          variables: {
-            userId: 18,
-            offset: this.offset,
-          },
-        });
-        console.log(result);
-        if (this.offset === 0) {
-          this.Fitness_Posts = result.data.Fitness_Posts;
-        }
-        if (this.offset != 0) {
-          this.Fitness_Posts.push(...result.data.Fitness_Posts);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    loadMore() {
-      console.log("ok");
-      this.offset = this.offset + 2;
-      this.loadFeed();
-    },
-  },
-  created() {
-    this.loadFeed();
   },
 };
 </script>
