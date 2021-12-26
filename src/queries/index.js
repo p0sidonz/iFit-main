@@ -1,5 +1,16 @@
 import gql from "graphql-tag";
 
+export const GET_NEW_USERS = gql`
+  query NewMembers {
+    Fitness_User(order_by: { created_at: desc }, limit: 5) {
+      id
+      fullname
+      avatar
+      username
+      is_follow
+    }
+  }
+`;
 
 export const GET_MEDICAL_INFO = gql`
 query MyQuery($id: Int!) {

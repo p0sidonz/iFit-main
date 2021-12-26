@@ -22,7 +22,7 @@ const router = new VueRouter({
     {
       path: "/",
       name: "home",
-      component: () => import("@/views/Home.vue"),
+      component: () => import("@/views/pages/home/Home.vue"),
       meta: {
         requiresAuth: true,
         role: ["user", "trainer"],
