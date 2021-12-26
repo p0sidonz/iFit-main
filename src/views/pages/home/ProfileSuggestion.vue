@@ -73,6 +73,9 @@ export default {
       suggestions: [],
     };
   },
+
+
+    
   // props: {
   //   suggestions: {
   //     type: Array,

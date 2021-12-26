@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div v-if="isLoading">
+    <!-- <div v-if="isLoading">
       <b-spinner small class="mr-1" variant="primary" />
-    </div>
-    <div v-else>
-      <div v-if="!posts.length">No posts to show</div>
-      <div v-else v-for="(data, index) in posts" :key="data.id">
+    </div> -->
+    <div>
+      <!-- <div v-if="!posts.length">No posts to show</div> -->
+      <div>
         <b-card class="ml-25">
           <div class="d-flex justify-content-start align-items-center mb-1">
             <!-- avatar -->
             <b-avatar
               :to="{
                 name: 'profile',
-                params: { username: data.author.username },
+                params: { username: item.author.username },
               }"
               size="50"
               class="mr-1"
-              :src="data.author.avatar"
+              :src="item.author.avatar"
             />
             <!--/ avatar -->
             <div class="profile-user-info">
@@ -24,35 +24,35 @@
                 <router-link
                   :to="{
                     name: 'profile',
-                    params: { username: data.author.username },
+                    params: { username: item.author.username },
                   }"
                 >
-                  {{ data.author.username }}
+                  {{ item.author.username }}
                 </router-link>
               </h6>
               <small class="text-muted"
-                >{{ data.created_at | moment("from", "now") }}
+                >{{ item.created_at | moment("from", "now") }}
               </small>
             </div>
           </div>
           <b-card-text>
-            {{ data.content }}
+            {{ item.content }}
           </b-card-text>
 
           <!-- post img -->
           <b-img
-            v-if="data.photo"
+            v-if="item.photo"
             fluid
             rounded
             class="mb-25"
-            :src="data.photo"
+            :src="item.photo"
           />
           <!--/ post img -->
           <!-- post video -->
           <b-embed
-            v-if="data.postVid"
+            v-if="item.postVid"
             type="iframe"
-            :src="data.postVid"
+            :src="item.postVid"
             allowfullscreen
             class="rounded mb-50"
           />
@@ -68,17 +68,17 @@
               "
             >
               <b-link class="d-flex align-items-center text-muted text-nowrap">
-                <div @click="unlike(data.id)">
+                <div @click="unlike(item.id)">
                   <Icon
-                    v-if="data.youLiked"
+                    v-if="item.youLiked"
                     icon="ant-design:heart-filled"
                     style="font-size: 32px"
                     color="red"
                   />
                 </div>
-                <div @click="addnewliketoPost(data.id)">
+                <div @click="addnewliketoPost(item.id)">
                   <Icon
-                    v-if="!data.youLiked"
+                    v-if="!item.youLiked"
                     icon="akar-icons:heart"
                     style="font-size: 32px"
                   />
@@ -87,7 +87,7 @@
               <div class="d-flex align-item-center">
                 <b-avatar-group size="26" class="ml-1">
                   <b-avatar
-                    v-for="(avatarData, i) in data.likedby"
+                    v-for="(avatarData, i) in item.likedby"
                     :key="i"
                     v-b-tooltip.hover.bottom="avatarData.authorOBJ.username"
                     class="pull-up"
@@ -95,9 +95,9 @@
                   />
                 </b-avatar-group>
                 <b-link
-                  v-if="data.likedby_aggregate.aggregate.count"
+                  v-if="item.likedby_aggregate.aggregate.count"
                   class="text-muted text-nowrap mt-50 ml-50"
-                  >{{ data.likedby_aggregate.aggregate.count }} Likes</b-link
+                  >{{ item.likedby_aggregate.aggregate.count }} Likes</b-link
                 >
               </div>
             </b-col>
@@ -112,7 +112,7 @@
             >
               <b-link
                 class="text-body text-nowrap"
-                v-if="data.comments_aggregate.aggregate.count > 3"
+                v-if="item.comments_aggregate.aggregate.count > 3"
               >
                 <feather-icon
                   icon="MessageSquareIcon"
@@ -122,7 +122,7 @@
 
                 <span class="text-muted mr-1">
                   View
-                  {{ kFormatter(data.comments_aggregate.aggregate.count) }}
+                  {{ kFormatter(item.comments_aggregate.aggregate.count) }}
                   Comments</span
                 >
               </b-link>
@@ -139,7 +139,7 @@
           </b-row>
           <!-- comments -->
           <div
-            v-for="commentx in data.comments"
+            v-for="commentx in item.comments"
             :key="commentx.id"
             class="d-flex align-items-start mb-1"
           >
@@ -166,14 +166,18 @@
           </div>
           <!--/ comments -->
           <div
-            v-if="data.comments_aggregate.aggregate.count > 3"
+            v-if="item.comments_aggregate.aggregate.count > 3"
             class="text-center mb-2"
           >
+            <b-button v-if="isLoading" variant="primary" disabled class="mr-1">
+              <b-spinner small type="grow" />
+            </b-button>
             <b-button
+              v-else
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               variant="primary"
               size="sm"
-              @click="loadMoreComment(data.id, index)"
+              @click="loadMoreComment(item.id)"
             >
               Load More
             </b-button>
@@ -191,7 +195,7 @@
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             size="sm"
             variant="primary"
-            @click="addNewComment(data.id)"
+            @click="addNewComment(item.id)"
           >
             Add a comment
           </b-button>
@@ -240,82 +244,6 @@ export default {
     BSpinner,
     BRow,
     Icon,
-  },
-
-  apollo: {
-    // Subscriptions
-    $subscribe: {
-      // When a tag is added
-      posts: {
-        query: gql`
-          subscription notifyNewPosts($userId: Int!) {
-            Fitness_Posts(
-              order_by: { created_at: desc }
-              limit: 10
-              where: {
-                _or: [
-                  { author: { Follow: { following_id: { _eq: $userId } } } }
-                  { userId: { _neq: $userId } }
-                ]
-              }
-            ) {
-              id
-              content
-              photo
-              created_at
-              youLiked
-              author {
-                username
-                id
-                avatar
-              }
-              likedby_aggregate {
-                aggregate {
-                  count
-                }
-              }
-              likedby {
-                authorOBJ {
-                  id
-                  username
-                  avatar
-                }
-              }
-              comments_aggregate {
-                aggregate {
-                  count
-                }
-              }
-              comments(limit: 3, order_by: { created_at: desc }) {
-                id
-                text
-                owner {
-                  username
-                  avatar
-                  id
-                }
-              }
-            }
-          }
-        `,
-        // Reactive variables
-        variables() {
-          return {
-            userId: 18,
-          };
-        },
-        // Result hook
-        result(data) {
-          console.log(data);
-          this.posts = data.data.Fitness_Posts;
-        },
-        // Skip the subscription
-        // skip() {
-        //   return this.skipSubscription;
-        // },
-      },
-    },
-    // Polling interval in milliseconds
   },
 
   directives: {
@@ -395,8 +323,9 @@ export default {
       }
     },
 
-    async loadMoreComment(post_id, index) {
-      console.log(post_id, index);
+    async loadMoreComment(post_id) {
+      this.isLoading = true;
+      console.log(post_id);
       this.post_offset = this.post_offset + 3;
 
       try {
@@ -426,25 +355,33 @@ export default {
             post_id: post_id,
           },
         });
-
-        console.log(data);
-        console.log(
-          this.posts[index].comments.push(
-            ...data.data.Fitness_Posts_by_pk.comments
-          )
-        );
+        this.isLoading = false;
+        this.item.comments.push(...data.data.Fitness_Posts_by_pk.comments);
+        // console.log(
+        //   this.posts[index].comments.push(
+        //     ...item.item.Fitness_Posts_by_pk.comments
+        //   )
+        // );
         // location.reload();
         // this.$emit("refresh");
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.isLoading = false;
+
         console.log(error);
       }
     },
   },
 
+  props: {
+    item: {
+      type: Object,
+      default: () => {},
+    },
+  },
+
   data() {
     return {
-      posts: [],
       isLoading: false,
       AddNewCommentData: {
         postid: null,
