@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="isDeleted ? 'hidden' : ''">
     <!-- <div v-if="isLoading">
       <b-spinner small class="mr-1" variant="primary" />
     </div> -->
@@ -7,6 +7,35 @@
       <!-- <div v-if="!posts.length">No posts to show</div> -->
       <div>
         <b-card class="ml-25">
+          <div class="text-right">
+            <b-dropdown variant="link" no-caret right toggle-class="p-0">
+              <template #button-content>
+                <feather-icon
+                  icon="MoreVerticalIcon"
+                  size="18"
+                  class="text-body cursor-pointer"
+                />
+              </template>
+
+              <b-dropdown-item href="#" @click="editContent()">
+                <feather-icon
+                  icon="EditIcon"
+                  size="18"
+                  class="text-body cursor-pointer"
+                />
+                Edit
+              </b-dropdown-item>
+              <b-dropdown-item href="#" @click="deletePostModal(item.id)">
+                <feather-icon
+                  icon="XIcon"
+                  size="18"
+                  class="text-body cursor-pointer"
+                />
+                Delete
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
+
           <div class="d-flex justify-content-start align-items-center mb-1">
             <!-- avatar -->
             <b-avatar
@@ -35,10 +64,60 @@
               </small>
             </div>
           </div>
-          <b-card-text>
+
+          <b-card-text v-if="!isEdit">
             {{ item.content }}
           </b-card-text>
+          <div v-if="isEdit">
+            <b-form-group>
+              <b-form-textarea
+                rows="3"
+                placeholder="Empty? Is your photo that expresive,?"
+                v-model="item.content"
+              />
+            </b-form-group>
+            <div class="text-right inline-spacing">
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="outline-secondary"
+                size="sm"
+                class="mr-1"
+                @click="
+                  () => {
+                    this.item.content = this.previousPostContent;
 
+                    this.isEdit = !this.isEdit;
+                  }
+                "
+              >
+                Cancel
+              </b-button>
+
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="outline-primary"
+                size="sm"
+                :class="isLoadingComment ? 'hidden' : ''"
+                @click="updatePost(item.id)"
+              >
+                Update Post
+              </b-button>
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                size="sm"
+                v-if="isLoadingComment"
+                variant="outline-primary"
+                disabled
+              >
+                <div>
+                  <b-spinner small />
+
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </b-button>
+              <hr class="invoice-spacing" />
+            </div>
+          </div>
           <!-- post img -->
           <b-img
             v-if="item.photo"
@@ -57,6 +136,7 @@
             allowfullscreen
             class="rounded mb-50"
           />
+          <b-card-title></b-card-title>
 
           <!-- likes comments  share-->
           <b-row class="pb-50 mt-50">
@@ -188,6 +268,7 @@
               v-model="AddNewCommentData.text"
             />
           </b-form-group>
+
           <!--/ comment box -->
 
           <b-button
@@ -222,11 +303,20 @@ import {
   BEmbed,
   BSpinner,
   BRow,
+  BDropdown,
+  BDropdownItem,
+  BCardTitle,
+  BCardBody,
+  BCardHeader,
 } from "bootstrap-vue";
+
 import Ripple from "vue-ripple-directive";
 import { kFormatter } from "@core/utils/filter";
 import gql from "graphql-tag";
 import { Icon } from "@iconify/vue2";
+import { DELETE_POST_BY_ID } from "@/queries/";
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
+
 export default {
   components: {
     BAvatar,
@@ -243,6 +333,11 @@ export default {
     BSpinner,
     BRow,
     Icon,
+    BDropdown,
+    BDropdownItem,
+    BCardTitle,
+    BCardBody,
+    BCardHeader,
   },
 
   directives: {
@@ -250,8 +345,45 @@ export default {
     Ripple,
   },
 
+  computed: {
+    isOwner() {
+      return this.getUsernameFromParam === this.currentUserID.username
+        ? true
+        : false;
+    },
+  },
+
   methods: {
     kFormatter,
+    editContent() {
+      this.previousPostContent = this.item.content;
+      this.isEdit = true;
+      console.log("ok");
+    },
+    async deletePostModal(postid) {
+      this.boxOne = "";
+      this.$bvModal
+        .msgBoxConfirm("Are you sure?", {
+          cancelVariant: "outline-secondary",
+        })
+        .then((value) => {
+          this.boxOne = value;
+
+          if (value === true) {
+            this.$apollo.mutate({
+              mutation: DELETE_POST_BY_ID,
+              variables: {
+                postId: postid,
+              },
+            });
+            // this.$apollo.queries.Fitness_Posts.refetch();
+            // location.reload();
+            this.isDeleted = true;
+          } else {
+            console.log("fail to delete");
+          }
+        });
+    },
 
     dblclick(postid, youLiked) {
       this.counter += 1;
@@ -263,11 +395,54 @@ export default {
         this.counter = 0;
       }
     },
+    async updatePost(postId) {
+      console.log(postId);
+      this.isLoadingComment = true;
+      try {
+        const data = await this.$apollo.mutate({
+          mutation: gql`
+            mutation updatePostContent($id: Int!, $content: String!) {
+              update_Fitness_Posts_by_pk(
+                pk_columns: { id: $id }
+                _set: { content: $content }
+              ) {
+                id
+              }
+            }
+          `,
+          variables: {
+            id: postId,
+            content: this.item.content,
+          },
+        });
+        if (data.data.update_Fitness_Posts_by_pk.id) {
+          this.isEdit = false;
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: "Post Updated",
+              icon: "EditIcon",
+              variant: "success",
+            },
+          });
+          this.isLoadingComment = false;
+        }
 
-    async unlike(postId) {
-      if (!this.item.youLiked) {
-        this.item.youLiked = false;
+        // this.$apollo.queries.Fitness_Posts.refetch();
+      } catch (error) {
+        this.isLoadingComment = false;
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: "Check your internet connetion.",
+            icon: "EditIcon",
+            variant: "danger",
+          },
+        });
+        console.log(error);
       }
+    },
+    async unlike(postId) {
       // let UserToRemove = this.item.likedby.filter(
       //   (item) => item.authorOBJ.id === this.currentUserID.id
       // );
@@ -286,7 +461,7 @@ export default {
             postId: postId,
           },
         });
-
+        this.item.youLiked = false;
         this.item.likedby_aggregate.aggregate.count--;
 
         // this.$apollo.queries.Fitness_Posts.refetch();
@@ -300,8 +475,6 @@ export default {
         return;
       }
       this.$Progress.start();
-      this.item.youLiked = true;
-
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
@@ -320,7 +493,7 @@ export default {
             postId: postId,
           },
         });
-
+        this.item.youLiked = true;
         this.item.likedby_aggregate.aggregate.count++;
         // if (this.item.likedby.length < 5) {
         //   this.item.likedby.push(data.data.insert_Fitness_likes_one);
@@ -423,19 +596,28 @@ export default {
       type: Object,
       default: () => {},
     },
+    isowner: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       isLoading: false,
+      isLoadingComment: false,
       AddNewCommentData: {
         postid: null,
         text: null,
       },
+      isEdit: false,
+      isDeleted: false,
       post_offset: 0,
       post_Id: null,
       counter: 0,
+      previousPostContent: "",
       currentUserID: JSON.parse(localStorage.getItem("userInfo")),
+      getUsernameFromParam: this.$route.params.username,
     };
   },
 };

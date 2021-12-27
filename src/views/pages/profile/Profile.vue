@@ -6,7 +6,34 @@
     <div v-else id="user-profile">
       <profile-header :header-data="profileData" @refresh-data="ok" />
       <section id="profile-info">
-        <profile-post />
+        <b-row>
+          <!-- about suggested page and twitter feed -->
+          <!--/ about suggested page and twitter feed -->
+          <!-- post -->
+          <b-col lg="9" cols="12" order="1" order-lg="2">
+            <!-- <profile-post /> -->
+            <div v-if="Fitness_Posts.length">
+              <post-component
+                v-for="(item, index) in Fitness_Posts"
+                v-bind:item="item"
+                v-bind:index="index"
+                v-bind:key="item.id"
+                :posts="item"
+              />
+            </div>
+            <div v-else>Loading...</div>
+            <feed-bottom @feedcount="loadMore" />
+          </b-col>
+
+          <!-- <b-col lg="6" order="2" >
+          <card-advance-timeline />
+        </b-col> -->
+          <b-col lg="3" cols="12" order="3">
+            <profile-suggestion class="d-none d-sm-block" />
+          </b-col>
+
+          <!--/ load more  -->
+        </b-row>
       </section>
     </div>
   </div>
@@ -15,9 +42,12 @@
 <script>
 import { BRow, BCol, BSpinner } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
-import ProfilePost from "./ProfilePost.vue";
-
+import PostComponent from "./postComponent.vue";
+import { GET_POST } from "@/queries/";
+import FeedBottom from "./feedBottom.vue";
+import ProfileAbout from "./ProfileAbout.vue";
 import gql from "graphql-tag";
+import ProfileSuggestion from "./ProfileSuggestion.vue";
 
 /* eslint-disable global-require */
 export default {
@@ -25,20 +55,55 @@ export default {
     BRow,
     BCol,
     ProfileHeader,
-    ProfilePost,
     BSpinner,
+    PostComponent,
+    FeedBottom,
+    ProfileAbout,
+    ProfileSuggestion,
   },
+
   data() {
     return {
+      Fitness_Posts: [],
       profileData: null,
       username: null,
       refreshkey: 0,
       postID: null,
+      offset: 0,
       isLoading: false,
+      getUsernameFromParam: this.$route.params.username,
+      currentUser: JSON.parse(localStorage.getItem("userInfo")),
     };
   },
 
   methods: {
+    async loadFeed() {
+      try {
+        const result = await this.$apollo.query({
+          query: GET_POST,
+          variables: {
+            username: this.getUsernameFromParam,
+            offset: this.offset,
+          },
+        });
+        console.log(result);
+        if (this.offset === 0) {
+          this.Fitness_Posts = result.data.Fitness_Posts;
+        }
+        if (this.offset != 0) {
+          this.Fitness_Posts.push(...result.data.Fitness_Posts);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    loadMore() {
+      console.log("ok");
+      this.offset = this.offset + 2;
+      this.loadFeed();
+    },
+
     ok(username) {
       let x = username.username;
       this.refetchProfile(x);
@@ -46,6 +111,7 @@ export default {
     refreshx() {
       this.refreshkey += 1;
     },
+
     async refetchProfile(ReUsername) {
       this.isLoading = true;
       console.log("testing if this is even triggering", ReUsername);
@@ -150,7 +216,9 @@ export default {
       });
 
       console.log(data.data.Fitness_User.length);
+
       if (!data.data.Fitness_User.length) {
+        this.isLoading = false;
         this.$router.push("/error-404");
       }
       if (data.data.Fitness_User.length) {
@@ -165,7 +233,7 @@ export default {
 
       console.log(error);
     }
-
+    this.loadFeed();
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
@@ -184,4 +252,7 @@ export default {
 
 <style lang="scss" >
 // @import "@core/scss/vue/pages/page-profile.scss";
+.custom {
+  position: sticky;
+}
 </style>

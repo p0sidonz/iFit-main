@@ -3,7 +3,7 @@
     <b-card>
       <div class="pricing-trial-content d-flex justify-content-between">
         <div class="text-center text-md-left mt-3">
-          <h3 class="text-primary">Upgrade your account as low as 499</h3>
+          <h3 class="text-primary">Upgrade your account for as low as 499</h3>
           <h5>
             We are offering lauching offer for the first 1000 customers only.
             <b-badge pill variant="light-primary" class="badge-glow">FLAT 50% OFF </b-badge>

@@ -26,7 +26,7 @@
         </b-col> -->
 
         <b-col lg="3" cols="12" order="3">
-          <role-card />
+          <role-card v-if="currentUser.role === 'user'" />
 
           <card-download-app />
           <profile-suggestion class="d-none d-sm-block" />
@@ -72,6 +72,7 @@ export default {
       posts: [],
       offset: 0,
       Fitness_Posts: [],
+      currentUser: JSON.parse(localStorage.getItem("userInfo")),
     };
   },
 
