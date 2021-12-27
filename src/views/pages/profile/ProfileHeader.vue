@@ -28,9 +28,9 @@
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="outline-primary"
         size="sm"
-         :to="{ name: 'account-settings' }"
+        :to="{ name: 'account-settings' }"
       >
-        <feather-icon icon="EditIcon" class="mr-50" /> 
+        <feather-icon icon="EditIcon" class="mr-50" />
         <span class="align-middle">Edit Profile</span>
       </b-button>
       <b-button
@@ -570,6 +570,32 @@
         </div>
       </div>
     </b-modal>
+
+    <b-modal
+      id="newpost"
+      size="default"
+      centered
+      hide-footer
+      v-model="showNewPostModal"
+      scrollable:false
+      title="Add new post"
+    >
+      <create-post @close-post="closeModal" />
+    </b-modal>
+    <div class="btn-new-post">
+      <!-- We have wrapper because ripple effect give position relative to this absolute positioned btn -->
+      <!-- Hence due to that our btn get lost -->
+      <b-button
+        @click="newPostModal"
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        variant="success"
+        size="sm"
+      >
+        <feather-icon icon="PlusCircleIcon" size="12" />
+
+        Add Post
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -608,6 +634,7 @@ import Ripple from "vue-ripple-directive";
 import gql from "graphql-tag";
 import formValidation from "@core/comp-functions/forms/form-validation";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
+import CreatePost from "./createPost.vue";
 
 import {
   GET_FOLLOWERS,
@@ -648,6 +675,7 @@ export default {
     BForm,
     ValidationObserver,
     ValidationProvider,
+    CreatePost,
   },
   directives: {
     Ripple,
@@ -667,6 +695,7 @@ export default {
 
   data() {
     return {
+      showNewPostModal: false,
       temp: null,
       currentUsername: this.$route.params.username,
       applyData: {
@@ -704,6 +733,10 @@ export default {
   },
 
   methods: {
+    newPostModal() {
+      this.showNewPostModal = true;
+    },
+
     async applyForPackage() {
       this.$toast({
         component: ToastificationContent,
@@ -976,3 +1009,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.btn-new-post {
+  position: fixed;
+  bottom: 5%;
+  right: 30px;
+  z-index: 99;
+}
+
+body.modal-open > :not(.modal) {
+  filter: blur(1px);
+}
+.commentx {
+  height: 300px; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+</style>
+
