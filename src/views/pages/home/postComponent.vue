@@ -46,6 +46,7 @@
             rounded
             class="mb-25"
             :src="item.photo"
+            @click="dblclick(item.id, item.youLiked)"
           />
           <!--/ post img -->
           <!-- post video -->
@@ -85,7 +86,7 @@
                 </div>
               </b-link>
               <div class="d-flex align-item-center">
-                <b-avatar-group size="26" class="ml-1">
+                <!-- <b-avatar-group size="26" class="ml-1">
                   <b-avatar
                     v-for="(avatarData, i) in item.likedby"
                     :key="i"
@@ -93,10 +94,8 @@
                     class="pull-up"
                     :src="avatarData.authorOBJ.avatar"
                   />
-                </b-avatar-group>
-                <b-link
-                  v-if="item.likedby_aggregate.aggregate.count"
-                  class="text-muted text-nowrap mt-50 ml-50"
+                </b-avatar-group> -->
+                <b-link class="text-muted text-nowrap mt-50 ml-50"
                   >{{ item.likedby_aggregate.aggregate.count }} Likes</b-link
                 >
               </div>
@@ -254,7 +253,23 @@ export default {
   methods: {
     kFormatter,
 
+    dblclick(postid, youLiked) {
+      this.counter += 1;
+      if (!youLiked && this.counter === 2) {
+        this.addnewliketoPost(postid);
+        this.counter = 0;
+      } else if (youLiked && this.counter === 2) {
+        this.unlike(postid);
+        this.counter = 0;
+      }
+    },
+
     async unlike(postId) {
+      // let UserToRemove = this.item.likedby.filter(
+      //   (item) => item.authorOBJ.id === this.currentUserID.id
+      // );
+      // console.log(UserToRemove);
+
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
@@ -269,6 +284,8 @@ export default {
           },
         });
         this.item.youLiked = false;
+        this.item.likedby_aggregate.aggregate.count--;
+
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
         console.log(error);
@@ -276,13 +293,21 @@ export default {
     },
 
     async addnewliketoPost(postId) {
+      if (this.item.youLiked) {
+        return;
+      }
       this.$Progress.start();
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
             mutation ($postId: Int!) {
               insert_Fitness_likes_one(object: { postId: $postId }) {
-                id
+                authorOBJ {
+                  id
+                  fullname
+                  username
+                  avatar
+                }
               }
             }
           `,
@@ -291,6 +316,12 @@ export default {
           },
         });
         this.item.youLiked = true;
+        this.item.likedby_aggregate.aggregate.count++;
+        // if (this.item.likedby.length < 5) {
+        //   this.item.likedby.push(data.data.insert_Fitness_likes_one);
+        // }
+        // console.log(data.data.insert_Fitness_likes_one);
+        // authorOBJ = {...data.data.insert_Fitness_likes_one}
         // location.reload();
         // this.$emit("refresh");
         // this.$apollo.queries.Fitness_Posts.refetch();
@@ -398,6 +429,8 @@ export default {
       },
       post_offset: 0,
       post_Id: null,
+      counter: 0,
+      currentUserID: JSON.parse(localStorage.getItem("userInfo")),
     };
   },
 };

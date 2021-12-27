@@ -1,5 +1,5 @@
 <template>
-  <b-card no-body>
+  <b-card no-body   >
     <b-card-header>
       <div class="d-flex align-items-center">
         <feather-icon

@@ -4,13 +4,9 @@
     <section id="profile-info">
       <b-row>
         <!-- about suggested page and twitter feed -->
-        <b-col lg="3" cols="12" order="2" order-lg="1">
-          <profile-suggestion />
-          <card-download-app />
-        </b-col>
         <!--/ about suggested page and twitter feed -->
         <!-- post -->
-        <b-col lg="6" cols="12" order="1" order-lg="2">
+        <b-col lg="9" cols="12" order="1" order-lg="2">
           <!-- <profile-post /> -->
           <div v-if="Fitness_Posts.length">
             <post-component
@@ -22,6 +18,7 @@
             />
           </div>
           <div v-else>Loading...</div>
+          <feed-bottom @feedcount="loadMore" />
         </b-col>
 
         <!-- <b-col lg="6" order="2" >
@@ -29,12 +26,14 @@
         </b-col> -->
 
         <b-col lg="3" cols="12" order="3">
-          <card-advance-meetup />
+          <role-card />
+
+          <card-download-app />
+          <profile-suggestion class="d-none d-sm-block" />
         </b-col>
 
         <!--/ load more  -->
       </b-row>
-      <feed-bottom @feedcount="loadMore" />
     </section>
     <!--/ profile info  -->
   </div>
@@ -51,7 +50,7 @@ import gql from "graphql-tag";
 import PostComponent from "./postComponent.vue";
 import FeedBottom from "./feedBottom.vue";
 import { GET_FEED, GET_POST_BY_ID } from "@/queries/";
-
+import RoleCard from "./RoleCard.vue";
 export default {
   components: {
     BCard,
@@ -66,6 +65,7 @@ export default {
     CardDownloadApp,
     PostComponent,
     FeedBottom,
+    RoleCard,
   },
   data() {
     return {
