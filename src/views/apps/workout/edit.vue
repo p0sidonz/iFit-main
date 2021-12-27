@@ -1,57 +1,61 @@
 <template>
   <div>
-    <b-alert variant="danger" :show="!excercises">
-      <h4 class="alert-heading">Error fetching Workouts</h4>
-      <div class="alert-body">
-        Pleae hit back
-        <b-link class="alert-link" :to="{ name: 'workout-list' }">
-          Workout List
-        </b-link>
-        for other users.
-      </div>
-    </b-alert>
-    <template v-if="excercises">
-      <b-row class="invoice-padding pt-0">
-        <b-col cols="12" xl="9" class="mb-lg-1">
-          <section id="diet">
-            <b-card
-              no-body
-              class="diet"
-              :style="{
-                backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
-              }"
-            >
-              <b-card-body class="text-center">
-                <h2 class="text-primary">
-                  {{ excercises.title }}
-                </h2>
+    <div v-if="isLoadingComp">
+      <b-alert variant="danger" :show="!excercises">
+        <h4 class="alert-heading">Error fetching Workouts</h4>
+        <div class="alert-body">
+          Pleae hit back
+          <b-link class="alert-link" :to="{ name: 'workout-list' }">
+            Workout List
+          </b-link>
+          for other users.
+        </div>
+      </b-alert>
+      <b-spinner small class="mr-1" variant="primary" />
+    </div>
+    <div v-else>
+      <template v-if="excercises">
+        <b-row class="invoice-padding pt-0">
+          <b-col cols="12" xl="9" class="mb-lg-1">
+            <section id="diet">
+              <b-card
+                no-body
+                class="diet"
+                :style="{
+                  backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
+                }"
+              >
+                <b-card-body class="text-center">
+                  <h2 class="text-primary">
+                    {{ excercises.title }}
+                  </h2>
 
-                <b-card-text class="mb-2">
-                  {{ excercises.description }}
-                </b-card-text>
-              </b-card-body>
-            </b-card>
+                  <b-card-text class="mb-2">
+                    {{ excercises.description }}
+                  </b-card-text>
+                </b-card-body>
+              </b-card>
 
-            <b-alert v-if="!excercies_and_sets.length" variant="warning" show>
-              <h4 class="alert-heading">Warning!</h4>
-              <div class="alert-body">
-                You haven't added any excersise yet!
-                <b-link class="alert-link" @click="modalContent">
-                  User List
-                </b-link>
-              </div>
-            </b-alert>
+              <b-alert v-if="!excercies_and_sets.length" variant="warning" show>
+                <h4 class="alert-heading">Warning!</h4>
+                <div class="alert-body">
+                  You haven't added any excersise yet!
+                  <b-link class="alert-link" @click="modalContent">
+                    User List
+                  </b-link>
+                </div>
+              </b-alert>
 
-            <b-card-actions
-              v-for="(data, index) in excercies_and_sets"
-              :key="data.id"
-              action-collapse
-              action-close
-              class="text-primary"
-              @close="removeExcercise(index, data)"
-              :title="data.exercise.title"
-            >
-              <!-- <b-row>
+              <b-card-actions
+                v-for="(data, index) in excercies_and_sets"
+                :key="data.id"
+                action-collapse
+                action-close
+                class="text-primary"
+                @close="removeExcercise(index, data)"
+                :title="data.exercise.title"
+              >
+                <!-- <b-row>
                 <b-row md="1">
                   @click="modalContent"
                   <b-col class="p-4">
@@ -70,238 +74,239 @@
                 </b-col>
               </b-row> -->
 
-              <div>
                 <div>
-                  <!-- <b-col md="1" class="p-1">
+                  <div>
+                    <!-- <b-col md="1" class="p-1">
                         <b-form-group label="(Lbs/Kg)" label-for="item-name">
                           <b-form-select v-model="macros" :options="weight"/>
 
                         </b-form-group>
                       </b-col> -->
-                  <b-form
-                    ref="form"
-                    :style="{ height: trHeight }"
-                    class="repeater-form"
-                    @submit.prevent="repeateAgain"
-                  >
-                    <!-- Row Loop -->
-                    <b-row
-                      v-for="(item, index_set) in data.json_sets"
-                      :id="item.id"
-                      :key="item.id"
-                      ref="row"
+                    <b-form
+                      ref="form"
+                      :style="{ height: trHeight }"
+                      class="repeater-form"
+                      @submit.prevent="repeateAgain"
                     >
-                      <b-row md="1">
-                        <b-col class="p-3">
-                          <span> Set {{ index_set + 1 }}</span>
+                      <!-- Row Loop -->
+                      <b-row
+                        v-for="(item, index_set) in data.json_sets"
+                        :id="item.id"
+                        :key="item.id"
+                        ref="row"
+                      >
+                        <b-row md="1">
+                          <b-col class="p-3">
+                            <span> Set {{ index_set + 1 }}</span>
+                          </b-col>
+                        </b-row>
+                        <!-- Item Name -->
+                        <b-col md="2" class="p-1">
+                          <b-form-group label="(Weight)" label-for="item-name">
+                            <cleave
+                              id="customDelimiter"
+                              v-model="item.weight"
+                              class="form-control"
+                              :raw="false"
+                              :options="options.weight"
+                              placeholder="8-12"
+                            />
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- Cost -->
+                        <b-col md="2" class="p-1">
+                          <b-form-group
+                            label="Repetitions (i.e. 8-12)"
+                            label-for="cost"
+                          >
+                            <cleave
+                              id="customDelimiter"
+                              v-model="item.reps"
+                              class="form-control"
+                              :raw="false"
+                              :options="options.reps"
+                              placeholder="8-12"
+                            />
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- Quantity -->
+                        <b-col md="2" class="p-1">
+                          <b-form-group
+                            label="Tempo (1-2-3)"
+                            label-for="quantity"
+                          >
+                            <cleave
+                              id="customDelimiter"
+                              v-model="item.tempo"
+                              class="form-control"
+                              :raw="false"
+                              :options="options.tempo"
+                              placeholder="1-2-3"
+                            />
+                          </b-form-group>
+                        </b-col>
+                        <b-col md="2" class="p-1">
+                          <b-form-group
+                            label="Rest (Seconds)"
+                            label-for="quantity"
+                          >
+                            <cleave
+                              id="customDelimiter"
+                              v-model="item.rest"
+                              class="form-control"
+                              :raw="false"
+                              :options="options.weight"
+                              placeholder="8-12"
+                            />
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- Remove Button -->
+                        <b-col md="1" class="mb-50 p-1">
+                          <b-button
+                            v-ripple.400="'rgba(234, 84, 85, 0.15)'"
+                            variant="outline-danger"
+                            class="mt-0 mt-md-2"
+                            @click="removeItem(index, index_set)"
+                          >
+                            <feather-icon icon="XIcon" class="mr-25" />
+                          </b-button>
+                        </b-col>
+                        <b-col cols="12">
+                          <hr />
                         </b-col>
                       </b-row>
-                      <!-- Item Name -->
-                      <b-col md="2" class="p-1">
-                        <b-form-group label="(Weight)" label-for="item-name">
-                          <cleave
-                            id="customDelimiter"
-                            v-model="item.weight"
-                            class="form-control"
-                            :raw="false"
-                            :options="options.weight"
-                            placeholder="8-12"
-                          />
-                        </b-form-group>
-                      </b-col>
+                    </b-form>
+                  </div>
 
-                      <!-- Cost -->
-                      <b-col md="2" class="p-1">
-                        <b-form-group
-                          label="Repetitions (i.e. 8-12)"
-                          label-for="cost"
-                        >
-                          <cleave
-                            id="customDelimiter"
-                            v-model="item.reps"
-                            class="form-control"
-                            :raw="false"
-                            :options="options.reps"
-                            placeholder="8-12"
-                          />
-                        </b-form-group>
-                      </b-col>
-
-                      <!-- Quantity -->
-                      <b-col md="2" class="p-1">
-                        <b-form-group
-                          label="Tempo (1-2-3)"
-                          label-for="quantity"
-                        >
-                          <cleave
-                            id="customDelimiter"
-                            v-model="item.tempo"
-                            class="form-control"
-                            :raw="false"
-                            :options="options.tempo"
-                            placeholder="1-2-3"
-                          />
-                        </b-form-group>
-                      </b-col>
-                      <b-col md="2" class="p-1">
-                        <b-form-group
-                          label="Rest (Seconds)"
-                          label-for="quantity"
-                        >
-                          <cleave
-                            id="customDelimiter"
-                            v-model="item.rest"
-                            class="form-control"
-                            :raw="false"
-                            :options="options.weight"
-                            placeholder="8-12"
-                          />
-                        </b-form-group>
-                      </b-col>
-
-                      <!-- Remove Button -->
-                      <b-col md="1" class="mb-50 p-1">
-                        <b-button
-                          v-ripple.400="'rgba(234, 84, 85, 0.15)'"
-                          variant="outline-danger"
-                          class="mt-0 mt-md-2"
-                          @click="removeItem(index, index_set)"
-                        >
-                          <feather-icon icon="XIcon" class="mr-25" />
-                        </b-button>
-                      </b-col>
-                      <b-col cols="12">
-                        <hr />
-                      </b-col>
-                    </b-row>
-                  </b-form>
+                  <b-button
+                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                    variant="primary"
+                    @click="repeateAgain(index)"
+                  >
+                    <feather-icon icon="PlusIcon" class="mr-25" />
+                    <span>Add Set</span>
+                  </b-button>
                 </div>
+              </b-card-actions>
+            </section>
+          </b-col>
 
-                <b-button
-                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  variant="primary"
-                  @click="repeateAgain(index)"
-                >
-                  <feather-icon icon="PlusIcon" class="mr-25" />
-                  <span>Add Set</span>
-                </b-button>
+          <b-col cols="12" md="4" xl="3" class="invoice-actions">
+            <!-- Action Buttons -->
+            <b-card>
+              <!-- Button: Send Invoice -->
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                variant="primary"
+                class="mb-75"
+                block
+                @click="modalContent"
+              >
+                Add Excercise
+              </b-button>
+              <!-- Button: DOwnload -->
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="outline-primary"
+                class="mb-75"
+                block
+                @click="printInvoice"
+              >
+                Print
+              </b-button>
+
+              <!-- Button: Print -->
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="outline-primary"
+                block
+                @click="saveExcercise"
+              >
+                <div v-if="isLoading">
+                  <b-spinner small />
+
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div v-if="!isLoading">
+                  <span> Save</span>
+                </div>
+              </b-button>
+              <!-- Button: Add Payment -->
+            </b-card>
+
+            <!-- Payment Method -->
+            <div class="mt-2">
+              <b-form-group label="Wight Type" label-for="payment-method">
+                <v-select
+                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                  input-id="payment-method"
+                  class="payment-selector"
+                  :options="weight"
+                  :clearable="false"
+                />
+              </b-form-group>
+
+              <!-- IF workout is active/not -->
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="patymentTerms">Active</label>
+                <b-form-checkbox
+                  id="patymentTerms"
+                  :checked="excercises.is_active"
+                  switch
+                />
               </div>
-            </b-card-actions>
-          </section>
-        </b-col>
-
-        <b-col cols="12" md="4" xl="3" class="invoice-actions">
-          <!-- Action Buttons -->
-          <b-card>
-            <!-- Button: Send Invoice -->
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              variant="primary"
-              class="mb-75"
-              block
-              @click="modalContent"
-            >
-              Add Excercise
-            </b-button>
-            <!-- Button: DOwnload -->
-            <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="outline-primary"
-              class="mb-75"
-              block
-              @click="printInvoice"
-            >
-              Print
-            </b-button>
-
-            <!-- Button: Print -->
-            <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="outline-primary"
-              block
-              @click="saveExcercise"
-            >
-              <div v-if="isLoading">
-                <b-spinner small />
-
-                <span class="sr-only">Loading...</span>
-              </div>
-              <div v-if="!isLoading">
-                <span> Save</span>
-              </div>
-            </b-button>
-            <!-- Button: Add Payment -->
-          </b-card>
-
-          <!-- Payment Method -->
-          <div class="mt-2">
-            <b-form-group label="Wight Type" label-for="payment-method">
-              <v-select
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                input-id="payment-method"
-                class="payment-selector"
-                :options="weight"
-                :clearable="false"
-              />
-            </b-form-group>
-
-            <!-- IF workout is active/not -->
-            <div class="d-flex justify-content-between align-items-center">
-              <label for="patymentTerms">Active</label>
-              <b-form-checkbox
-                id="patymentTerms"
-                :checked="excercises.is_active"
-                switch
-              />
             </div>
-          </div>
-        </b-col>
-      </b-row>
-
-      <b-modal
-        id="idk2"
-        size="lg"
-        title="Add New Excercise"
-        hide-footer
-        v-model="modalShow"
-        scrollable:true
-      >
-        <b-row>
-          <b-col lg="12" class="mb-1">
-            <!-- button on right -->
-            <b-input-group>
-              <b-form-input
-                v-on:input="excerciseSearch"
-                v-model="excerciseSearchValue"
-                placeholder="...May be Leg Press?"
-              />
-              <b-input-group-append>
-                <b-button variant="outline-primary"> GO </b-button>
-              </b-input-group-append>
-            </b-input-group>
-            <b-spinner
-              v-show="isLoadingx"
-              variant="primary"
-              label="Text Centered"
-            />
           </b-col>
         </b-row>
-        <div v-if="fetchedExcerciseResult">
-          <div
-            v-for="data in fetchedExcerciseResult"
-            :key="data.index"
-            class="d-flex align-items-center"
-          >
-            <div @click="AddExcercise(data)" class="detail ml-50">
-              <b-card-text class="mb-0">
-                {{ data.title }}
-              </b-card-text>
-              <small class="text-muted"> 12:12:12 </small>
+
+        <b-modal
+          id="idk2"
+          size="lg"
+          title="Add New Excercise"
+          hide-footer
+          v-model="modalShow"
+          scrollable:true
+        >
+          <b-row>
+            <b-col lg="12" class="mb-1">
+              <!-- button on right -->
+              <b-input-group>
+                <b-form-input
+                  v-on:input="excerciseSearch"
+                  v-model="excerciseSearchValue"
+                  placeholder="...May be Leg Press?"
+                />
+                <b-input-group-append>
+                  <b-button variant="outline-primary"> GO </b-button>
+                </b-input-group-append>
+              </b-input-group>
+              <b-spinner
+                v-show="isLoadingx"
+                variant="primary"
+                label="Text Centered"
+              />
+            </b-col>
+          </b-row>
+          <div v-if="fetchedExcerciseResult">
+            <div
+              v-for="data in fetchedExcerciseResult"
+              :key="data.index"
+              class="d-flex align-items-center"
+            >
+              <div @click="AddExcercise(data)" class="detail ml-50">
+                <b-card-text class="mb-0">
+                  {{ data.title }}
+                </b-card-text>
+                <small class="text-muted"> 12:12:12 </small>
+              </div>
             </div>
           </div>
-        </div>
-      </b-modal>
-    </template>
+        </b-modal>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -613,7 +618,7 @@ export default {
 
   setup() {
     const toast = useToast();
-
+    const isLoadingComp = ref(false)
     const TODO_APP_STORE_MODULE_NAME = "app-workout";
 
     const excercises = ref({});
@@ -632,8 +637,9 @@ export default {
     const { route, router } = useRouter();
 
     const statusOptions = ["Vegetarian", "NonVegetarian", "Vegan"];
-
+    
     const fetchExcercise = () => {
+      isLoadingComp.value = true
       store
         .dispatch("app-workout/getExcercices", {
           id: router.currentRoute.params.id,
@@ -643,11 +649,13 @@ export default {
             "GET excercices",
             response.data.data.Fitness_workout_by_pk.workout_exercises
           );
+          isLoadingComp.value = false
           excercises.value = response.data.data.Fitness_workout_by_pk;
           excercies_and_sets.value =
             response.data.data.Fitness_workout_by_pk.workout_exercises;
         })
         .catch((error) => {
+          isLoadingComp.value = false
           toast({
             component: ToastificationContent,
             props: {
@@ -669,6 +677,7 @@ export default {
       statusOptions,
       excercies_and_sets,
       printInvoice,
+      isLoadingComp
     };
   },
 };

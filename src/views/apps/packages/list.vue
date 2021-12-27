@@ -790,7 +790,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           store
-            .dispatch("app-todo/deleteDiet", id)
+            .dispatch("app-todo/deletePackages", id)
             .then((response) => {
               console.log(
                 "DIET DELETE RESPONSE",
