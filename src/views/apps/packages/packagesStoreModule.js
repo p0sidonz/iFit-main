@@ -17,7 +17,7 @@ export default {
              process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `mutation MyMutation ($id: Int!){
-                delete_Fitness_program_by_pk(id: $id) {
+                delete_Fitness_trainer_package_by_pk(id: $id) {
                   id
                 }
               }

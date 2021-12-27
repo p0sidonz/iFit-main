@@ -790,11 +790,11 @@ export default {
       }).then((result) => {
         if (result.value) {
           store
-            .dispatch("app-todo/deletePackages", id)
+            .dispatch("app-packages/deletePackages", id)
             .then((response) => {
               console.log(
                 "DIET DELETE RESPONSE",
-                response.data.data.delete_Fitness_Diet_by_pk
+                response.data.data.delete_Fitness_trainer_package_by_pk
               );
               // totalInvoices.value = total
             })
