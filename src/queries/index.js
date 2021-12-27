@@ -1,44 +1,83 @@
 import gql from "graphql-tag";
 
-export const GET_NEW_USERS = gql`
-  query NewMembers {
-    Fitness_User(order_by: { created_at: desc }, limit: 5) {
+export const GET_FEED = gql`
+  query notifyNewPosts($userId: Int!, $offset: Int) {
+    Fitness_Posts(
+      order_by: { created_at: desc }
+      limit: 2
+      offset: $offset
+      where: {
+        _or: [
+          { author: { Follow: { following_id: { _eq: $userId } } } }
+          { userId: { _neq: $userId } }
+        ]
+      }
+    ) {
       id
-      fullname
-      avatar
-      username
-      is_follow
+      content
+      photo
+      created_at
+      youLiked
+      author {
+        username
+        id
+        avatar
+      }
+      likedby_aggregate {
+        aggregate {
+          count
+        }
+      }
+      likedby {
+        authorOBJ {
+          id
+          username
+          avatar
+        }
+      }
+      comments_aggregate {
+        aggregate {
+          count
+        }
+      }
+      comments(limit: 3, order_by: { created_at: desc }) {
+        id
+        text
+        owner {
+          username
+          avatar
+          id
+        }
+      }
     }
   }
 `;
 
 export const GET_MEDICAL_INFO = gql`
-query MyQuery($id: Int!) {
-  Fitness_UserRelation_by_pk(id: $id) {
-    additional_profile_detail {
-      profile_completed
-      heart_condition
-      instagram_id
-      is_injured
-      is_pregnant
-      on_medication
-      tell_us_more
-      youtube_channel_id
-      allergies
-      current_goal
-      facebook_id
-      giveup_alchol
-      have_asthma
-      have_diabetes
-      have_epilepsy
-      have_joint_issue
-      have_vertigo
+  query MyQuery($id: Int!) {
+    Fitness_UserRelation_by_pk(id: $id) {
+      additional_profile_detail {
+        profile_completed
+        heart_condition
+        instagram_id
+        is_injured
+        is_pregnant
+        on_medication
+        tell_us_more
+        youtube_channel_id
+        allergies
+        current_goal
+        facebook_id
+        giveup_alchol
+        have_asthma
+        have_diabetes
+        have_epilepsy
+        have_joint_issue
+        have_vertigo
+      }
     }
   }
-}
-
 `;
-
 
 export const IS_COMPLETED = gql`
   mutation MyMutation($profile_completed: Boolean!) {
@@ -233,6 +272,18 @@ export const GET_FOLLOWINGS = gql`
         fullname
         is_follow
       }
+    }
+  }
+`;
+
+export const GET_NEW_USERS = gql`
+  query NewMembers {
+    Fitness_User(order_by: { created_at: desc }, limit: 5) {
+      id
+      fullname
+      avatar
+      username
+      is_follow
     }
   }
 `;
