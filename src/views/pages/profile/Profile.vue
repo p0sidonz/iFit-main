@@ -20,9 +20,18 @@
                 v-bind:key="item.id"
                 :posts="item"
               />
+              <feed-bottom @feedcount="loadMore" />
             </div>
-            <div v-else>Loading...</div>
-            <feed-bottom @feedcount="loadMore" />
+
+            <div v-else>
+              <div class="text-center">
+                <b-alert variant="primary" show>
+                  <div class="alert-body">
+                    <span>No posts</span>
+                  </div>
+                </b-alert>
+              </div>
+            </div>
           </b-col>
 
           <!-- <b-col lg="6" order="2" >
@@ -40,7 +49,7 @@
 </template>
 
 <script>
-import { BRow, BCol, BSpinner } from "bootstrap-vue";
+import { BRow, BCol, BSpinner, BAlert } from "bootstrap-vue";
 import ProfileHeader from "./ProfileHeader.vue";
 import PostComponent from "./postComponent.vue";
 import { GET_POST } from "@/queries/";
@@ -60,6 +69,7 @@ export default {
     FeedBottom,
     ProfileAbout,
     ProfileSuggestion,
+    BAlert,
   },
 
   data() {
