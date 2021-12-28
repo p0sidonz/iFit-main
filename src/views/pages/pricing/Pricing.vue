@@ -1,532 +1,568 @@
 <template>
-  <section v-if="Object.keys(pricing).length" id="pricing-plan">
-    <!-- title text and switch button -->
-    <div class="text-center d-flex p-2">
-      <h1 class="mt-5">Pricing Plans</h1>
-      <b-badge variant="primary" class="badge-glow">
-        🤑 Launching OFFER <br />
-        50% FLAT OFF ON ALL THE PLANS 🤑
-      </b-badge>
-      <br />
-      <br />
-      <p class="mb-4 pb-75">
-        We don't take this much rest while working out So Why now? The prices
-        are simple and straightforward, Select the package and serve your
-        clients.
-      </p>
-    </div>
-    <!--/ title text and switch button -->
-    <!-- pricing plan cards -->
-    <b-row class="pricing-card">
-      <b-col offset-sm-2 sm="10" md="12" offset-lg="2" lg="10" class="mx-auto">
-        <b-row>
-          <b-col md="4">
-            <b-card align="center">
-              <div class="pricing-badge text-right"></div>
+  <div>
+    <section v-if="Object.keys(pricing).length" id="pricing-plan">
+      <!-- title text and switch button -->
+      <div class="text-center">
+        <h1 class="mt-5">Pricing Plans</h1>
+        <b-badge variant="primary" class="badge-glow">
+          <h7>🤑 Launching OFFER | 50% FLAT OFF ON ALL THE PLANS 🤑</h7>
+        </b-badge>
+        <br />
+        <br />
+        <br />
+        <p class="mb-4 pb-75">
+          We don't take this much rest while working out So Why now? The prices
+          are simple and straightforward, Select the package and serve your
+          clients.
+        </p>
+      </div>
+      <!--/ title text and switch button -->
+      <!-- pricing plan cards -->
+      <b-row class="pricing-card">
+        <b-col
+          offset-sm-2
+          sm="10"
+          md="12"
+          offset-lg="2"
+          lg="10"
+          class="mx-auto"
+        >
+          <b-row>
+            <b-col md="4">
+              <b-card align="center">
+                <div class="pricing-badge text-right"></div>
 
-              <!-- img -->
-              <b-img
-                v-if="pricing.basicPlan.img"
-                :src="pricing.basicPlan.img"
-                class="mb-2 mt-5"
-                alt="basic svg img"
-              />
-              <!--/ img -->
-              <h3>{{ pricing.basicPlan.title }}</h3>
-              <b-card-text>
-                {{ pricing.basicPlan.subtitle }}
-              </b-card-text>
+                <!-- img -->
+                <b-img
+                  v-if="pricing.basicPlan.img"
+                  :src="pricing.basicPlan.img"
+                  class="mb-2 mt-5"
+                  alt="basic svg img"
+                />
+                <!--/ img -->
+                <h3>{{ pricing.basicPlan.title }}</h3>
+                <b-card-text>
+                  {{ pricing.basicPlan.subtitle }}
+                </b-card-text>
 
-              <!-- annual plan -->
-              <div class="annual-plan">
-                <div class="plan-price mt-2">
-                  <sup class="font-medium-1 font-weight-bold text-primary"
-                    >₹</sup
-                  >
-                  <span
-                    class="pricing-basic-value font-weight-bolder text-primary"
-                    >{{
-                      monthlyPlanShow
-                        ? pricing.basicPlan.monthlyPrice
-                        : pricing.basicPlan.yearlyPlan.perMonth
-                    }}</span
-                  >
-                  <sub
+                <!-- annual plan -->
+                <div class="annual-plan">
+                  <div class="plan-price mt-2">
+                    <sup class="font-medium-1 font-weight-bold text-primary"
+                      >₹</sup
+                    >
+                    <span
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{
+                        monthlyPlanShow
+                          ? pricing.basicPlan.monthlyPrice
+                          : pricing.basicPlan.yearlyPlan.perMonth
+                      }}</span
+                    >
+                    <sub
+                      class="
+                        pricing-duration
+                        text-body
+                        font-medium-1 font-weight-bold
+                      "
+                      >/month</sub
+                    >
+                  </div>
+
+                  <small
                     class="
-                      pricing-duration
-                      text-body
-                      font-medium-1 font-weight-bold
+                      annual-pricing
+                      text-muted text-decoration-line-through
                     "
-                    >/month</sub
+                  >
+                    <del>
+                      ₹ {{ pricing.basicPlan.monthlyPrice * 2 }} / month</del
+                    ></small
                   >
                 </div>
+                <!--/ annual plan -->
 
-                <small
-                  class="annual-pricing text-muted text-decoration-line-through"
-                >
-                  <del>
-                    ₹ {{ pricing.basicPlan.monthlyPrice * 2 }} / month</del
-                  ></small
-                >
-              </div>
-              <!--/ annual plan -->
+                <!-- plan benefit -->
+                <b-list-group class="list-group-circle text-left">
+                  <b-list-group-item
+                    v-for="(data, index) in pricing.basicPlan.planBenefits"
+                    :key="index"
+                  >
+                    {{ data }}
+                  </b-list-group-item>
+                </b-list-group>
+                <!--/ plan benefit -->
 
-              <!-- plan benefit -->
-              <b-list-group class="list-group-circle text-left">
-                <b-list-group-item
-                  v-for="(data, index) in pricing.basicPlan.planBenefits"
+                <!-- buttons -->
+                <b-button
+                  v-ripple.400="'rgba(40, 199, 111, 0.15)'"
+                  block
+                  class="mt-2"
+                  variant="outline-success"
+                  @click="
+                    modelswitch(
+                      pricing.basicPlan.title,
+                      pricing.basicPlan.id,
+                      pricing.basicPlan.subtitle
+                    )
+                  "
+                >
+                  Buy
+                </b-button>
+              </b-card>
+            </b-col>
+            <b-col md="4">
+              <b-card class="popular" align="center">
+                <div
+                  v-show="pricing.enterprisePlan.popular"
+                  class="pricing-badge text-right"
+                >
+                  <b-badge variant="light-primary" pill> Popular </b-badge>
+                </div>
+                <!-- img -->
+                <b-img
+                  v-if="pricing.enterprisePlan.img"
+                  :src="pricing.enterprisePlan.img"
+                  class="mb-1"
+                  alt="standardPlan"
+                />
+                <!--/ img -->
+                <h3>{{ pricing.enterprisePlan.title }}</h3>
+                <b-card-text>{{ pricing.enterprisePlan.subtitle }}</b-card-text>
+
+                <!-- annual plan -->
+                <div class="annual-plan">
+                  <div class="plan-price mt-2">
+                    <sup class="font-medium-1 font-weight-bold text-primary"
+                      >₹</sup
+                    >
+                    <span
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{
+                        !pricing.enterprisePlan.isYearlyPlan
+                          ? pricing.enterprisePlan.yearlyPrice
+                          : "NaN"
+                      }}</span
+                    >
+                    <sub
+                      class="
+                        pricing-duration
+                        text-body
+                        font-medium-1 font-weight-bold
+                      "
+                      >/month</sub
+                    >
+                  </div>
+                  <small
+                    class="
+                      annual-pricing
+                      text-muted text-decoration-line-through
+                    "
+                  >
+                    <del>
+                      ₹ {{ pricing.enterprisePlan.yearlyPrice * 2 }} /
+                      month</del
+                    ></small
+                  >
+                </div>
+                <!--/ annual plan -->
+
+                <!-- plan benefit -->
+                <b-list-group
+                  v-for="(data, index) in pricing.enterprisePlan.planBenefits"
                   :key="index"
+                  class="list-group-circle text-left"
                 >
-                  {{ data }}
-                </b-list-group-item>
-              </b-list-group>
-              <!--/ plan benefit -->
+                  <b-list-group-item>
+                    {{ data }}
+                  </b-list-group-item>
+                </b-list-group>
+                <!--/ plan benefit -->
 
-              <!-- buttons -->
-              <b-button
-                v-ripple.400="'rgba(40, 199, 111, 0.15)'"
-                block
-                class="mt-2"
-                variant="outline-success"
-                @click="
-                  modelswitch(
-                    pricing.basicPlan.title,
-                    pricing.basicPlan.id,
-                    pricing.basicPlan.subtitle
-                  )
-                "
-              >
-                Buy
-              </b-button>
-            </b-card>
-          </b-col>
-          <b-col md="4">
-            <b-card class="popular" align="center">
-              <div
-                v-show="pricing.enterprisePlan.popular"
-                class="pricing-badge text-right"
-              >
-                <b-badge variant="light-primary" pill> Popular </b-badge>
-              </div>
-              <!-- img -->
-              <b-img
-                v-if="pricing.enterprisePlan.img"
-                :src="pricing.enterprisePlan.img"
-                class="mb-1"
-                alt="standardPlan"
-              />
-              <!--/ img -->
-              <h3>{{ pricing.enterprisePlan.title }}</h3>
-              <b-card-text>{{ pricing.enterprisePlan.subtitle }}</b-card-text>
+                <!-- buttons -->
+                <b-button
+                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                  block
+                  class="mt-2"
+                  variant="outline-primary"
+                  @click="
+                    modelswitch(
+                      pricing.enterprisePlan.title,
+                      pricing.enterprisePlan.id,
+                      pricing.enterprisePlan.subtitle
+                    )
+                  "
+                >
+                  Buy
+                </b-button>
+              </b-card>
+            </b-col>
+            <b-col md="4">
+              <b-card align="center">
+                <div
+                  v-show="pricing.standardPlan.popular"
+                  class="pricing-badge text-right"
+                >
+                  <b-badge variant="light-primary" pill> Popular </b-badge>
+                </div>
+                <!-- img -->
+                <b-img
+                  v-if="pricing.standardPlan.img"
+                  :src="
+                    pricing.standardPlan.img ||
+                    'https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/demo-1/img/Pot2.527b9edc.svg'
+                  "
+                  class="mb-1"
+                  alt="standardPlan"
+                />
+                <!--/ img -->
+                <h3>{{ pricing.standardPlan.title }}</h3>
+                <b-card-text>{{ pricing.standardPlan.subtitle }}</b-card-text>
 
-              <!-- annual plan -->
-              <div class="annual-plan">
-                <div class="plan-price mt-2">
-                  <sup class="font-medium-1 font-weight-bold text-primary"
-                    >₹</sup
-                  >
-                  <span
-                    class="pricing-basic-value font-weight-bolder text-primary"
-                    >{{
-                      !pricing.enterprisePlan.isYearlyPlan
-                        ? pricing.enterprisePlan.yearlyPrice
-                        : "NaN"
-                    }}</span
-                  >
-                  <sub
+                <!-- annual plan -->
+                <div class="annual-plan">
+                  <div class="plan-price mt-2">
+                    <sup class="font-medium-1 font-weight-bold text-primary"
+                      >₹</sup
+                    >
+                    <span
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{
+                        monthlyPlanShow
+                          ? pricing.standardPlan.monthlyPrice
+                          : pricing.standardPlan.yearlyPlan.perMonth
+                      }}</span
+                    >
+                    <sub
+                      class="
+                        pricing-duration
+                        text-body
+                        font-medium-1 font-weight-bold
+                      "
+                      >/month</sub
+                    >
+                  </div>
+                  <small
                     class="
-                      pricing-duration
-                      text-body
-                      font-medium-1 font-weight-bold
+                      annual-pricing
+                      text-muted text-decoration-line-through
                     "
-                    >/month</sub
+                  >
+                    <del>
+                      ₹ {{ pricing.standardPlan.monthlyPrice * 2 }} / month</del
+                    ></small
                   >
                 </div>
-                <small
-                  class="annual-pricing text-muted text-decoration-line-through"
-                >
-                  <del>
-                    ₹ {{ pricing.enterprisePlan.yearlyPrice * 2 }} / month</del
-                  ></small
-                >
-              </div>
-              <!--/ annual plan -->
+                <!--/ annual plan -->
 
-              <!-- plan benefit -->
-              <b-list-group
-                v-for="(data, index) in pricing.enterprisePlan.planBenefits"
-                :key="index"
-                class="list-group-circle text-left"
-              >
-                <b-list-group-item>
-                  {{ data }}
-                </b-list-group-item>
-              </b-list-group>
-              <!--/ plan benefit -->
-
-              <!-- buttons -->
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                block
-                class="mt-2"
-                variant="outline-primary"
-                @click="
-                  modelswitch(
-                    pricing.enterprisePlan.title,
-                    pricing.enterprisePlan.id,
-                    pricing.enterprisePlan.subtitle
-                  )
-                "
-              >
-                Buy
-              </b-button>
-            </b-card>
-          </b-col>
-          <b-col md="4">
-            <b-card align="center">
-              <div
-                v-show="pricing.standardPlan.popular"
-                class="pricing-badge text-right"
-              >
-                <b-badge variant="light-primary" pill> Popular </b-badge>
-              </div>
-              <!-- img -->
-              <b-img
-                v-if="pricing.standardPlan.img"
-                :src="
-                  pricing.standardPlan.img ||
-                  'https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/demo-1/img/Pot2.527b9edc.svg'
-                "
-                class="mb-1"
-                alt="standardPlan"
-              />
-              <!--/ img -->
-              <h3>{{ pricing.standardPlan.title }}</h3>
-              <b-card-text>{{ pricing.standardPlan.subtitle }}</b-card-text>
-
-              <!-- annual plan -->
-              <div class="annual-plan">
-                <div class="plan-price mt-2">
-                  <sup class="font-medium-1 font-weight-bold text-primary"
-                    >₹</sup
+                <!-- plan benefit -->
+                <b-list-group class="list-group-circle text-left">
+                  <b-list-group-item
+                    v-for="(data, index) in pricing.standardPlan.planBenefits"
+                    :key="index"
                   >
-                  <span
-                    class="pricing-basic-value font-weight-bolder text-primary"
-                    >{{
-                      monthlyPlanShow
-                        ? pricing.standardPlan.monthlyPrice
-                        : pricing.standardPlan.yearlyPlan.perMonth
-                    }}</span
-                  >
-                  <sub
-                    class="
-                      pricing-duration
-                      text-body
-                      font-medium-1 font-weight-bold
-                    "
-                    >/month</sub
-                  >
-                </div>
-                <small
-                  class="annual-pricing text-muted text-decoration-line-through"
-                >
-                  <del>
-                    ₹ {{ pricing.standardPlan.monthlyPrice * 2 }} / month</del
-                  ></small
-                >
-              </div>
-              <!--/ annual plan -->
+                    {{ data }}
+                  </b-list-group-item>
+                </b-list-group>
+                <!--/ plan benefit -->
 
-              <!-- plan benefit -->
-              <b-list-group class="list-group-circle text-left">
-                <b-list-group-item
-                  v-for="(data, index) in pricing.standardPlan.planBenefits"
-                  :key="index"
+                <!-- buttons -->
+                <b-button
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  block
+                  class="mt-2"
+                  variant="primary"
+                  @click="
+                    modelswitch(
+                      pricing.standardPlan.title,
+                      pricing.standardPlan.id,
+                      pricing.standardPlan.subtitle
+                    )
+                  "
                 >
-                  {{ data }}
-                </b-list-group-item>
-              </b-list-group>
-              <!--/ plan benefit -->
+                  Buy
+                </b-button>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-col>
+      </b-row>
+      <b-modal
+        v-model="showModal"
+        size="lg"
+        hide-footer
+        no-close-on-backdrop
+        lazy
+      >
+        <div v-if="!payment_done">
+          <div class="modal-body px-sm-5 mx-30">
+            <h1 class="text-center mb-1" id="addNewCardTitle">
+              Billing Detail
+            </h1>
+            <!-- <p class="text-center">Add card for future billing</p> -->
+          </div>
 
-              <!-- buttons -->
+          <validation-observer v-slot="{ invalid }" ref="refFormObserver">
+            <b-form class="p-2" @submit.prevent="onSubmit;">
+              <b-row>
+                <b-col md="3" xl="3">
+                  <validation-provider
+                    #default="validationContext"
+                    name="First Name"
+                    rules="required"
+                  >
+                    <b-form-group label="First Name" label-for="v-first-name">
+                      <b-form-input
+                        id="v-first-name"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                        placeholder="Jon"
+                        v-model="billingData.firstName"
+                      />
+
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+                <b-col md="3" xl="3">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Last Name"
+                    rules="required"
+                  >
+                    <b-form-group label="Last Name" label-for="v-last-name">
+                      <b-form-input
+                        id="v-last-name"
+                        placeholder="Doe"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                        v-model="billingData.lastName"
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Email"
+                    rules="required|email"
+                  >
+                    <b-form-group label="Email address" label-for="email">
+                      <b-form-input
+                        id="email"
+                        placeholder="john.doe@gmail.com"
+                        v-model="billingData.email"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+                <b-col cols="12">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Address line"
+                    rules="required"
+                  >
+                    <b-form-group label="Address line" label-for="v-address-1">
+                      <b-form-input
+                        id="v-address-1"
+                        placeholder="123 New York Street"
+                        v-model="billingData.address_line_1"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="Address line 2" label-for="v-address-2">
+                    <b-form-input
+                      id="v-address-2"
+                      v-model="billingData.address_line_2"
+                    />
+                  </b-form-group>
+                </b-col>
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Mobile"
+                    rules="required"
+                  >
+                    <b-form-group label="Mobile" label-for="Mobile">
+                      <b-form-input
+                        id="Mobile"
+                        placeholder="7000799192"
+                        v-model="billingData.contact"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="City"
+                    rules="required"
+                  >
+                    <b-form-group label="City" label-for="v-city">
+                      <b-form-input
+                        id="v-city"
+                        placeholder="NY"
+                        v-model="billingData.city"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Zip Code"
+                    rules="required"
+                  >
+                    <b-form-group label="Zip Code" label-for="v-zip">
+                      <b-form-input
+                        id="v-zip"
+                        placeholder="90102"
+                        v-model="billingData.zip"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="State"
+                    rules="required"
+                  >
+                    <b-form-group label="State" label-for="v-state">
+                      <b-form-input
+                        id="v-state"
+                        placeholder="New York"
+                        v-model="billingData.state"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                <b-col md="6" xl="6">
+                  <validation-provider
+                    #default="validationContext"
+                    name="Country"
+                    rules="required"
+                  >
+                    <b-form-group label="Country" label-for="v-country">
+                      <b-form-input
+                        id="v-country"
+                        placeholder="USA"
+                        v-model="billingData.country"
+                        autofocus
+                        :state="getValidationState(validationContext)"
+                        trim
+                      />
+                      <b-form-invalid-feedback>
+                        {{ validationContext.errors[0] }}
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+              </b-row>
+            </b-form>
+            <div class="d-flex justify-content-center">
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                block
-                class="mt-2"
-                variant="primary"
-                @click="
-                  modelswitch(
-                    pricing.standardPlan.title,
-                    pricing.standardPlan.id,
-                    pricing.standardPlan.subtitle
-                  )
-                "
+                variant="relief-primary"
+                :disabled="invalid"
+                @click="displayRazorPay()"
               >
-                Buy
+                Pay
               </b-button>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
-    <b-modal
-      v-model="showModal"
-      size="lg"
-      hide-footer
-      no-close-on-backdrop
-      lazy
-    >
-      <div v-if="!payment_done">
-        <div class="modal-body px-sm-5 mx-30">
-          <h1 class="text-center mb-1" id="addNewCardTitle">Billing Detail</h1>
-          <!-- <p class="text-center">Add card for future billing</p> -->
+            </div>
+          </validation-observer>
         </div>
-
-        <validation-observer v-slot="{ invalid }" ref="refFormObserver">
-          <b-form class="p-2" @submit.prevent="onSubmit;">
-            <b-row>
-              <b-col md="3" xl="3">
-                <validation-provider
-                  #default="validationContext"
-                  name="First Name"
-                  rules="required"
-                >
-                  <b-form-group label="First Name" label-for="v-first-name">
-                    <b-form-input
-                      id="v-first-name"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                      placeholder="Jon"
-                      v-model="billingData.firstName"
-                    />
-
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-
-              <b-col md="3" xl="3">
-                <validation-provider
-                  #default="validationContext"
-                  name="Last Name"
-                  rules="required"
-                >
-                  <b-form-group label="Last Name" label-for="v-last-name">
-                    <b-form-input
-                      id="v-last-name"
-                      placeholder="Doe"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                      v-model="billingData.lastName"
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="Email"
-                  rules="required|email"
-                >
-                  <b-form-group label="Email address" label-for="email">
-                    <b-form-input
-                      id="email"
-                      placeholder="john.doe@gmail.com"
-                      v-model="billingData.email"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-
-              <b-col cols="12">
-                <validation-provider
-                  #default="validationContext"
-                  name="Address line"
-                  rules="required"
-                >
-                  <b-form-group label="Address line" label-for="v-address-1">
-                    <b-form-input
-                      id="v-address-1"
-                      placeholder="123 New York Street"
-                      v-model="billingData.address_line_1"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-              <b-col cols="6">
-                <b-form-group label="Address line 2" label-for="v-address-2">
-                  <b-form-input
-                    id="v-address-2"
-                    v-model="billingData.address_line_2"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="Mobile"
-                  rules="required"
-                >
-                  <b-form-group label="Mobile" label-for="Mobile">
-                    <b-form-input
-                      id="Mobile"
-                      placeholder="7000799192"
-                      v-model="billingData.contact"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="City"
-                  rules="required"
-                >
-                  <b-form-group label="City" label-for="v-city">
-                    <b-form-input
-                      id="v-city"
-                      placeholder="NY"
-                      v-model="billingData.city"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="Zip Code"
-                  rules="required"
-                >
-                  <b-form-group label="Zip Code" label-for="v-zip">
-                    <b-form-input
-                      id="v-zip"
-                      placeholder="90102"
-                      v-model="billingData.zip"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="State"
-                  rules="required"
-                >
-                  <b-form-group label="State" label-for="v-state">
-                    <b-form-input
-                      id="v-state"
-                      placeholder="New York"
-                      v-model="billingData.state"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-              <b-col md="6" xl="6">
-                <validation-provider
-                  #default="validationContext"
-                  name="Country"
-                  rules="required"
-                >
-                  <b-form-group label="Country" label-for="v-country">
-                    <b-form-input
-                      id="v-country"
-                      placeholder="USA"
-                      v-model="billingData.country"
-                      autofocus
-                      :state="getValidationState(validationContext)"
-                      trim
-                    />
-                    <b-form-invalid-feedback>
-                      {{ validationContext.errors[0] }}
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                </validation-provider>
-              </b-col>
-            </b-row>
-          </b-form>
-          <div class="d-flex justify-content-center">
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              variant="relief-primary"
-              :disabled="invalid"
-              @click="displayRazorPay()"
-            >
-              Pay
-            </b-button>
+        <div v-else>
+          <div class="modal-body px-sm-5 mx-30">
+            <h1 class="text-center mb-1 text-success" id="addNewCardTitle">
+              Success! 🎉
+            </h1>
+            <p class="text-center">
+              Your order number is
+              <b-badge pill variant="success">
+                {{ success_order_id }}
+              </b-badge>
+              Keep it for future reference.
+            </p>
+            <p class="text-center">
+              Payment reciept has been sent to your registered email. Click
+              <b-badge href="/dashboard" pill variant="light-primary">
+                here
+              </b-badge>
+              to visit the traning dashboard.
+            </p>
           </div>
-        </validation-observer>
-      </div>
-      <div v-else>
-        <div class="modal-body px-sm-5 mx-30">
-          <h1 class="text-center mb-1 text-success" id="addNewCardTitle">
-            Success! 🎉
-          </h1>
-          <p class="text-center">
-            Your order number is
-            <b-badge pill variant="success">
-              {{ success_order_id }}
-            </b-badge>
-            Keep it for future reference.
-          </p>
-          <p class="text-center">
-            Payment reciept has been sent to your registered email. Click
-            <b-badge href="/dashboard" pill variant="light-primary">
-              here
-            </b-badge>
-            to visit the traning dashboard.
-          </p>
         </div>
-      </div>
-    </b-modal>
-    <!-- pricing plan cards -->
-    <!--/ pricing faq -->
-  </section>
+      </b-modal>
+      <!-- pricing plan cards -->
+      <!--/ pricing faq -->
+    </section>
+    <section v-else>
+      <b-spinner small class="mr-1" variant="primary" />
+    </section>
+  </div>
 </template>
 
 <script>
@@ -545,6 +581,7 @@ import {
   BFormInput,
   BFormInvalidFeedback,
   BForm,
+  BSpinner,
 } from "bootstrap-vue";
 import AppCollapse from "@core/components/app-collapse/AppCollapse.vue";
 import AppCollapseItem from "@core/components/app-collapse/AppCollapseItem.vue";
@@ -581,6 +618,7 @@ export default {
     ValidationProvider,
     BFormInvalidFeedback,
     BForm,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -590,6 +628,7 @@ export default {
       status: "monthly",
       monthlyPlanShow: true,
       pricing: {},
+      isCompoLoading: false,
     };
   },
 
@@ -605,6 +644,7 @@ export default {
       });
   },
   async created() {
+    this.isCompoLoading = true;
     try {
       const data = await this.$apollo.query({
         query: gql`
@@ -641,9 +681,13 @@ export default {
           }
           return y;
         });
+
         this.pricing = result[0];
+        this.isCompoLoading = false;
       }
     } catch (error) {
+      this.isCompoLoading = false;
+
       console.log(error);
     }
   },
