@@ -6,167 +6,177 @@
     <div>
       <!-- <div v-if="!posts.length">No posts to show</div> -->
       <div>
-        <b-card class="ml-25">
-          <div class="text-right">
-            <b-dropdown variant="link" no-caret right toggle-class="p-0">
-              <template #button-content>
-                <feather-icon
-                  icon="MoreVerticalIcon"
-                  size="18"
-                  class="text-body cursor-pointer"
-                />
-              </template>
+        <b-overlay
+          :show="showOverlay"
+          spinner-variant="primary"
+          spinner-type="grow"
+          spinner-small
+          opacity="0.1"
+          rounded="sm"
+        >
+          <b-card class="ml-25">
+            <div class="text-right">
+              <b-dropdown variant="link" no-caret right toggle-class="p-0">
+                <template #button-content>
+                  <feather-icon
+                    icon="MoreVerticalIcon"
+                    size="18"
+                    class="text-body cursor-pointer"
+                  />
+                </template>
 
-              <b-dropdown-item href="#" @click="editContent()">
-                <feather-icon
-                  icon="EditIcon"
-                  size="18"
-                  class="text-body cursor-pointer"
-                />
-                Edit
-              </b-dropdown-item>
-              <b-dropdown-item href="#" @click="deletePostModal(item.id)">
-                <feather-icon
-                  icon="XIcon"
-                  size="18"
-                  class="text-body cursor-pointer"
-                />
-                Delete
-              </b-dropdown-item>
-            </b-dropdown>
-          </div>
-
-          <div class="d-flex justify-content-start align-items-center mb-1">
-            <!-- avatar -->
-            <b-avatar
-              :to="{
-                name: 'profile',
-                params: { username: item.author.username },
-              }"
-              size="50"
-              class="mr-1"
-              :src="item.author.avatar"
-            />
-            <!--/ avatar -->
-            <div class="profile-user-info">
-              <h6 class="mb-0">
-                <router-link
-                  :to="{
-                    name: 'profile',
-                    params: { username: item.author.username },
-                  }"
-                >
-                  {{ item.author.username }}
-                </router-link>
-              </h6>
-              <small class="text-muted"
-                >{{ item.created_at | moment("from", "now") }}
-              </small>
+                <b-dropdown-item href="#" @click="editContent()">
+                  <feather-icon
+                    icon="EditIcon"
+                    size="18"
+                    class="text-body cursor-pointer"
+                  />
+                  Edit
+                </b-dropdown-item>
+                <b-dropdown-item href="#" @click="deletePostModal(item.id)">
+                  <feather-icon
+                    icon="XIcon"
+                    size="18"
+                    class="text-body cursor-pointer"
+                  />
+                  Delete
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
-          </div>
 
-          <b-card-text v-if="!isEdit">
-            {{ item.content }}
-          </b-card-text>
-          <div v-if="isEdit">
-            <b-form-group>
-              <b-form-textarea
-                rows="3"
-                placeholder="Empty? Is your photo that expresive,?"
-                v-model="item.content"
-              />
-            </b-form-group>
-            <div class="text-right inline-spacing">
-              <b-button
-                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                variant="outline-secondary"
-                size="sm"
+            <div class="d-flex justify-content-start align-items-center mb-1">
+              <!-- avatar -->
+              <b-avatar
+                :to="{
+                  name: 'profile',
+                  params: { username: item.author.username },
+                }"
+                size="50"
                 class="mr-1"
-                @click="
-                  () => {
-                    this.item.content = this.previousPostContent;
+                :src="item.author.avatar"
+              />
+              <!--/ avatar -->
+              <div class="profile-user-info">
+                <h6 class="mb-0">
+                  <router-link
+                    :to="{
+                      name: 'profile',
+                      params: { username: item.author.username },
+                    }"
+                  >
+                    {{ item.author.username }}
+                  </router-link>
+                </h6>
+                <small class="text-muted"
+                  >{{ item.created_at | moment("from", "now") }}
+                </small>
+              </div>
+            </div>
 
-                    this.isEdit = !this.isEdit;
-                  }
+            <b-card-text v-if="!isEdit">
+              {{ item.content }}
+            </b-card-text>
+            <div v-if="isEdit">
+              <b-form-group>
+                <b-form-textarea
+                  rows="3"
+                  placeholder="Empty? Is your photo that expresive,?"
+                  v-model="item.content"
+                />
+              </b-form-group>
+              <div class="text-right inline-spacing">
+                <b-button
+                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                  variant="outline-secondary"
+                  size="sm"
+                  class="mr-1"
+                  @click="
+                    () => {
+                      this.item.content = this.previousPostContent;
+
+                      this.isEdit = !this.isEdit;
+                    }
+                  "
+                >
+                  Cancel
+                </b-button>
+
+                <b-button
+                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                  variant="outline-primary"
+                  size="sm"
+                  :class="isLoadingComment ? 'hidden' : ''"
+                  @click="updatePost(item.id)"
+                >
+                  Update Post
+                </b-button>
+                <b-button
+                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                  size="sm"
+                  v-if="isLoadingComment"
+                  variant="outline-primary"
+                  disabled
+                >
+                  <div>
+                    <b-spinner small />
+
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </b-button>
+                <hr class="invoice-spacing" />
+              </div>
+            </div>
+            <!-- post img -->
+            <b-img
+              v-if="item.photo"
+              fluid
+              rounded
+              class="mb-25"
+              :src="item.photo"
+              @click="dblclick(item.id, item.youLiked)"
+            />
+            <!--/ post img -->
+            <!-- post video -->
+            <b-embed
+              v-if="item.postVid"
+              type="iframe"
+              :src="item.postVid"
+              allowfullscreen
+              class="rounded mb-50"
+            />
+            <b-card-title></b-card-title>
+
+            <!-- likes comments  share-->
+            <b-row class="pb-50 mt-50">
+              <b-col
+                sm="8"
+                class="
+                  d-flex
+                  justify-content-between justify-content-sm-start
+                  mb-2
                 "
               >
-                Cancel
-              </b-button>
-
-              <b-button
-                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                variant="outline-primary"
-                size="sm"
-                :class="isLoadingComment ? 'hidden' : ''"
-                @click="updatePost(item.id)"
-              >
-                Update Post
-              </b-button>
-              <b-button
-                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                size="sm"
-                v-if="isLoadingComment"
-                variant="outline-primary"
-                disabled
-              >
-                <div>
-                  <b-spinner small />
-
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </b-button>
-              <hr class="invoice-spacing" />
-            </div>
-          </div>
-          <!-- post img -->
-          <b-img
-            v-if="item.photo"
-            fluid
-            rounded
-            class="mb-25"
-            :src="item.photo"
-            @click="dblclick(item.id, item.youLiked)"
-          />
-          <!--/ post img -->
-          <!-- post video -->
-          <b-embed
-            v-if="item.postVid"
-            type="iframe"
-            :src="item.postVid"
-            allowfullscreen
-            class="rounded mb-50"
-          />
-          <b-card-title></b-card-title>
-
-          <!-- likes comments  share-->
-          <b-row class="pb-50 mt-50">
-            <b-col
-              sm="8"
-              class="
-                d-flex
-                justify-content-between justify-content-sm-start
-                mb-2
-              "
-            >
-              <b-link class="d-flex align-items-center text-muted text-nowrap">
-                <div @click="unlike(item.id)">
-                  <Icon
-                    v-if="item.youLiked"
-                    icon="ant-design:heart-filled"
-                    style="font-size: 32px"
-                    color="red"
-                  />
-                </div>
-                <div @click="addnewliketoPost(item.id)">
-                  <Icon
-                    v-if="!item.youLiked"
-                    icon="akar-icons:heart"
-                    style="font-size: 32px"
-                  />
-                </div>
-              </b-link>
-              <div class="d-flex align-item-center">
-                <!-- <b-avatar-group size="26" class="ml-1">
+                <b-link
+                  class="d-flex align-items-center text-muted text-nowrap"
+                >
+                  <div @click="unlike(item.id)">
+                    <Icon
+                      v-if="item.youLiked"
+                      icon="ant-design:heart-filled"
+                      style="font-size: 32px"
+                      color="red"
+                    />
+                  </div>
+                  <div @click="addnewliketoPost(item.id)">
+                    <Icon
+                      v-if="!item.youLiked"
+                      icon="akar-icons:heart"
+                      style="font-size: 32px"
+                    />
+                  </div>
+                </b-link>
+                <div class="d-flex align-item-center">
+                  <!-- <b-avatar-group size="26" class="ml-1">
                   <b-avatar
                     v-for="(avatarData, i) in item.likedby"
                     :key="i"
@@ -175,112 +185,118 @@
                     :src="avatarData.authorOBJ.avatar"
                   />
                 </b-avatar-group> -->
-                <b-link class="text-muted text-nowrap mt-50 ml-50"
-                  >{{ item.likedby_aggregate.aggregate.count }} Likes</b-link
-                >
-              </div>
-            </b-col>
-            <b-col
-              sm="4"
-              class="
-                d-flex
-                justify-content-between justify-content-sm-end
-                align-items-center
-                mb-2
-              "
-            >
-              <b-link
-                class="text-body text-nowrap"
-                v-if="item.comments_aggregate.aggregate.count > 3"
-              >
-                <feather-icon
-                  icon="MessageSquareIcon"
-                  size="18"
-                  class="profile-icon mr-50"
-                />
-
-                <span class="text-muted mr-1">
-                  View
-                  {{ kFormatter(item.comments_aggregate.aggregate.count) }}
-                  Comments</span
-                >
-              </b-link>
-
-              <b-link class="text-body text-nowrap">
-                <feather-icon
-                  icon="Share2Icon"
-                  size="18"
-                  class="profile-icon mr-50"
-                />
-                <span class="text-muted">Share</span>
-              </b-link>
-            </b-col>
-          </b-row>
-          <!-- comments -->
-          <div
-            v-for="commentx in item.comments"
-            :key="commentx.id"
-            class="d-flex align-items-start mb-1"
-          >
-            <b-avatar
-              :src="commentx.owner.avatar"
-              size="34"
-              class="mt-25 mr-75"
-            />
-            <div class="profile-user-info w-100">
-              <div class="d-flex align-items-center justify-content-between">
-                <h6 class="mb-0">
-                  <router-link
-                    :to="{
-                      name: 'profile',
-                      params: { username: commentx.owner.username },
-                    }"
+                  <b-link class="text-muted text-nowrap mt-50 ml-50"
+                    >{{ item.likedby_aggregate.aggregate.count }} Likes</b-link
                   >
-                    {{ commentx.owner.username }}
-                  </router-link>
-                </h6>
-              </div>
-              <small>{{ commentx.text }}</small>
-            </div>
-          </div>
-          <!--/ comments -->
-          <div
-            v-if="item.comments_aggregate.aggregate.count > 3"
-            class="text-center mb-2"
-          >
-            <b-button v-if="isLoading" variant="primary" disabled class="mr-1">
-              <b-spinner small type="grow" />
-            </b-button>
-            <b-button
-              v-else
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              variant="primary"
-              size="sm"
-              @click="loadMoreComment(item.id)"
+                </div>
+              </b-col>
+              <b-col
+                sm="4"
+                class="
+                  d-flex
+                  justify-content-between justify-content-sm-end
+                  align-items-center
+                  mb-2
+                "
+              >
+                <b-link
+                  class="text-body text-nowrap"
+                  v-if="item.comments_aggregate.aggregate.count > 3"
+                >
+                  <feather-icon
+                    icon="MessageSquareIcon"
+                    size="18"
+                    class="profile-icon mr-50"
+                  />
+
+                  <span class="text-muted mr-1">
+                    View
+                    {{ kFormatter(item.comments_aggregate.aggregate.count) }}
+                    Comments</span
+                  >
+                </b-link>
+
+                <b-link class="text-body text-nowrap">
+                  <feather-icon
+                    icon="Share2Icon"
+                    size="18"
+                    class="profile-icon mr-50"
+                  />
+                  <span class="text-muted">Share</span>
+                </b-link>
+              </b-col>
+            </b-row>
+            <!-- comments -->
+            <div
+              v-for="commentx in item.comments"
+              :key="commentx.id"
+              class="d-flex align-items-start mb-1"
             >
-              Load More
+              <b-avatar
+                :src="commentx.owner.avatar"
+                size="34"
+                class="mt-25 mr-75"
+              />
+              <div class="profile-user-info w-100">
+                <div class="d-flex align-items-center justify-content-between">
+                  <h6 class="mb-0">
+                    <router-link
+                      :to="{
+                        name: 'profile',
+                        params: { username: commentx.owner.username },
+                      }"
+                    >
+                      {{ commentx.owner.username }}
+                    </router-link>
+                  </h6>
+                </div>
+                <small>{{ commentx.text }}</small>
+              </div>
+            </div>
+            <!--/ comments -->
+            <div
+              v-if="item.comments_aggregate.aggregate.count > 3"
+              class="text-center mb-2"
+            >
+              <b-button
+                v-if="isLoading"
+                variant="primary"
+                disabled
+                class="mr-1"
+              >
+                <b-spinner small type="grow" />
+              </b-button>
+              <b-button
+                v-else
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                variant="primary"
+                size="sm"
+                @click="loadMoreComment(item.id)"
+              >
+                Load More
+              </b-button>
+            </div>
+            <b-form-group>
+              <b-form-textarea
+                rows="1"
+                placeholder="Add Comment"
+                v-model="AddNewCommentData.text"
+              />
+            </b-form-group>
+
+            <!--/ comment box -->
+
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              size="sm"
+              variant="primary"
+              @click="addNewComment(item.id)"
+            >
+              Add a comment
             </b-button>
-          </div>
-          <b-form-group>
-            <b-form-textarea
-              rows="1"
-              placeholder="Add Comment"
-              v-model="AddNewCommentData.text"
-            />
-          </b-form-group>
-
-          <!--/ comment box -->
-
-          <b-button
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            size="sm"
-            variant="primary"
-            @click="addNewComment(item.id)"
-          >
-            Add a comment
-          </b-button>
-          <!--/ post video -->
-        </b-card>
+            <!--/ post video -->
+          </b-card>
+        </b-overlay>
       </div>
     </div>
   </div>
@@ -308,6 +324,7 @@ import {
   BCardTitle,
   BCardBody,
   BCardHeader,
+  BOverlay,
 } from "bootstrap-vue";
 
 import Ripple from "vue-ripple-directive";
@@ -338,6 +355,7 @@ export default {
     BCardTitle,
     BCardBody,
     BCardHeader,
+    BOverlay,
   },
 
   directives: {
@@ -361,6 +379,7 @@ export default {
       console.log("ok");
     },
     async deletePostModal(postid) {
+      this.showOverlay = true
       this.boxOne = "";
       this.$bvModal
         .msgBoxConfirm("Are you sure?", {
@@ -378,8 +397,10 @@ export default {
             });
             // this.$apollo.queries.Fitness_Posts.refetch();
             // location.reload();
+            this.showOverlay = false
             this.isDeleted = true;
           } else {
+            this.showOverlay = false
             console.log("fail to delete");
           }
         });
@@ -396,6 +417,7 @@ export default {
       }
     },
     async updatePost(postId) {
+      this.showOverlay = true
       console.log(postId);
       this.isLoadingComment = true;
       try {
@@ -417,6 +439,7 @@ export default {
         });
         if (data.data.update_Fitness_Posts_by_pk.id) {
           this.isEdit = false;
+          this.showOverlay = false
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -430,6 +453,7 @@ export default {
 
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.showOverlay = false
         this.isLoadingComment = false;
         this.$toast({
           component: ToastificationContent,
@@ -443,6 +467,7 @@ export default {
       }
     },
     async unlike(postId) {
+      this.showOverlay = true
       // let UserToRemove = this.item.likedby.filter(
       //   (item) => item.authorOBJ.id === this.currentUserID.id
       // );
@@ -463,17 +488,20 @@ export default {
         });
         this.item.youLiked = false;
         this.item.likedby_aggregate.aggregate.count--;
-
+        this.showOverlay = false
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.showOverlay = false
         console.log(error);
       }
     },
 
     async addnewliketoPost(postId) {
+
       if (this.item.youLiked) {
         return;
       }
+      this.showOverlay = true
       this.$Progress.start();
       try {
         const data = await this.$apollo.mutate({
@@ -493,6 +521,7 @@ export default {
             postId: postId,
           },
         });
+        this.showOverlay = false
         this.item.youLiked = true;
         this.item.likedby_aggregate.aggregate.count++;
         // if (this.item.likedby.length < 5) {
@@ -504,10 +533,12 @@ export default {
         // this.$emit("refresh");
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.showOverlay = false
         console.log(error);
       }
     },
     async addNewComment(postId) {
+      this.showOverlay = true
       try {
         const data = await this.$apollo.mutate({
           mutation: gql`
@@ -530,6 +561,7 @@ export default {
             postId: postId,
           },
         });
+        this.showOverlay = false
         this.item.comments.push(data.data.insert_Fitness_postComment_one);
 
         // location.reload();
@@ -537,11 +569,13 @@ export default {
         this.AddNewCommentData.text = null;
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.showOverlay = false
         console.log(error);
       }
     },
 
     async loadMoreComment(post_id) {
+      this.showOverlay = true
       this.isLoading = true;
       console.log(post_id);
       this.post_offset = this.post_offset + 3;
@@ -573,6 +607,7 @@ export default {
             post_id: post_id,
           },
         });
+        this.showOverlay = false
         this.isLoading = false;
         this.item.comments.push(...data.data.Fitness_Posts_by_pk.comments);
         // console.log(
@@ -584,6 +619,7 @@ export default {
         // this.$emit("refresh");
         // this.$apollo.queries.Fitness_Posts.refetch();
       } catch (error) {
+        this.showOverlay = false
         this.isLoading = false;
 
         console.log(error);
@@ -604,6 +640,7 @@ export default {
 
   data() {
     return {
+      showOverlay: false,
       isLoading: false,
       isLoadingComment: false,
       AddNewCommentData: {
