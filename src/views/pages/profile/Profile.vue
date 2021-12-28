@@ -114,7 +114,8 @@ export default {
       this.loadFeed();
     },
 
-    ok(username) {
+    ok() {
+      let username = this.$route.params.username;
       let x = username.username;
       this.refetchProfile(x);
     },

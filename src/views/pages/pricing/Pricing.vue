@@ -1,14 +1,14 @@
 <template>
   <section v-if="Object.keys(pricing).length" id="pricing-plan">
     <!-- title text and switch button -->
-    <div class="text-center">
+    <div class="text-center d-flex p-2">
       <h1 class="mt-5">Pricing Plans</h1>
-      <b-badge variant="warning" class="badge-glow">
-       
-        <h7>🤑  Launching OFFER | 50% FLAT OFF ON ALL THE PLANS 🤑</h7>
-
-      </b-badge> <br>
-<br>
+      <b-badge variant="primary" class="badge-glow">
+        🤑 Launching OFFER <br />
+        50% FLAT OFF ON ALL THE PLANS 🤑
+      </b-badge>
+      <br />
+      <br />
       <p class="mb-4 pb-75">
         We don't take this much rest while working out So Why now? The prices
         are simple and straightforward, Select the package and serve your
@@ -61,10 +61,13 @@
                   >
                 </div>
 
-                                <small
+                <small
                   class="annual-pricing text-muted text-decoration-line-through"
-                > <del> ₹ {{pricing.basicPlan.monthlyPrice * 2}} / month</del></small>
-
+                >
+                  <del>
+                    ₹ {{ pricing.basicPlan.monthlyPrice * 2 }} / month</del
+                  ></small
+                >
               </div>
               <!--/ annual plan -->
 
@@ -93,7 +96,7 @@
                   )
                 "
               >
-                Your current plan
+                Buy
               </b-button>
             </b-card>
           </b-col>
@@ -139,9 +142,13 @@
                     >/month</sub
                   >
                 </div>
-                                <small
+                <small
                   class="annual-pricing text-muted text-decoration-line-through"
-                > <del> ₹ {{pricing.enterprisePlan.yearlyPrice * 2}} / month</del></small>
+                >
+                  <del>
+                    ₹ {{ pricing.enterprisePlan.yearlyPrice * 2 }} / month</del
+                  ></small
+                >
               </div>
               <!--/ annual plan -->
 
@@ -171,7 +178,7 @@
                   )
                 "
               >
-                Upgrade
+                Buy
               </b-button>
             </b-card>
           </b-col>
@@ -220,9 +227,13 @@
                     >/month</sub
                   >
                 </div>
-                                <small
+                <small
                   class="annual-pricing text-muted text-decoration-line-through"
-                > <del> ₹ {{pricing.standardPlan.monthlyPrice * 2}} / month</del></small>
+                >
+                  <del>
+                    ₹ {{ pricing.standardPlan.monthlyPrice * 2 }} / month</del
+                  ></small
+                >
               </div>
               <!--/ annual plan -->
 
@@ -251,7 +262,7 @@
                   )
                 "
               >
-                Upgrade
+                Buy
               </b-button>
             </b-card>
           </b-col>

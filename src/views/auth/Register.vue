@@ -29,147 +29,156 @@
 
           <!-- form -->
           <validation-observer ref="registerForm" #default="{ invalid }">
-            <b-form class="auth-register-form mt-2" @submit.prevent="signup">
-              <!-- Firstname -->
-              <b-form-group label="First Name" label-for="register-firstname">
-                <validation-provider
-                  #default="{ errors }"
-                  name="firstname"
-                  vid="firstname"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="register-firstname"
-                    v-model="register.firstName"
-                    name="register-firstname"
-                    :state="errors.length > 0 ? false : null"
-                    placeholder="Ankit"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- Lastname -->
-              <b-form-group label="Last Name" label-for="register-firstname">
-                <validation-provider
-                  #default="{ errors }"
-                  name="lastname"
-                  vid="lastname"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="register-lastname"
-                    v-model="register.lastName"
-                    name="register-lastname"
-                    :state="errors.length > 0 ? false : null"
-                    placeholder="Singh"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- username -->
-              <b-form-group label="Username" label-for="register-username">
-                <validation-provider
-                  #default="{ errors }"
-                  name="Username"
-                  vid="username"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="register-username"
-                    v-model="register.username"
-                    name="register-username"
-                    :state="errors.length > 0 ? false : null"
-                    placeholder="johndoe"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- email -->
-              <b-form-group label="Email" label-for="register-email">
-                <validation-provider
-                  #default="{ errors }"
-                  name="Email"
-                  vid="email"
-                  rules="required|email"
-                >
-                  <b-form-input
-                    id="register-email"
-                    v-model="register.email"
-                    name="register-email"
-                    :state="errors.length > 0 ? false : null"
-                    placeholder="john@example.com"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- password -->
-              <b-form-group label-for="register-password" label="Password">
-                <validation-provider
-                  #default="{ errors }"
-                  name="Password"
-                  vid="password"
-                  rules="required"
-                >
-                  <b-input-group
-                    class="input-group-merge"
-                    :class="errors.length > 0 ? 'is-invalid' : null"
+            <b-overlay
+              :show="showOverlay"
+              spinner-variant="primary"
+              spinner-type="grow"
+              spinner-small
+              opacity="0.0"
+              rounded="sm"
+            >
+              <b-form class="auth-register-form mt-2" @submit.prevent="signup">
+                <!-- Firstname -->
+                <b-form-group label="First Name" label-for="register-firstname">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="firstname"
+                    vid="firstname"
+                    rules="required"
                   >
                     <b-form-input
-                      id="register-password"
-                      v-model="register.password"
-                      class="form-control-merge"
-                      :type="passwordFieldType"
+                      id="register-firstname"
+                      v-model="register.firstName"
+                      name="register-firstname"
                       :state="errors.length > 0 ? false : null"
-                      name="register-password"
-                      placeholder="*********"
+                      placeholder="Ankit"
                     />
-                    <b-input-group-append is-text>
-                      <feather-icon
-                        :icon="passwordToggleIcon"
-                        class="cursor-pointer"
-                        @click="togglePasswordVisibility"
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+
+                <!-- Lastname -->
+                <b-form-group label="Last Name" label-for="register-firstname">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="lastname"
+                    vid="lastname"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="register-lastname"
+                      v-model="register.lastName"
+                      name="register-lastname"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="Singh"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+
+                <!-- username -->
+                <b-form-group label="Username" label-for="register-username">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Username"
+                    vid="username"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="register-username"
+                      v-model="register.username"
+                      name="register-username"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="johndoe"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+
+                <!-- email -->
+                <b-form-group label="Email" label-for="register-email">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Email"
+                    vid="email"
+                    rules="required|email"
+                  >
+                    <b-form-input
+                      id="register-email"
+                      v-model="register.email"
+                      name="register-email"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="john@example.com"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+
+                <!-- password -->
+                <b-form-group label-for="register-password" label="Password">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Password"
+                    vid="password"
+                    rules="required"
+                  >
+                    <b-input-group
+                      class="input-group-merge"
+                      :class="errors.length > 0 ? 'is-invalid' : null"
+                    >
+                      <b-form-input
+                        id="register-password"
+                        v-model="register.password"
+                        class="form-control-merge"
+                        :type="passwordFieldType"
+                        :state="errors.length > 0 ? false : null"
+                        name="register-password"
+                        placeholder="*********"
                       />
-                    </b-input-group-append>
-                  </b-input-group>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
+                      <b-input-group-append is-text>
+                        <feather-icon
+                          :icon="passwordToggleIcon"
+                          class="cursor-pointer"
+                          @click="togglePasswordVisibility"
+                        />
+                      </b-input-group-append>
+                    </b-input-group>
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
 
-              <b-form-group>
-                <b-form-checkbox
-                  id="register-privacy-policy"
-                  v-model="register.status"
-                  name="checkbox-1"
+                <b-form-group>
+                  <b-form-checkbox
+                    id="register-privacy-policy"
+                    v-model="register.status"
+                    name="checkbox-1"
+                  >
+                    I agree to
+                    <b-link>privacy policy & terms</b-link>
+                  </b-form-checkbox>
+                </b-form-group>
+
+                <b-button
+                  variant="primary"
+                  block
+                  type="submit"
+                  :disabled="invalid || isloading"
+                  :class="isloading ? 'hidden' : ''"
                 >
-                  I agree to
-                  <b-link>privacy policy & terms</b-link>
-                </b-form-checkbox>
-              </b-form-group>
+                  <div v-if="!isloading">
+                    <span> Sign up</span>
+                  </div>
+                </b-button>
 
-              <b-button
-                variant="primary"
-                block
-                type="submit"
-                :disabled="invalid || isloading"
-                :class="isloading ? 'hidden' : ''"
-              >
-                <div v-if="!isloading">
-                  <span> Sign up</span>
-                </div>
-              </b-button>
+                <b-button v-if="isloading" variant="primary" disabled block>
+                  <div>
+                    <b-spinner small />
 
-              <b-button v-if="isloading" variant="primary" disabled block>
-                <div>
-                  <b-spinner small />
-
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </b-button>
-            </b-form>
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </b-button>
+              </b-form>
+            </b-overlay>
           </validation-observer>
 
           <!-- <p class="text-center mt-2">
@@ -223,6 +232,7 @@ import {
   BCardTitle,
   BCardText,
   BSpinner,
+  BOverlay,
 } from "bootstrap-vue";
 import { required, email } from "@validations";
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
@@ -250,10 +260,12 @@ export default {
     ValidationProvider,
     ValidationObserver,
     BSpinner,
+    BOverlay,
   },
   mixins: [togglePasswordVisibility],
   data() {
     return {
+      showOverlay: false,
       isloading: false,
       register: {
         status: "",
@@ -285,6 +297,7 @@ export default {
   },
   methods: {
     async signup() {
+      this.showOverlay = true;
       this.isloading = true;
       // Call to the graphql mutation
       const data = await this.$apollo
@@ -319,6 +332,7 @@ export default {
         })
         .then((data) => {
           this.isloading = false;
+          this.showOverlay = false;
           this.$router.replace({ path: "/login" });
           this.$toast({
             component: ToastificationContent,
@@ -333,6 +347,8 @@ export default {
         })
 
         .catch((errors) => {
+          this.showOverlay = false;
+
           this.isloading = false;
           console.log(errors);
           this.$toast({
