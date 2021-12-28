@@ -20,6 +20,8 @@
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
+                  <dark-Toggler class="d-xl-none" />
+
       <search-bar />
       <notification-dropdown />
 
