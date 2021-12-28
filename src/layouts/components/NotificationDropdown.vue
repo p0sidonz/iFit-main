@@ -6,8 +6,8 @@
   >
     <template #button-content>
       <feather-icon
-        badge="6"
-        badge-classes="bg-danger"
+        badge="0"
+        badge-classes="bg-primary"
         class="text-body"
         icon="BellIcon"
         size="21"
@@ -17,15 +17,7 @@
     <!-- Header -->
     <li class="dropdown-menu-header">
       <div class="dropdown-header d-flex">
-        <h4 class="notification-title mb-0 mr-auto">
-          Notifications
-        </h4>
-        <b-badge
-          pill
-          variant="light-primary"
-        >
-          6 New
-        </b-badge>
+        <h4 class="notification-title mb-0 mr-auto">Notifications</h4>
       </div>
     </li>
 
@@ -37,79 +29,70 @@
       tagname="li"
     >
       <!-- Account Notification -->
-      <b-link
-        v-for="notification in notifications"
-        :key="notification.subtitle"
-      >
-        <b-media>
-          <template #aside>
-            <b-avatar
-              size="32"
-              :src="notification.avatar"
-              :text="notification.avatar"
-              :variant="notification.type"
-            />
-          </template>
-          <p class="media-heading">
-            <span class="font-weight-bolder">
-              {{ notification.title }}
-            </span>
-          </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
-        </b-media>
-      </b-link>
-
-      <!-- System Notification Toggler -->
-      <div class="media d-flex align-items-center">
-        <h6 class="font-weight-bolder mr-auto mb-0">
-          System Notifications
-        </h6>
-        <b-form-checkbox
-          :checked="true"
-          switch
-        />
+      <div v-if="notifications.length">
+        <b-link
+          v-for="notification in notifications"
+          :key="notification.subtitle"
+        >
+          <b-media>
+            <template #aside>
+              <b-avatar
+                size="32"
+                :src="notification.avatar"
+                :text="notification.avatar"
+                :variant="notification.type"
+              />
+            </template>
+            <p class="media-heading">
+              <span class="font-weight-bolder">
+                {{ notification.title }}
+              </span>
+            </p>
+            <small class="notification-text">{{ notification.subtitle }}</small>
+          </b-media>
+        </b-link>
       </div>
 
-      <!-- System Notifications -->
-      <b-link
-        v-for="notification in systemNotifications"
-        :key="notification.subtitle"
-      >
-        <b-media>
-          <template #aside>
-            <b-avatar
-              size="32"
-              :variant="notification.type"
-            >
-              <feather-icon :icon="notification.icon" />
-            </b-avatar>
-          </template>
-          <p class="media-heading">
-            <span class="font-weight-bolder">
-              {{ notification.title }}
-            </span>
-          </p>
-          <small class="notification-text">{{ notification.subtitle }}</small>
-        </b-media>
-      </b-link>
+      <div v-else>
+
+            <b-alert
+      variant="primary"
+      show
+    >
+    <div class="text-center">       <div class="alert-body">
+          <span><strong>No Notification</strong></span>
+      </div></div>
+
+    </b-alert>
+
+      </div>
     </vue-perfect-scrollbar>
 
     <!-- Cart Footer -->
-    <li class="dropdown-menu-footer"><b-button
-      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-      variant="primary"
-      block
-    >Read all notifications</b-button>
-    </li>
+    <!-- <li class="dropdown-menu-footer">
+      <b-button
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        variant="primary"
+        block
+        >Clear all notification</b-button
+      >
+    </li> -->
   </b-nav-item-dropdown>
 </template>
 
 <script>
 import {
-  BNavItemDropdown, BBadge, BMedia, BLink, BAvatar, BButton, BFormCheckbox,
-} from 'bootstrap-vue'
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import Ripple from 'vue-ripple-directive'
+  BNavItemDropdown,
+  BBadge,
+  BMedia,
+  BLink,
+  BAvatar,
+  BButton,
+  BFormCheckbox,
+  BAlert,
+} from "bootstrap-vue";
+import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import Ripple from "vue-ripple-directive";
 
 export default {
   components: {
@@ -118,6 +101,7 @@ export default {
     BMedia,
     BLink,
     BAvatar,
+    BAlert,
     VuePerfectScrollbar,
     BButton,
     BFormCheckbox,
@@ -128,62 +112,61 @@ export default {
   setup() {
     /* eslint-disable global-require */
     const notifications = [
-      {
-        title: 'Congratulation Sam 🎉',
-        avatar: require('@/assets/images/avatars/6-small.png'),
-        subtitle: 'Won the monthly best seller badge',
-        type: 'light-success',
-      },
-      {
-        title: 'New message received',
-        avatar: require('@/assets/images/avatars/9-small.png'),
-        subtitle: 'You have 10 unread messages',
-        type: 'light-info',
-      },
-      {
-        title: 'Revised Order 👋',
-        avatar: 'MD',
-        subtitle: 'MD Inc. order updated',
-        type: 'light-danger',
-      },
-    ]
+      // {
+      //   title: 'Congratulation Sam 🎉',
+      //   avatar: require('@/assets/images/avatars/6-small.png'),
+      //   subtitle: 'Won the monthly best seller badge',
+      //   type: 'light-success',
+      // },
+      // {
+      //   title: 'New message received',
+      //   avatar: require('@/assets/images/avatars/9-small.png'),
+      //   subtitle: 'You have 10 unread messages',
+      //   type: 'light-info',
+      // },
+      // {
+      //   title: 'Revised Order 👋',
+      //   avatar: 'MD',
+      //   subtitle: 'MD Inc. order updated',
+      //   type: 'light-danger',
+      // },
+    ];
     /* eslint-disable global-require */
 
     const systemNotifications = [
-      {
-        title: 'Server down',
-        subtitle: 'USA Server is down due to hight CPU usage',
-        type: 'light-danger',
-        icon: 'XIcon',
-      },
-      {
-        title: 'Sales report generated',
-        subtitle: 'Last month sales report generated',
-        type: 'light-success',
-        icon: 'CheckIcon',
-      },
-      {
-        title: 'High memory usage',
-        subtitle: 'BLR Server using high memory',
-        type: 'light-warning',
-        icon: 'AlertTriangleIcon',
-      },
-    ]
+      // {
+      //   title: 'Server down',
+      //   subtitle: 'USA Server is down due to hight CPU usage',
+      //   type: 'light-danger',
+      //   icon: 'XIcon',
+      // },
+      // {
+      //   title: 'Sales report generated',
+      //   subtitle: 'Last month sales report generated',
+      //   type: 'light-success',
+      //   icon: 'CheckIcon',
+      // },
+      // {
+      //   title: 'High memory usage',
+      //   subtitle: 'BLR Server using high memory',
+      //   type: 'light-warning',
+      //   icon: 'AlertTriangleIcon',
+      // },
+    ];
 
     const perfectScrollbarSettings = {
       maxScrollbarLength: 60,
       wheelPropagation: false,
-    }
+    };
 
     return {
       notifications,
       systemNotifications,
       perfectScrollbarSettings,
-    }
+    };
   },
-}
+};
 </script>
 
 <style>
-
 </style>
