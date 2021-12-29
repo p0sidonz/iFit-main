@@ -11,7 +11,7 @@
           >
             <b-button
               :to="{
-                name: 'user-program-view',
+                name: 'program-edit',
                 params: { id: program.program_details.id },
               }"
               class="float-right"

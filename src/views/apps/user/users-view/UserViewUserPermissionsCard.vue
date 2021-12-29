@@ -13,7 +13,7 @@
 
             <b-button
               :to="{
-                name: 'trainer-diet-view',
+                name: 'nutrition-edit',
                 params: { id: diets.diet_details.id },
               }"
               class="float-right"
