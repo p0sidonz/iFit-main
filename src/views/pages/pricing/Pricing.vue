@@ -102,7 +102,7 @@
                   v-ripple.400="'rgba(40, 199, 111, 0.15)'"
                   block
                   class="mt-2"
-                  variant="outline-success"
+                  variant="primary"
                   @click="
                     modelswitch(
                       pricing.basicPlan.title,
@@ -192,7 +192,7 @@
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   block
                   class="mt-2"
-                  variant="outline-primary"
+                  variant="primary"
                   @click="
                     modelswitch(
                       pricing.enterprisePlan.title,
