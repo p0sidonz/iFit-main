@@ -69,14 +69,30 @@ const router = new VueRouter({
     },
 
     {
-      path: "/verify_email",
-      name: "verify-email",
-      component: () => import("@/views/pages/miscellaneous/VerifyEmail.vue"),
+      path: "/reset-password/:token",
+      name: "reset-password",
+      component: () => import("@/views/auth/ResetPassword.vue"),
+      props: true,
       meta: {
         layout: "full",
+        requiresAuth: false,
+        redirectIfLoggedIn: true,
       },
     },
-    
+
+
+    {
+      path: "/verify_email/:token",
+      name: "verify-email",
+      component: () => import("@/views/auth/VerifyEmail.vue"),
+      props: true,
+      meta: {
+        layout: "full",
+        requiresAuth: false,
+        redirectIfLoggedIn: true,
+      },
+    },
+
     /*-----END OF LOGIN and REGISTER-----*/
 
     /*-----calendar-----*/
