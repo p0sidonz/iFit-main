@@ -68,6 +68,15 @@ const router = new VueRouter({
       },
     },
 
+    {
+      path: "/verify_email",
+      name: "verify-email",
+      component: () => import("@/views/pages/miscellaneous/VerifyEmail.vue"),
+      meta: {
+        layout: "full",
+      },
+    },
+    
     /*-----END OF LOGIN and REGISTER-----*/
 
     /*-----calendar-----*/

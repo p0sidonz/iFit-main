@@ -26,9 +26,6 @@
           <b-card-text class="mb-2">
             Make Fitness your next habbit!
           </b-card-text>
-
-          <!-- form -->
-          <validation-observer ref="registerForm" #default="{ invalid }">
             <b-overlay
               :show="showOverlay"
               spinner-variant="primary"
@@ -37,6 +34,9 @@
               opacity="0.0"
               rounded="sm"
             >
+          <!-- form -->
+          <validation-observer ref="registerForm" #default="{ invalid }">
+
               <b-form class="auth-register-form mt-2" @submit.prevent="signup">
                 <!-- Firstname -->
                 <b-form-group label="First Name" label-for="register-firstname">
@@ -178,7 +178,6 @@
                   </div>
                 </b-button>
               </b-form>
-            </b-overlay>
           </validation-observer>
 
           <!-- <p class="text-center mt-2">
@@ -206,6 +205,8 @@
           >
             Sign in
           </b-button>
+                      </b-overlay>
+
         </b-col>
       </b-col>
       <!-- /Register-->

@@ -27,9 +27,6 @@
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
           </b-card-text>
-
-          <!-- form -->
-          <validation-observer ref="loginValidation">
             <b-overlay
               :show="showOverlay"
               spinner-variant="primary"
@@ -38,6 +35,9 @@
               opacity="0.0"
               rounded="sm"
             >
+          <!-- form -->
+          <validation-observer ref="loginValidation">
+
               <b-form class="auth-login-form mt-2" @submit.prevent>
                 <!-- email -->
                 <b-form-group label="Email" label-for="login-email">
@@ -126,7 +126,6 @@
                   </div>
                 </b-button>
               </b-form>
-            </b-overlay>
           </validation-observer>
 
           <b-card-text class="text-center mt-1"> <span>Or </span></b-card-text>
@@ -145,6 +144,8 @@
           >
             Create an account
           </b-button>
+                      </b-overlay>
+
           <!-- social buttons -->
         </b-col>
       </b-col>

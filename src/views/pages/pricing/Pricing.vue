@@ -4,9 +4,9 @@
       <!-- title text and switch button -->
       <div class="text-center">
         <h1 class="mt-5">Pricing Plans</h1>
-        <b-badge variant="primary" class="badge-glow">
-          <h7>🤑 Launching OFFER | 50% FLAT OFF ON ALL THE PLANS 🤑</h7>
-        </b-badge>
+      <b-badge variant="primary" class="badge-glow">
+      🤑 Launching OFFER <br> 50% FLAT OFF ON ALL THE PLANS 🤑
+      </b-badge>
         <br />
         <br />
         <br />
