@@ -103,11 +103,11 @@ export default {
     
     verifyNow() {
       axios.get(`https://node84787-fetch.cloudjiffy.net/verify_email/${this.token}`).then((response)=> {
-        if(response.ok) {
+        if(response.data.ok) {
            this.isLoading = false
             this.ok = true
         }
-        if(!response.ok){
+        if(!response.data.ok){
           this.isLoading = false
          this.ok = false
         }
