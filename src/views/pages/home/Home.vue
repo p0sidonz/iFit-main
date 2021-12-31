@@ -82,7 +82,7 @@ export default {
         const result = await this.$apollo.query({
           query: GET_FEED,
           variables: {
-            userId: 18,
+            userId: this.currentUser.id,
             offset: this.offset,
           },
         });
