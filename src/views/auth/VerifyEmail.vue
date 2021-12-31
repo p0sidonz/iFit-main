@@ -102,7 +102,7 @@ export default {
   methods:{
     
     verifyNow() {
-      axios.get(`http://localhost:3000/verify_email/${this.token}`).then((response)=> {
+      axios.get(`https://node84787-fetch.cloudjiffy.net/verify_email/${this.token}`).then((response)=> {
         if(response.ok) {
            this.isLoading = false
             this.ok = true
