@@ -39,7 +39,7 @@
       </div>
             <div v-if="!isLoading && !ok" class="w-100 text-center">
         <h2 class="mb-1">
-         Token Expired ❌
+        Invalid or Expired Token  ❌
         </h2>
         <p class="mb-2">
         Please kindly login again to request a new one
@@ -119,8 +119,14 @@ export default {
   },
     created(){
       this.verifyNow()
-      // setTimeout( () => this.$router.push({ path: '/login'}), 3000);
+     
 
+    },
+
+    watch: {
+      ok: function (val) {
+        setTimeout(() => this.$router.push({ path: '/login'}), 3000);
+      }
     }
 }
 </script>
