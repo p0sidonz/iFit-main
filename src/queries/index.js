@@ -1,56 +1,47 @@
 import gql from "graphql-tag";
 
-export const GET_FEED = gql`
-  query notifyNewPosts($userId: Int!, $offset: Int) {
-    Fitness_Posts(
-      order_by: { created_at: desc }
-      limit: 2
-      offset: $offset
-      where: {
-        _or: [
-          { author: { Follow: { following_id: { _eq: $userId } } } }
-          { userId: { _neq: $userId } }
-        ]
-      }
-    ) {
+export const GET_FEED = gql`query notifyNewPosts($userId: Int!, $offset: Int) {
+  Fitness_Posts(order_by: {created_at: desc}, limit: 2, offset: $offset,
+    where: {_or: [{userId: {_neq: $userId}}], author: {Following: {myfollowingObj: {id: {_eq: $userId}}}}}) {
+    id
+    content
+    photo
+    created_at
+    youLiked
+    author {
+      username
       id
-      content
-      photo
-      created_at
-      youLiked
-      author {
-        username
+      avatar
+    }
+    likedby_aggregate {
+      aggregate {
+        count
+      }
+    }
+    likedby {
+      authorOBJ {
         id
+        username
         avatar
       }
-      likedby_aggregate {
-        aggregate {
-          count
-        }
+    }
+    comments_aggregate {
+      aggregate {
+        count
       }
-      likedby {
-        authorOBJ {
-          id
-          username
-          avatar
-        }
-      }
-      comments_aggregate {
-        aggregate {
-          count
-        }
-      }
-      comments(limit: 3, order_by: { created_at: desc }) {
+    }
+    comments(limit: 3, order_by: {created_at: desc}) {
+      id
+      text
+      owner {
+        username
+        avatar
         id
-        text
-        owner {
-          username
-          avatar
-          id
-        }
       }
     }
   }
+}
+
 `;
 
 export const GET_MEDICAL_INFO = gql`
