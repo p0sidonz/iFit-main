@@ -16,7 +16,7 @@
         >
           <b-card class="ml-25">
             <div class="text-right">
-              <b-dropdown variant="link" no-caret right toggle-class="p-0">
+              <b-dropdown variant="link" no-caret right toggle-class="p-0" v-if="isOwner">
                 <template #button-content>
                   <feather-icon
                     icon="MoreVerticalIcon"
