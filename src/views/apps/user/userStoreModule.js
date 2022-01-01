@@ -8,8 +8,34 @@ export default {
   getters: {},
   mutations: {},
   actions: {
-
-
+    getOfflineClientCount(ctx, _) {
+      const token = localStorage.getItem("apollo-token");
+      const freshTocken = token.replace(/['"]+/g, "");
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            process.env.VUE_APP_GRAPHQL_HTTP,
+            {
+              query: `query getOFflineClientCount {
+                Fitness_User_aggregate(where: {trainers: {is_offline: {_eq: true}}}) {
+                  aggregate {
+                    count
+                  }
+                }
+              }
+              `,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: freshTocken,
+              },
+            }
+          )
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
 
     fetchUsers(ctx, queryParams) {
       const token = localStorage.getItem("apollo-token");
@@ -104,7 +130,13 @@ export default {
                     count
                   }
                 }
-              }`,
+              }
+              Fitness_User_aggregate(where: { trainers: {is_offline: { _eq: true}} }){
+                aggregate{
+                  count
+                }
+              }
+              `,
               variables: {
                 where,
                 limit: queryParams.perPage,

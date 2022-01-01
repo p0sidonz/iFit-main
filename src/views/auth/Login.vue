@@ -27,17 +27,16 @@
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
           </b-card-text>
-            <b-overlay
-              :show="showOverlay"
-              spinner-variant="primary"
-              spinner-type="grow"
-              spinner-small
-              opacity="0.0"
-              rounded="sm"
-            >
-          <!-- form -->
-          <validation-observer ref="loginValidation">
-
+          <b-overlay
+            :show="showOverlay"
+            spinner-variant="primary"
+            spinner-type="grow"
+            spinner-small
+            opacity="0.0"
+            rounded="sm"
+          >
+            <!-- form -->
+            <validation-observer ref="loginValidation">
               <b-form class="auth-login-form mt-2" @submit.prevent>
                 <!-- email -->
                 <b-form-group label="Email" label-for="login-email">
@@ -126,25 +125,27 @@
                   </div>
                 </b-button>
               </b-form>
-          </validation-observer>
+            </validation-observer>
 
-          <b-card-text class="text-center mt-1"> <span>Or </span></b-card-text>
-          <!-- 
+            <b-card-text class="text-center mt-1">
+              <span>Or </span></b-card-text
+            >
+            <!-- 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
             <b-link :to="{ name: 'page-auth-register-v2' }">
               <span>&nbsp;Create an account</span>
             </b-link>
           </b-card-text> -->
-          <b-button
-            type="submit"
-            variant="outline-primary"
-            block
-            :to="{ name: 'register' }"
-          >
-            Create an account
-          </b-button>
-                      </b-overlay>
+            <b-button
+              type="submit"
+              variant="outline-primary"
+              block
+              :to="{ name: 'register' }"
+            >
+              Create an account
+            </b-button>
+          </b-overlay>
 
           <!-- social buttons -->
         </b-col>
@@ -280,6 +281,55 @@ export default {
           );
 
           // Update when logged in
+
+          //Fetch more info related to user
+
+          const token = localStorage.getItem("apollo-token");
+          const freshTocken = token.replace(/['"]+/g, "");
+
+          axios
+            .post(
+              process.env.VUE_APP_GRAPHQL_HTTP,
+              {
+                query: `
+
+            query getPackage($id: Int!) {
+  Fitness_User_by_pk(id: $id) {
+    current_package(limit: 1, order_by: {created_at: asc}) {
+      id
+      end_date
+      package_detail {
+        title
+        subscription_days
+      }
+    }
+  }
+}
+`,
+
+                variables: {
+                  id: data.data.Login.id,
+                },
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: freshTocken,
+                },
+              }
+            )
+            .then((res) => {
+              localStorage.setItem(
+                "pkg-detail",
+                JSON.stringify(
+                  res.data.data.Fitness_User_by_pk.current_package[0]
+                    .package_detail
+                )
+              );
+            })
+            .catch((error) => {
+              console.log("pkg error", error);
+            });
 
           this.$store.dispatch("loginState", response);
 

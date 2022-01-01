@@ -27,6 +27,7 @@ export default function useUsersList() {
     { key: "actions" },
   ];
   const perPage = ref(10);
+  const totalOfflineClient = ref(0);
   const totalUsers = ref(0);
   const currentPage = ref(1);
   const perPageOptions = [5, 10, 25, 50];
@@ -91,6 +92,19 @@ export default function useUsersList() {
           },
         });
       });
+
+    //offline client list for starter plan
+    store
+      .dispatch("app-user/getOfflineClientCount")
+      .then((response) => {
+        console.log(response);
+        totalOfflineClient.value =
+          response.data.data.Fitness_User_aggregate.aggregate.count;
+        console.log(totalOfflineClient);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // *===============================================---*
@@ -145,5 +159,6 @@ export default function useUsersList() {
     planFilter,
     statusFilter,
     isLoading,
+    totalOfflineClient
   };
 }

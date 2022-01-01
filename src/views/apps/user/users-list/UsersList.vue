@@ -46,7 +46,39 @@
                 class="d-inline-block mr-1"
                 placeholder="Search..."
               />
+
+              <div
+                v-if="
+                  totalOfflineClient === 5 ||
+                  (totalOfflineClient > 5 && pkg_detail.title === 'Basic')
+                "
+              >
+                <b-button
+                  id="popover-button-danger"
+                  v-ripple.400="'rgba(234, 84, 85, 0.15)'"
+                  variant="outline-danger"
+                >
+                  Max 5 client limit reached
+                </b-button>
+
+                <b-popover
+                  target="popover-button-danger"
+                  variant="danger"
+                  triggers="focus"
+                  placement="top"
+                >
+                  <template #title>
+                    <span>Upgrade your package!</span>
+                  </template>
+                  <span
+                    >Your plan limit of 5 client is reached. Please upgrade your
+                    plan or remove the existing clients</span
+                  >
+                </b-popover>
+              </div>
+
               <b-button
+                v-else
                 variant="primary"
                 @click="isAddNewUserSidebarActive = true"
               >
@@ -164,6 +196,8 @@
               {{ dataMeta.of }} entries</span
             >
           </b-col>
+
+          {{ totalUsers }}
           <!-- Pagination -->
           <b-col
             cols="12"
@@ -213,7 +247,9 @@ import {
   BDropdown,
   BDropdownItem,
   BPagination,
+  VBPopover,
   BSpinner,
+  BPopover,
 } from "bootstrap-vue";
 import vSelect from "vue-select";
 import store from "@/store";
@@ -223,6 +259,7 @@ import UsersListFilters from "./UsersListFilters.vue";
 import useUsersList from "./useUsersList";
 import userStoreModule from "../userStoreModule";
 import UserListAddNew from "./UserListAddNew.vue";
+import Ripple from "vue-ripple-directive";
 
 export default {
   components: {
@@ -243,11 +280,20 @@ export default {
     BDropdownItem,
     BPagination,
     BSpinner,
+    BPopover,
 
     vSelect,
   },
+
+  directives: {
+    "b-popover": VBPopover,
+
+    Ripple,
+  },
+
   setup() {
     const USER_APP_STORE_MODULE_NAME = "app-user";
+        const pkg_detail = JSON.parse(localStorage.getItem("pkg-detail")),
 
     // Register module
     if (!store.hasModule(USER_APP_STORE_MODULE_NAME))
@@ -271,7 +317,6 @@ export default {
 
     const planOptions = [
       { label: "Offline", value: "offline" },
-      // { label: "Gold", value: "gold" },
       // { label: 'Enterprise', value: 'enterprise' },
       // { label: 'Team', value: 'team' },
     ];
@@ -294,6 +339,7 @@ export default {
       sortBy,
       isSortDirDesc,
       isLoading,
+      totalOfflineClient,
       refUserListTable,
       refetchData,
 
@@ -307,11 +353,9 @@ export default {
       planFilter,
       statusFilter,
     } = useUsersList();
-
     return {
       // Sidebar
       isAddNewUserSidebarActive,
-
       fetchUsers,
       tableColumns,
       perPage,
@@ -323,9 +367,10 @@ export default {
       sortBy,
       isSortDirDesc,
       isLoading,
+      totalOfflineClient,
       refUserListTable,
       refetchData,
-
+      //offline clinet
       // Filter
       avatarText,
 
@@ -337,11 +382,11 @@ export default {
       roleOptions,
       planOptions,
       statusOptions,
-
       // Extra Filters
       roleFilter,
       planFilter,
       statusFilter,
+      pkg_detail
     };
   },
 };
