@@ -279,19 +279,17 @@ export default {
             "apollo-token",
             JSON.stringify(response.accessToken)
           );
+          if (response.role === "trainer") {
+            //Fetch more info related to user
 
-          // Update when logged in
+            const token = localStorage.getItem("apollo-token");
+            const freshTocken = token.replace(/['"]+/g, "");
 
-          //Fetch more info related to user
-
-          const token = localStorage.getItem("apollo-token");
-          const freshTocken = token.replace(/['"]+/g, "");
-
-          axios
-            .post(
-              process.env.VUE_APP_GRAPHQL_HTTP,
-              {
-                query: `
+            axios
+              .post(
+                process.env.VUE_APP_GRAPHQL_HTTP,
+                {
+                  query: `
 
             query getPackage($id: Int!) {
   Fitness_User_by_pk(id: $id) {
@@ -307,33 +305,36 @@ export default {
 }
 `,
 
-                variables: {
-                  id: data.data.Login.id,
+                  variables: {
+                    id: data.data.Login.id,
+                  },
                 },
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: freshTocken,
-                },
-              }
-            )
-            .then((res) => {
-              localStorage.setItem(
-                "pkg-detail",
-                JSON.stringify(
-                  res.data.data.Fitness_User_by_pk.current_package[0]
-                    .package_detail
-                )
-              );
-            })
-            .catch((error) => {
-              console.log("pkg error", error);
-            });
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: freshTocken,
+                  },
+                }
+              )
+              .then((res) => {
+                localStorage.setItem(
+                  "pkg-detail",
+                  JSON.stringify(
+                    res.data.data.Fitness_User_by_pk.current_package[0]
+                      .package_detail
+                  )
+                );
+              })
+              .catch((error) => {
+                console.log("pkg error", error);
+              });
 
-          this.$store.dispatch("loginState", response);
+            this.$store.dispatch("loginState", response);
 
-          localStorage.setItem("userInfo", JSON.stringify(response));
+            localStorage.setItem("userInfo", JSON.stringify(response));
+          }
+          // Update when logged in
+
           // if (response.role === "trainer") {
           //   this.$router.replace({ path: "/dashboard" });
           // }
