@@ -17,6 +17,7 @@ export default function useUsersList() {
     { key: "user", sortable: true },
     { key: "email", sortable: true },
     { key: "role", sortable: true },
+    {key: "type"},
     // {
     //   key: "currentPlan",
     //   label: "Plan",

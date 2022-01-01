@@ -112,6 +112,7 @@ export default {
                   traineelist{
                     id
                     status
+                    is_offline
                     user_subscriptions(where: {is_expired: {_eq: true}}){
                       start_date
                       end_date

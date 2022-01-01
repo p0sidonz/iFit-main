@@ -1,5 +1,17 @@
 import gql from "graphql-tag";
 
+
+
+export const DELETE_USERRELATION_BY_ID = gql`
+  mutation MyMuxtation($id: Int!) {
+    delete_Fitness_UserRelation_by_pk(id: $id) {
+      id
+    }
+  }
+`;
+
+
+
 export const GET_FEED = gql`
   query notifyNewPosts($userId: Int!, $offset: Int) {
     Fitness_Posts(
