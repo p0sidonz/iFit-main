@@ -131,11 +131,6 @@ export default {
                   }
                 }
               }
-              Fitness_User_aggregate(where: { trainers: {is_offline: { _eq: true}} }){
-                aggregate{
-                  count
-                }
-              }
               `,
               variables: {
                 where,
