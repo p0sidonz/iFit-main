@@ -17,7 +17,7 @@ export default {
             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query getOFflineClientCount {
-                Fitness_User_aggregate(where: {trainers: {is_offline: {_eq: true}}}) {
+                Fitness_User_aggregate(where: {traineelist: {is_offline: {_eq: true}}}) {
                   aggregate {
                     count
                   }
