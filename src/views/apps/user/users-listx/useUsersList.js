@@ -26,9 +26,8 @@ export default function useUsersList() {
     { key: "status", sortable: true },
     { key: "actions" },
   ];
-  const packageDetail = ref(null)
-  const totalOfflineClient = ref(0);
   const perPage = ref(10);
+  const totalOfflineClient = ref(0);
   const totalUsers = ref(0);
   const currentPage = ref(1);
   const perPageOptions = [5, 10, 25, 50];
@@ -39,6 +38,7 @@ export default function useUsersList() {
   const planFilter = ref(null);
   const statusFilter = ref(null);
   const isLoading = ref(false);
+
   const dataMeta = computed(() => {
     const localItemsCount = refUserListTable.value
       ? refUserListTable.value.localItems.length
@@ -72,9 +72,9 @@ export default function useUsersList() {
         page: currentPage.value,
       })
       .then((response) => {
+        isLoading.value = false;
         console.log("LIST", response);
         const test = response.data.data.Fitness_User;
-        // packageDetail.value = response.data.data.Fitness_User.current_package
         // const usersx = test.map(({ UserRelations }) => UserRelations)
         const users = test;
         const total = response.data.data.Fitness_User_aggregate.aggregate.count;
@@ -82,13 +82,13 @@ export default function useUsersList() {
         totalUsers.value = total;
       })
       .catch((error) => {
+        isLoading.value = false;
         toast({
           component: ToastificationContent,
           props: {
-            title: "error",
+            title: error,
             icon: "AlertTriangleIcon",
             variant: "danger",
-            text: `${error}`
           },
         });
       });
@@ -148,6 +148,7 @@ export default function useUsersList() {
     sortBy,
     isSortDirDesc,
     refUserListTable,
+
     resolveUserRoleVariant,
     resolveUserRoleIcon,
     resolveUserStatusVariant,
@@ -158,7 +159,6 @@ export default function useUsersList() {
     planFilter,
     statusFilter,
     isLoading,
-    totalOfflineClient,
-    packageDetail
+    totalOfflineClient
   };
 }

@@ -197,6 +197,7 @@
             >
           </b-col>
 
+          {{ totalUsers }}
           <!-- Pagination -->
           <b-col
             cols="12"
@@ -247,8 +248,8 @@ import {
   BDropdownItem,
   BPagination,
   VBPopover,
-  BPopover,
   BSpinner,
+  BPopover,
 } from "bootstrap-vue";
 import vSelect from "vue-select";
 import store from "@/store";
@@ -292,6 +293,7 @@ export default {
 
   setup() {
     const USER_APP_STORE_MODULE_NAME = "app-user";
+        const pkg_detail = JSON.parse(localStorage.getItem("pkg-detail")),
 
     // Register module
     if (!store.hasModule(USER_APP_STORE_MODULE_NAME))
@@ -324,7 +326,6 @@ export default {
       { label: "Active", value: "active" },
       { label: "Inactive", value: "inactive" },
     ];
-    const pkg_detail = JSON.parse(localStorage.getItem("pkg-detail"));
 
     const {
       fetchUsers,
@@ -385,7 +386,7 @@ export default {
       roleFilter,
       planFilter,
       statusFilter,
-      pkg_detail,
+      pkg_detail
     };
   },
 };

@@ -69,9 +69,9 @@
             name="Last Name"
             rules="required"
           >
-            <b-form-group label="Last Name" label-for="last-name">
+            <b-form-group label="Last Name" label-for="full-name">
               <b-form-input
-                id="last-name"
+                id="full-name"
                 v-model="userData.lastname"
                 autofocus
                 :state="getValidationState(validationContext)"
@@ -321,7 +321,6 @@ export default {
       required,
       alphaNum,
       email,
-      
     }
   },
   setup(props, { emit }) {
