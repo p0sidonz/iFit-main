@@ -270,8 +270,8 @@ export default {
     ];
 
     const planOptions = [
-      { label: "Basic", value: "basic" },
-      { label: "Gold", value: "gold" },
+      { label: "Offline", value: "offline" },
+      // { label: "Gold", value: "gold" },
       // { label: 'Enterprise', value: 'enterprise' },
       // { label: 'Team', value: 'team' },
     ];

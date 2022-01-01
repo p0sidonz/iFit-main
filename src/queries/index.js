@@ -1,47 +1,54 @@
 import gql from "graphql-tag";
 
-export const GET_FEED = gql`query notifyNewPosts($userId: Int!, $offset: Int) {
-  Fitness_Posts(order_by: {created_at: desc}, limit: 2, offset: $offset,
-    where: {_or: [{userId: {_neq: $userId}}], author: {Following: {myfollowingObj: {id: {_eq: $userId}}}}}) {
-    id
-    content
-    photo
-    created_at
-    youLiked
-    author {
-      username
-      id
-      avatar
-    }
-    likedby_aggregate {
-      aggregate {
-        count
+export const GET_FEED = gql`
+  query notifyNewPosts($userId: Int!, $offset: Int) {
+    Fitness_Posts(
+      order_by: { created_at: desc }
+      limit: 10
+      offset: $offset
+      where: {
+        _or: [{ userId: { _neq: $userId } }]
+        author: { Following: { myfollowingObj: { id: { _eq: $userId } } } }
       }
-    }
-    likedby {
-      authorOBJ {
-        id
+    ) {
+      id
+      content
+      photo
+      created_at
+      youLiked
+      author {
         username
+        id
         avatar
       }
-    }
-    comments_aggregate {
-      aggregate {
-        count
+      likedby_aggregate {
+        aggregate {
+          count
+        }
       }
-    }
-    comments(limit: 3, order_by: {created_at: desc}) {
-      id
-      text
-      owner {
-        username
-        avatar
+      likedby {
+        authorOBJ {
+          id
+          username
+          avatar
+        }
+      }
+      comments_aggregate {
+        aggregate {
+          count
+        }
+      }
+      comments(limit: 3, order_by: { created_at: desc }) {
         id
+        text
+        owner {
+          username
+          avatar
+          id
+        }
       }
     }
   }
-}
-
 `;
 
 export const GET_MEDICAL_INFO = gql`
@@ -354,7 +361,7 @@ export const FOLLOW_USER = gql`
 `;
 
 export const UNFOLLOW_USER = gql`
-  mutation($following_id: Int!) {
+  mutation ($following_id: Int!) {
     delete_Fitness_Follow(where: { following_id: { _eq: $following_id } }) {
       affected_rows
     }
