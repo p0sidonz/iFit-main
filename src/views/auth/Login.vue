@@ -184,6 +184,7 @@ import gql from "graphql-tag";
 import { data } from "vue-echarts";
 import jwt from "jsonwebtoken";
 import { getHomeRouteForLoggedInUser } from "@/auth/utils";
+import axios from "@axios";
 
 // import LOGIN_MUTATION from '../graphql/auth.gql'
 
