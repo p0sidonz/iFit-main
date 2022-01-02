@@ -164,7 +164,48 @@
           </b-badge>
           {{ data.item.traineelist.status }}
         </template>
-
+        <!-- Column: Status -->
+        <template #cell(type)="data">
+          <b-badge
+            pill
+            :variant="`light-${
+              data.item.traineelist.is_offline ? 'dark' : 'success'
+            }`"
+            >{{
+              data.item.traineelist.is_offline ? "Offline" : "Online"
+            }}</b-badge
+          >
+        </template>
+        <template #cell(expiry)="data">
+          <div
+            v-if="
+              !data.item.traineelist.is_offline &&
+              timeCalc(data.item.traineelist.user_subscriptions[0].end_date)
+            "
+          >
+            <b-badge pill variant="light-danger">
+              Expired on
+              {{
+                data.item.traineelist.user_subscriptions[0].end_date
+              }}</b-badge
+            >
+          </div>
+          <div
+            v-if="
+              !data.item.traineelist.is_offline &&
+              timeCalc(data.item.traineelist.user_subscriptions[0].end_date) ===
+                false
+            "
+          >
+            <b-badge pill variant="light-primary">
+              {{
+                data.item.traineelist.user_subscriptions[0].end_date
+                  | moment("from", "now", true)
+              }}
+              remaining</b-badge
+            >
+          </div>
+        </template>
         <!-- Column: Actions -->
         <template #cell(actions)="data">
           <b-button
@@ -176,6 +217,14 @@
             }"
           >
             View Dashboard
+          </b-button>
+          <b-button
+            v-if="data.item.traineelist.is_offline"
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="flat-danger"
+            @click="deleteUserModal(data.item.traineelist.id)"
+          >
+            X
           </b-button>
         </template>
       </b-table>
@@ -258,8 +307,9 @@ import UsersListFilters from "./UsersListFilters.vue";
 import useUsersList from "./useUsersList";
 import userStoreModule from "../userStoreModule";
 import UserListAddNew from "./UserListAddNew.vue";
+import gql from "graphql-tag";
 import Ripple from "vue-ripple-directive";
-
+import { DELETE_USERRELATION_BY_ID } from "@/queries/";
 export default {
   components: {
     UsersListFilters,
@@ -288,6 +338,38 @@ export default {
     "b-popover": VBPopover,
 
     Ripple,
+  },
+
+  methods: {
+    timeCalc(date) {
+      var m = this.$moment(date);
+      var now = this.$moment();
+      let o = m.isBefore(now);
+      return o;
+    },
+
+    deleteUserModal(id) {
+      this.$bvModal
+        .msgBoxConfirm("Are you sure?", {
+          cancelVariant: "outline-secondary",
+        })
+        .then((value) => {
+          this.boxOne = value;
+
+          if (value === true) {
+            this.$apollo.mutate({
+              mutation: DELETE_USERRELATION_BY_ID,
+              variables: {
+                id: id,
+              },
+            });
+            this.refetchData();
+            // location.reload();
+          } else {
+            console.log("fail to delete");
+          }
+        });
+    },
   },
 
   setup() {
