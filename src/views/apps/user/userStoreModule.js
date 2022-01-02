@@ -163,7 +163,9 @@ export default {
                   Fitness_UserRelation_by_pk(id: $id) {
                     id
                     status
-
+                    is_offline
+                    start_date
+                    end_date
                     user_subscriptions(order_by: {created_at: asc}) {
                       start_date
                       end_date
