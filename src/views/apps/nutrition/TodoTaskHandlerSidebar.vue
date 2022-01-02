@@ -368,6 +368,8 @@ export default {
             this.singleFood.servings.serving = [];
             this.singleFood.servings.serving.push(x);
           }
+                    console.log("singlefood", this.singleFood);
+
         });
     },
   },
