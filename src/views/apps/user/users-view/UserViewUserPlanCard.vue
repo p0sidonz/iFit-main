@@ -52,10 +52,10 @@
           </ul>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            variant="success"
+            variant="primary"
             block
           >
-            Offline
+            Expires: {{ timeCalc(offline.end_date) ? 'Expired' :  offline.end_date  }}
           </b-button>
         </b-card-body>
       </b-card>
@@ -79,9 +79,22 @@ export default {
     BButton,
   },
 
+  methods: {
+    timeCalc(date) {
+      var m = this.$moment(date);
+      var now = this.$moment();
+      let o = m.isBefore(now);
+      return o;
+    },
+  },
+
   props: {
     planData: {
       type: Array,
+      default: () => {},
+    },
+    offline: {
+      type: Object,
       default: () => {},
     },
   },

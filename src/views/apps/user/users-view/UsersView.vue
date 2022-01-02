@@ -8,7 +8,7 @@
     <div v-else>
 
           <b-alert variant="danger" :show="userData === undefined">
-      <h4 class="alert-heading">Error fetching user data</h4>
+      <h4 class="alert-heading">Error fetching diet data</h4>
       <div class="alert-body">
         No user found with this user id. Check
         <b-link class="alert-link" :to="{ name: 'apps-users-list' }">
@@ -20,7 +20,6 @@
 
       <template v-if="userData">
 
-
         <!-- First Row -->
         <b-row>
           <b-col cols="12" xl="9" lg="8" md="7">
@@ -29,6 +28,7 @@
           <b-col cols="12" md="5" xl="3" lg="4">
             <user-view-user-plan-card
               :plan-data="userData.user_subscriptions"
+              :offline="userData"
             />
           </b-col>
         </b-row>
