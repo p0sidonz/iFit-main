@@ -362,14 +362,14 @@ export default {
           this.singleFood = res.data.data.food;
           console.log("singlefood", this.singleFood);
           let typeOF = typeof res.data.data.food.servings.serving;
-          if (typeOF === "object") {
+          console.log(typeOF)
+          if (typeOF === "object" && Object.keys(typeOF).length === 0) {
             let x = res.data.data.food.servings.serving;
             delete this.singleFood.servings.serving;
             this.singleFood.servings.serving = [];
             this.singleFood.servings.serving.push(x);
           }
-                    console.log("singlefood", this.singleFood);
-
+          console.log("singlefood", this.singleFood);
         });
     },
   },
