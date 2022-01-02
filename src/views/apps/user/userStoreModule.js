@@ -103,6 +103,7 @@ export default {
             {
               query: `query MyQuery($where: Fitness_User_bool_exp = {}, $offset: Int, $limit: Int) {
                 Fitness_User(where: $where, limit: $limit, offset: $offset) {
+
                   id
                   firstName
                   username
@@ -113,7 +114,7 @@ export default {
                     id
                     status
                     is_offline
-                    user_subscriptions(where: {is_expired: {_eq: true}}){
+                    user_subscriptions{
                       start_date
                       end_date
                       trainer_package{
@@ -126,6 +127,7 @@ export default {
                     }
                   }
                 }
+
                 Fitness_User_aggregate(where: $where){
                   aggregate{
                     count
@@ -160,52 +162,52 @@ export default {
             process.env.VUE_APP_GRAPHQL_HTTP,
             {
               query: `query MyQuery ($id: Int!) {
-                  Fitness_UserRelation_by_pk(id: $id) {
-                    id
-                    status
-                    is_offline
+                Fitness_UserRelation_by_pk(id: $id) {
+                  id
+                  status
+                  is_offline
+                  start_date
+                  end_date
+                  user_subscriptions(order_by: {created_at: asc}) {
                     start_date
                     end_date
-                    user_subscriptions(order_by: {created_at: asc}) {
-                      start_date
-                      end_date
-                      order_status
-                      trainer_package{
-                        id
-                        title
-                        amount
-                        subscription_days
-                        created_at
-                      }
-                    }
-                    program_assigned_clients{
-                      program_details{
-                        id
-                        title
-                        
-                      }
-                    }		
-                    
-                    diet_assigned_clients{
-                      diet_details{
-                        id
-                        diet_name
-                        diet_description
-                      }
-                    }
-                    User {
+                    order_status
+                    trainer_package{
                       id
-                      username
-                      role
-                      avatar
-                      phonenumber
-                      country
-                      fullname
-                      status
-                      is_follow
+                      title
+                      amount
+                      subscription_days
+                      created_at
                     }
                   }
-              }
+                  program_assigned_clients{
+                    program_details{
+                      id
+                      title
+                      
+                    }
+                  }		
+                  
+                  diet_assigned_clients{
+                    diet_details{
+                      id
+                      diet_name
+                      diet_description
+                    }
+                  }
+                  User {
+                    id
+                    username
+                    role
+                    avatar
+                    phonenumber
+                    country
+                    fullname
+                    status
+                    is_follow
+                  }
+                }
+            }
               `,
               variables: {
                 id,
