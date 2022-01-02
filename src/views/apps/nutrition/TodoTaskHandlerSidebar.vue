@@ -340,18 +340,12 @@ export default {
       }
       this.isLoadingx = true;
       this.$http
-        .get(
-          `https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression=${this.query}&format=json`,
-          {
-            headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjYwNzdBNzkyMERFNDM1NDQ5QkUxNEEwNTI5QkZFNjQxNUEzOTZFRjgiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJZSGVua2cza05VU2I0VW9GS2JfbVFWbzVidmcifQ.eyJuYmYiOjE2MzM4MzcxMDUsImV4cCI6MTYzMzkyMzUwNSwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5mYXRzZWNyZXQuY29tIiwiYXVkIjoiYmFzaWMiLCJjbGllbnRfaWQiOiIyZTY1YjdhMjNlNGY0NmZhYTA2OTFhNjZjZmU4MDhlOCIsInNjb3BlIjpbImJhc2ljIl19.VUsomul5qwCK7LP8jmMzSoPTw7zQNRikCvxET9T58jj_0lxMnfLt6T99xXUpNH_Bh4yNtl9X5pZeR0Dgg2IMNBxBiLvt0bdG1hURSL0xZQVt1fcPh1a3QiQQNx-LDYymzwGB_-Rx0XxYLbnJ1OCq8xnZBdcWMTPOiDkhBMZCLnYltwoRrDH4wtlJPGZSwz9NDBbIuC2S8i5gahSfKULbecRRwLfcRYpTfcrH_7uvdYskAmwh2MNcPvGubpK3QqY22NQlA_7UVLUO-s6nE5HNAQgmM8JCbt-hsG4MrHndQIW6_AuG4PeT0kzsVjGhjVkErhjsLdqW4K0f2UOVHbO4BGODoqK4KCpY9lG13BfXyvRsA7P_GesKV18EY9W6lTnNwAUe0I_9uFrE_yQ2AO7j70oAXuR7xFRlvKU1tytn4Vyc_a_m-iaMqapiKmdgV_dpy2vjmjrreqPWcEsA4LLladuDeF0gmjJwLyGIPIklU7u5K-0gP0cMhy--DdpsJGkC8LujDDIWBRSDxm6WVjJUo9zklVu8_OwS5e6pTTsTwE77hUgn8w9t5QIUfrCB57s1nRI7qS8CJKPLBFnaMIdDUmsqFBGrShNpobaz3TsWFQuTPZIKSfTO5UqVCmGTf9h6Fz8Z09BRXlWLiDk5j0UOhwM_jgLuUkSiB75eaA_TJUk",
-            },
-          }
+        .post(
+          `https://node84787-fetch.cloudjiffy.net/searchfood?foodsearch=${this.query}`
         )
         .then((res) => {
           console.log(res);
-          this.fetchedResult = res.data.foods.food;
+          this.fetchedResult = res.data.data.foods.food;
           console.log(this.fetchedResult);
           this.isLoadingx = false;
         });
@@ -360,22 +354,15 @@ export default {
     fetchIndividualFood(food_id) {
       this.fetchedResult = null;
       this.$http
-        .get(
-          `https://platform.fatsecret.com/rest/server.api?method=food.get.v2&food_id=${food_id}&format=json`,
-          {
-            headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjYwNzdBNzkyMERFNDM1NDQ5QkUxNEEwNTI5QkZFNjQxNUEzOTZFRjgiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJZSGVua2cza05VU2I0VW9GS2JfbVFWbzVidmcifQ.eyJuYmYiOjE2MzM4MzcxMDUsImV4cCI6MTYzMzkyMzUwNSwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5mYXRzZWNyZXQuY29tIiwiYXVkIjoiYmFzaWMiLCJjbGllbnRfaWQiOiIyZTY1YjdhMjNlNGY0NmZhYTA2OTFhNjZjZmU4MDhlOCIsInNjb3BlIjpbImJhc2ljIl19.VUsomul5qwCK7LP8jmMzSoPTw7zQNRikCvxET9T58jj_0lxMnfLt6T99xXUpNH_Bh4yNtl9X5pZeR0Dgg2IMNBxBiLvt0bdG1hURSL0xZQVt1fcPh1a3QiQQNx-LDYymzwGB_-Rx0XxYLbnJ1OCq8xnZBdcWMTPOiDkhBMZCLnYltwoRrDH4wtlJPGZSwz9NDBbIuC2S8i5gahSfKULbecRRwLfcRYpTfcrH_7uvdYskAmwh2MNcPvGubpK3QqY22NQlA_7UVLUO-s6nE5HNAQgmM8JCbt-hsG4MrHndQIW6_AuG4PeT0kzsVjGhjVkErhjsLdqW4K0f2UOVHbO4BGODoqK4KCpY9lG13BfXyvRsA7P_GesKV18EY9W6lTnNwAUe0I_9uFrE_yQ2AO7j70oAXuR7xFRlvKU1tytn4Vyc_a_m-iaMqapiKmdgV_dpy2vjmjrreqPWcEsA4LLladuDeF0gmjJwLyGIPIklU7u5K-0gP0cMhy--DdpsJGkC8LujDDIWBRSDxm6WVjJUo9zklVu8_OwS5e6pTTsTwE77hUgn8w9t5QIUfrCB57s1nRI7qS8CJKPLBFnaMIdDUmsqFBGrShNpobaz3TsWFQuTPZIKSfTO5UqVCmGTf9h6Fz8Z09BRXlWLiDk5j0UOhwM_jgLuUkSiB75eaA_TJUk",
-            },
-          }
+        .post(
+          `https://node84787-fetch.cloudjiffy.net/searchfood?food_id=${food_id}`
         )
         .then((res) => {
           console.log(res);
-          this.singleFood = res.data.food;
+          this.singleFood = res.data.data.food;
           console.log("singlefood", this.singleFood);
         });
     },
-    
   },
 
   setup(props, { emit }) {

@@ -16,7 +16,9 @@ export default function useUsersList() {
   const tableColumns = [
     { key: "user", sortable: true },
     { key: "email", sortable: true },
-    { key: "role", sortable: true },
+    { key: "type" },
+    { key: "expiry" },
+
     // {
     //   key: "currentPlan",
     //   label: "Plan",
@@ -26,7 +28,7 @@ export default function useUsersList() {
     { key: "status", sortable: true },
     { key: "actions" },
   ];
-  const packageDetail = ref(null)
+  const packageDetail = ref(null);
   const totalOfflineClient = ref(0);
   const perPage = ref(10);
   const totalUsers = ref(0);
@@ -88,7 +90,7 @@ export default function useUsersList() {
             title: "error",
             icon: "AlertTriangleIcon",
             variant: "danger",
-            text: `${error}`
+            text: `${error}`,
           },
         });
       });
@@ -159,6 +161,6 @@ export default function useUsersList() {
     statusFilter,
     isLoading,
     totalOfflineClient,
-    packageDetail
+    packageDetail,
   };
 }
