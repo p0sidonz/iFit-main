@@ -229,20 +229,22 @@ export default {
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
             {
-              query: `mutation MyMutation ($phonenumber: Int!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String! ){
-                addUserToTrainer(phonenumber: $phonenumber, email: $email, firstName:  $firstName, password: $password , username: $username, lastName: $lastName) {
+              query: `mutation MyMutation ($phonenumber: String!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String!, $is_offline: Boolean!, $endDate: date!, $startDate: date! ){
+                addUserToTrainer(phonenumber: $phonenumber, email: $email, firstName:  $firstName, password: $password , username: $username, lastName: $lastName, is_offline: $is_offline, startDate: $startDate, endDate: $endDate) {
                   ok
                   error
                 }
               }
               `,
               variables: {
-                phonenumber: userData.phonenumber,
+                phonenumber: userData.phonenumber.toString(),
                 email: userData.email,
                 firstName: userData.firstname,
                 password: userData.password,
                 username: userData.username,
                 lastName: userData.lastname,
+                startDate: userData.startDate.toString(),
+                endDate: userData.endDate.toString(),
               },
             },
             {

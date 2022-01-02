@@ -32,7 +32,6 @@
           @click="hide"
         />
       </div>
-
       <!-- BODY -->
       <validation-observer #default="{ handleSubmit }" ref="refFormObserver">
         <!-- Form -->
@@ -69,9 +68,9 @@
             name="Last Name"
             rules="required"
           >
-            <b-form-group label="Last Name" label-for="full-name">
+            <b-form-group label="Last Name" label-for="last-name">
               <b-form-input
-                id="full-name"
+                id="last-name"
                 v-model="userData.lastname"
                 autofocus
                 :state="getValidationState(validationContext)"
@@ -166,28 +165,56 @@
             </b-form-group>
           </validation-provider>
 
-          <!-- Country -->
-          <!-- <validation-provider
+          <!-- startdate -->
+          <validation-provider
             #default="validationContext"
-            name="Country"
+            name="Start Date"
             rules="required"
           >
             <b-form-group
-              label="Country"
-              label-for="country"
+              label="Subscription Starts"
+              label-for="start-date"
               :state="getValidationState(validationContext)"
             >
-              <v-select
-                v-model="userData.country"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :clearable="false"
-                input-id="country"
+              <flat-pickr
+                v-model="userData.startDate"
+                class="form-control"
+                input-id="start-date"
               />
-              <b-form-invalid-feedback :state="getValidationState(validationContext)">
+
+              <b-form-invalid-feedback
+                :state="getValidationState(validationContext)"
+              >
                 {{ validationContext.errors[0] }}
               </b-form-invalid-feedback>
             </b-form-group>
-          </validation-provider> -->
+          </validation-provider>
+
+          <!-- endate -->
+
+          <validation-provider
+            #default="validationContext"
+            name="End Date"
+            rules="required"
+          >
+            <b-form-group
+              label="Subscription Ends"
+              label-for="end-date"
+              :state="getValidationState(validationContext)"
+            >
+              <flat-pickr
+                v-model="userData.endDate"
+                class="form-control"
+                input-id="end-date"
+              />
+
+              <b-form-invalid-feedback
+                :state="getValidationState(validationContext)"
+              >
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
 
           <!-- User Role -->
           <!-- <validation-provider
@@ -268,16 +295,22 @@
 
 <script>
 import {
-  BSidebar, BForm, BFormGroup, BFormInput, BFormInvalidFeedback, BButton,
-} from 'bootstrap-vue'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import { ref } from '@vue/composition-api'
-import { required, alphaNum, email } from '@validations'
-import formValidation from '@core/comp-functions/forms/form-validation'
-import Ripple from 'vue-ripple-directive'
-import vSelect from 'vue-select'
-import store from '@/store'
+  BSidebar,
+  BForm,
+  BFormGroup,
+  BFormInput,
+  BFormInvalidFeedback,
+  BButton,
+} from "bootstrap-vue";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
+import { ref } from "@vue/composition-api";
+import { required, alphaNum, email } from "@validations";
+import formValidation from "@core/comp-functions/forms/form-validation";
+import Ripple from "vue-ripple-directive";
+import vSelect from "vue-select";
+import store from "@/store";
 import { togglePasswordVisibility } from "@core/mixins/ui/forms";
+import flatPickr from "vue-flatpickr-component";
 
 export default {
   components: {
@@ -288,19 +321,20 @@ export default {
     BFormInvalidFeedback,
     BButton,
     vSelect,
+    flatPickr,
 
     // Form Validation
     ValidationProvider,
     ValidationObserver,
   },
-    mixins: [togglePasswordVisibility],
+  mixins: [togglePasswordVisibility],
 
   directives: {
     Ripple,
   },
   model: {
-    prop: 'isAddNewUserSidebarActive',
-    event: 'update:is-add-new-user-sidebar-active',
+    prop: "isAddNewUserSidebarActive",
+    event: "update:is-add-new-user-sidebar-active",
   },
   props: {
     isAddNewUserSidebarActive: {
@@ -321,40 +355,38 @@ export default {
       required,
       alphaNum,
       email,
-    }
+    };
   },
   setup(props, { emit }) {
     const blankUserData = {
-      firstname: '',
-      lastname: '',
-      username: '',
-      email: '',
+      firstname: "",
+      lastname: "",
+      username: "",
+      email: "",
       // role: null,
       currentPlan: null,
       // company: '',
       // country: '',
-      phonenumber: '',
-      password: ''
-    }
+      phonenumber: "",
+      password: "",
+      startDate: "",
+      endDate: "",
+    };
 
-    const userData = ref(JSON.parse(JSON.stringify(blankUserData)))
+    const userData = ref(JSON.parse(JSON.stringify(blankUserData)));
     const resetuserData = () => {
-      userData.value = JSON.parse(JSON.stringify(blankUserData))
-    }
+      userData.value = JSON.parse(JSON.stringify(blankUserData));
+    };
 
     const onSubmit = () => {
-      store.dispatch('app-user/addUser', userData.value)
-        .then(() => {
-          emit('refetch-data')
-          emit('update:is-add-new-user-sidebar-active', false)
-        })
-    }
+      store.dispatch("app-user/addUser", userData.value).then(() => {
+        emit("refetch-data");
+        emit("update:is-add-new-user-sidebar-active", false);
+      });
+    };
 
-    const {
-      refFormObserver,
-      getValidationState,
-      resetForm,
-    } = formValidation(resetuserData)
+    const { refFormObserver, getValidationState, resetForm } =
+      formValidation(resetuserData);
 
     return {
       userData,
@@ -363,13 +395,14 @@ export default {
       refFormObserver,
       getValidationState,
       resetForm,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss">
 @import "@core/scss/vue/libs/vue-select.scss";
+@import "@core/scss/vue/libs/vue-flatpicker.scss";
 
 #add-new-user-sidebar {
   .vs__dropdown-menu {

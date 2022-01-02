@@ -16,7 +16,6 @@ export default function useUsersList() {
   const tableColumns = [
     { key: "user", sortable: true },
     { key: "email", sortable: true },
-    { key: "role", sortable: true },
     {key: "type"},
     {key: "end date"},
     // {
