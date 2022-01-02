@@ -16,8 +16,8 @@ export default function useUsersList() {
   const tableColumns = [
     { key: "user", sortable: true },
     { key: "email", sortable: true },
-    {key: "type"},
-    {key: "end date"},
+    { key: "type" },
+    { key: "expiry" },
     // {
     //   key: "currentPlan",
     //   label: "Plan",
