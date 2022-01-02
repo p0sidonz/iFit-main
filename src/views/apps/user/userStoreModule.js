@@ -113,6 +113,8 @@ export default {
                   traineelist{
                     id
                     status
+                    start_date
+                    end_date
                     is_offline
                     user_subscriptions{
                       start_date

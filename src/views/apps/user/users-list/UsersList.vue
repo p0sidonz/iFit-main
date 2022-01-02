@@ -177,34 +177,66 @@
           >
         </template>
         <template #cell(expiry)="data">
-          <div
-            v-if="
-              !data.item.traineelist.is_offline &&
-              timeCalc(data.item.traineelist.user_subscriptions[0].end_date)
-            "
-          >
-            <b-badge pill variant="light-danger">
-              Expired on
-              {{
-                data.item.traineelist.user_subscriptions[0].end_date
-              }}</b-badge
+          <div v-if="!data.item.traineelist.is_offline">
+            <div
+              v-if="
+                timeCalc(data.item.traineelist.user_subscriptions[0].end_date)
+              "
             >
-          </div>
-          <div
-            v-if="
-              !data.item.traineelist.is_offline &&
-              timeCalc(data.item.traineelist.user_subscriptions[0].end_date) ===
-                false
-            "
-          >
-            <b-badge pill variant="light-primary">
-              {{
-                data.item.traineelist.user_subscriptions[0].end_date
-                  | moment("from", "now", true)
-              }}
-              remaining</b-badge
+              <b-badge pill variant="light-danger">
+                Expired on
+                {{
+                  data.item.traineelist.user_subscriptions[0].end_date
+                }}</b-badge
+              >
+            </div>
+            <div
+              v-if="
+                timeCalc(
+                  data.item.traineelist.user_subscriptions[0].end_date
+                ) === false
+              "
             >
+              <b-badge pill variant="light-primary">
+                {{
+                  data.item.traineelist.user_subscriptions[0].end_date
+                    | moment("from", "now", true)
+                }}
+                remaining</b-badge
+              >
+            </div>
           </div>
+
+                    <div v-if="data.item.traineelist.is_offline">
+            <div
+              v-if="
+                timeCalc(data.item.traineelist.end_date)
+              "
+            >
+              <b-badge pill variant="light-danger">
+                Expired on
+                {{
+                  data.item.traineelist.end_date
+                }}</b-badge
+              >
+            </div>
+            <div
+              v-if="
+                timeCalc(
+                  data.item.traineelist.end_date
+                ) === false
+              "
+            >
+              <b-badge pill variant="light-primary">
+                {{
+                  data.item.traineelist.end_date
+                    | moment("from", "now", true)
+                }}
+                remaining</b-badge
+              >
+            </div>
+          </div>
+
         </template>
         <!-- Column: Actions -->
         <template #cell(actions)="data">
