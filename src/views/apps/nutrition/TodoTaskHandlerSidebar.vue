@@ -361,6 +361,13 @@ export default {
           console.log(res);
           this.singleFood = res.data.data.food;
           console.log("singlefood", this.singleFood);
+          let typeOF = typeof res.data.data.food.servings.serving;
+          if (typeOF === "object") {
+            let x = res.data.data.food.servings.serving;
+            delete this.singleFood.servings.serving;
+            this.singleFood.servings.serving = [];
+            this.singleFood.servings.serving.push(x);
+          }
         });
     },
   },
