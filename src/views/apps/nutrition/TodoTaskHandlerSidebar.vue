@@ -341,7 +341,7 @@ export default {
       this.isLoadingx = true;
       this.$http
         .post(
-          `https://node84787-fetch.cloudjiffy.net/searchfood?foodsearch=${this.query}`
+          `http://103.217.221.48/searchfood?foodsearch=${this.query}`
         )
         .then((res) => {
           console.log(res);
@@ -355,7 +355,7 @@ export default {
       this.fetchedResult = null;
       this.$http
         .post(
-          `https://node84787-fetch.cloudjiffy.net/searchfood?food_id=${food_id}`
+          `http://103.217.221.48/searchfood?food_id=${food_id}`
         )
         .then((res) => {
           console.log(res);
