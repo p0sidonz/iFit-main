@@ -358,18 +358,19 @@ export default {
           `https://node84787-fetch.cloudjiffy.net/searchfood?food_id=${food_id}`
         )
         .then((res) => {
-          console.log(res);
-          this.singleFood = res.data.data.food;
-          console.log("singlefood", this.singleFood);
-          let typeOF = typeof res.data.data.food.servings.serving;
-          console.log(typeOF)
-          if (typeOF === "object" && Object.keys(typeOF).length === 0) {
-            let x = res.data.data.food.servings.serving;
-            delete this.singleFood.servings.serving;
-            this.singleFood.servings.serving = [];
-            this.singleFood.servings.serving.push(x);
+          let REAL = res.data.data.food;
+          let nonReal = res.data.data.food;
+          console.log();
+          let lng = res.data.data.food.servings.serving.length;
+          if (lng === 0 || lng > 0) {
+            this.singleFood = res.data.data.food;
+          } else {
+            let x = REAL.servings.serving;
+            delete nonReal.servings.serving;
+            nonReal.servings.serving = [];
+            nonReal.servings.serving.push(x);
+            this.singleFood = nonReal;
           }
-          console.log("singlefood", this.singleFood);
         });
     },
   },
