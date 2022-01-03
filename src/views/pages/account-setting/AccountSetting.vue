@@ -1,6 +1,6 @@
 <template>
   <b-tabs
-  v-if="options"
+    v-if="options"
     vertical
     content-class="col-12 col-md-9 mt-1 mt-md-0"
     pills
@@ -56,11 +56,21 @@
         <account-plan v-if="options" :information-data="options" />
       </div>
     </b-tab>
+
+    <b-tab>
+      <!-- title -->
+      <template #title>
+        <feather-icon icon="InfoIcon" size="18" class="mr-50" />
+        <span class="font-weight-bold">Referral (Beta)</span>
+      </template>
+      <div v-if="options">
+        <account-referral />
+      </div>
+    </b-tab>
   </b-tabs>
   <div v-else>
-              <b-spinner small class="mr-1" variant="primary" />
-
-     </div>
+    <b-spinner small class="mr-1" variant="primary" />
+  </div>
 </template>
 
 <script>
@@ -74,6 +84,7 @@ import gql from "graphql-tag";
 import store from "@/store";
 import { ref, onUnmounted } from "@vue/composition-api";
 import accountStoreModule from "./accountSettingStore.js";
+import AccountReferral from "./AccountReferral";
 
 export default {
   components: {
@@ -85,6 +96,7 @@ export default {
     AccountPaymentHistory,
     BSpinner,
     AccountPlan,
+    AccountReferral,
   },
 
   data() {

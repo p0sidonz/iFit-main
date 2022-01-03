@@ -26,17 +26,16 @@
           <b-card-text class="mb-2">
             Make Fitness your next habbit!
           </b-card-text>
-            <b-overlay
-              :show="showOverlay"
-              spinner-variant="primary"
-              spinner-type="grow"
-              spinner-small
-              opacity="0.0"
-              rounded="sm"
-            >
-          <!-- form -->
-          <validation-observer ref="registerForm" #default="{ invalid }">
-
+          <b-overlay
+            :show="showOverlay"
+            spinner-variant="primary"
+            spinner-type="grow"
+            spinner-small
+            opacity="0.0"
+            rounded="sm"
+          >
+            <!-- form -->
+            <validation-observer ref="registerForm" #default="{ invalid }">
               <b-form class="auth-register-form mt-2" @submit.prevent="signup">
                 <!-- Firstname -->
                 <b-form-group label="First Name" label-for="register-firstname">
@@ -74,6 +73,16 @@
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
+                </b-form-group>
+
+                <b-form-group label="Referred by" label-for="register-referral">
+                  <b-form-input
+                    id="register-referral"
+                    v-model="referedBy"
+                    :disabled="referedBy ? true : false"
+                    name="register-referral"
+                    placeholder="Leave empty if you are not sure.."
+                  />
                 </b-form-group>
 
                 <!-- username -->
@@ -178,35 +187,34 @@
                   </div>
                 </b-button>
               </b-form>
-          </validation-observer>
+            </validation-observer>
 
-          <!-- <p class="text-center mt-2">
+            <!-- <p class="text-center mt-2">
             <span>Already have an account?</span>
             <b-link :to="{ name: 'login' }">
               <span>&nbsp;Sign in instead</span>
             </b-link>
           </p> -->
 
-          <b-card-text class="text-center mt-1">
-            <span>Already have an account? </span></b-card-text
-          >
-          <!-- 
+            <b-card-text class="text-center mt-1">
+              <span>Already have an account? </span></b-card-text
+            >
+            <!-- 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
             <b-link :to="{ name: 'page-auth-register-v2' }">
               <span>&nbsp;Create an account</span>
             </b-link>
           </b-card-text> -->
-          <b-button
-            type="submit"
-            variant="outline-primary"
-            block
-            :to="{ name: 'login' }"
-          >
-            Sign in
-          </b-button>
-                      </b-overlay>
-
+            <b-button
+              type="submit"
+              variant="outline-primary"
+              block
+              :to="{ name: 'login' }"
+            >
+              Sign in
+            </b-button>
+          </b-overlay>
         </b-col>
       </b-col>
       <!-- /Register-->
@@ -276,6 +284,8 @@ export default {
         username: "",
         email: "",
       },
+      referedBy:
+        this.$route.query.rid || JSON.parse(localStorage.getItem("fetch-rid")),
 
       sideImg: require("@/assets/images/pages/register-v2.svg"),
       // validation
@@ -310,6 +320,7 @@ export default {
               $username: String!
               $email: String!
               $password: String!
+              $rid: String
             ) {
               signup(
                 firstName: $firstName
@@ -317,6 +328,7 @@ export default {
                 username: $username
                 email: $email
                 password: $password
+                rid: $rid
               ) {
                 ok
                 error
@@ -329,6 +341,7 @@ export default {
             username: this.register.username.toLowerCase().trim(),
             email: this.register.email.toLowerCase().trim(),
             password: this.register.password,
+            rid: this.referedBy,
           },
         })
         .then((data) => {
@@ -394,6 +407,12 @@ export default {
       //   });
       // });
     },
+  },
+
+  async created() {
+    if (this.referedBy) {
+      localStorage.setItem("fetch-rid", JSON.stringify(this.referedBy));
+    }
   },
 };
 /* eslint-disable global-require */
