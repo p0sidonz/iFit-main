@@ -144,7 +144,7 @@ export default {
   data() {
     return {
       macros: { ...this.macronutrients },
-      option: ["GRAM", "percentage"],
+      option: ["gram", "percentage"],
       isPercentagevalid: true,
       showDismissibleAlert: false,
     };
