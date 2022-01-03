@@ -6,12 +6,15 @@
           <h3 class="text-primary">Upgrade your account for as low as 499</h3>
           <h5>
             We are offering lauching offer for the first 1000 customers only.
-            <b-badge pill variant="light-primary" class="badge-glow">FLAT 50% OFF </b-badge>
+            <b-badge pill variant="light-primary" class="badge-glow"
+              >FLAT 50% OFF
+            </b-badge>
           </h5>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             variant="primary"
             class="mt-2 mt-lg-3"
+            :to="{ name: trainer-pricing }"
           >
             Upgrade now
           </b-button>

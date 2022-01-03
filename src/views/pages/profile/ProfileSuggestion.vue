@@ -81,6 +81,9 @@ export default {
       result(data) {
         this.suggestions = data.data.Fitness_User;
       },
+      variables: {
+        not: JSON.parse(localStorage.getItem("userInfo")).id,
+      },
     },
     // Result hook
   },
@@ -88,14 +91,14 @@ export default {
   data() {
     return {
       suggestions: [],
-      showOverlay: false
+      showOverlay: false,
     };
   },
 
   methods: {
     async followUser(id, index) {
       console.log(id, index);
-      this.showOverlay = true
+      this.showOverlay = true;
       try {
         const data = await this.$apollo.mutate({
           mutation: FOLLOW_USER,
@@ -103,18 +106,18 @@ export default {
             followingId: id,
           },
         });
-         this.showOverlay = false
+        this.showOverlay = false;
         if (data.data.insert_Fitness_Follow_one.follower_id) {
           this.suggestions[index].is_follow = true;
         }
       } catch (error) {
-         this.showOverlay = false
+        this.showOverlay = false;
         console.log(error);
       }
     },
 
     async unFollowUser(id, index) {
-       this.showOverlay = true
+      this.showOverlay = true;
       try {
         const data = await this.$apollo.mutate({
           mutation: UNFOLLOW_USER,
@@ -122,12 +125,12 @@ export default {
             following_id: id,
           },
         });
- this.showOverlay = false
+        this.showOverlay = false;
         if (data.data.delete_Fitness_Follow.affected_rows) {
           this.suggestions[index].is_follow = false;
         }
       } catch (error) {
-         this.showOverlay = false
+        this.showOverlay = false;
         console.log(error);
       }
     },

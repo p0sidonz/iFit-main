@@ -1,7 +1,5 @@
 import gql from "graphql-tag";
 
-
-
 export const DELETE_USERRELATION_BY_ID = gql`
   mutation MyMuxtation($id: Int!) {
     delete_Fitness_UserRelation_by_pk(id: $id) {
@@ -9,8 +7,6 @@ export const DELETE_USERRELATION_BY_ID = gql`
     }
   }
 `;
-
-
 
 export const GET_FEED = gql`
   query notifyNewPosts($userId: Int!, $offset: Int) {
@@ -287,8 +283,12 @@ export const GET_FOLLOWINGS = gql`
 `;
 
 export const GET_NEW_USERS = gql`
-  query NewMembers {
-    Fitness_User(order_by: { created_at: desc }, limit: 5) {
+  query NewMembers($not: Int) {
+    Fitness_User(
+      limit: 5
+      order_by: { created_at: desc }
+      where: { id: { _neq: $not } }
+    ) {
       id
       fullname
       avatar
