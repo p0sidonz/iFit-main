@@ -27,9 +27,9 @@
               <div class="text-center">
                 <b-alert variant="primary" show>
                   <div class="alert-body">
-                    <span>No posts</span>
+                    <span>No posts to show!</span>
                   </div>
-                </b-alert>
+                </b-alert> 
               </div>
             </div>
           </b-col>

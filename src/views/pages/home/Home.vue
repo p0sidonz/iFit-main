@@ -17,7 +17,15 @@
               :posts="item"
             />
           </div>
-          <div v-else>Loading...</div>
+          <div v-else>
+            <div class="text-center">
+              <b-alert variant="primary" show>
+                <div class="alert-body">
+                  <span>No posts to show! Follow someone and make gainz!</span>
+                </div>
+              </b-alert>
+            </div>
+          </div>
           <feed-bottom @feedcount="loadMore" />
         </b-col>
 
@@ -40,7 +48,7 @@
 </template>
 
 <script>
-import { BCard, BCardText, BLink, BRow, BCol } from "bootstrap-vue";
+import { BCard, BCardText, BLink, BRow, BCol, BAlert } from "bootstrap-vue";
 import ProfilePost from "./posts.vue";
 import CardAdvanceTimeline from "./CardAdvanceTimeline.vue";
 import ProfileSuggestion from "./ProfileSuggestion.vue";
@@ -66,6 +74,7 @@ export default {
     PostComponent,
     FeedBottom,
     RoleCard,
+    BAlert,
   },
   data() {
     return {

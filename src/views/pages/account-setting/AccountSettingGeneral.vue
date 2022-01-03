@@ -670,7 +670,7 @@ export default {
        delete finalSet.fullname;
       console.log(this.generalData)
       let objectx = {
-        id: 18,
+        id: this.generalData.id,
         _set: {
           ...finalSet,
         },
