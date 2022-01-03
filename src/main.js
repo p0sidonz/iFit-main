@@ -2,8 +2,9 @@ import Vue from "vue";
 import { ToastPlugin, ModalPlugin } from "bootstrap-vue";
 import VueCompositionAPI from "@vue/composition-api";
 import VueSweetalert2 from "vue-sweetalert2";
-import LoadScript from 'vue-plugin-load-script';
-import VueProgressBar from 'vue-progressbar'
+import LoadScript from "vue-plugin-load-script";
+import VueProgressBar from "vue-progressbar";
+import VueClipboard from "vue-clipboard2";
 
 import router from "./router";
 import store from "./store";
@@ -17,18 +18,21 @@ import "@/libs/portal-vue";
 import "@/libs/toastification";
 import { createProvider } from "./vue-apollo";
 
+VueClipboard.config.autoSetContainer = true; // add this line
+Vue.use(VueClipboard);
+
 // BSV Plugin Registration
 Vue.use(ToastPlugin);
 Vue.use(ModalPlugin);
 Vue.use(VueSweetalert2);
-Vue.use(require('vue-moment'));
+Vue.use(require("vue-moment"));
 Vue.use(LoadScript);
 
 Vue.use(VueProgressBar, {
-  color: 'rgb(115, 103, 240)',
-  failedColor: 'red',
-  height: '100px'
-})
+  color: "rgb(115, 103, 240)",
+  failedColor: "red",
+  height: "100px",
+});
 
 // Composition API
 Vue.use(VueCompositionAPI);
