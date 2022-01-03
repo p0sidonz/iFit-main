@@ -276,12 +276,12 @@ export default {
         const response = data.data.Login;
         console.log(response.role);
         if (response.accessToken) {
-          localStorage.setItem(
-            "apollo-token",
-            JSON.stringify(response.accessToken)
-          );
           if (response.role === "trainer") {
             //Fetch more info related to user
+            localStorage.setItem(
+              "apollo-token",
+              JSON.stringify(response.accessToken)
+            );
 
             const token = localStorage.getItem("apollo-token");
             const freshTocken = token.replace(/['"]+/g, "");
@@ -334,6 +334,17 @@ export default {
 
             localStorage.setItem("userInfo", JSON.stringify(response));
           }
+
+          if (response.role === "user") {
+            localStorage.setItem(
+              "apollo-token",
+              JSON.stringify(response.accessToken)
+            );
+            this.$store.dispatch("loginState", response);
+
+            localStorage.setItem("userInfo", JSON.stringify(response));
+          }
+
           // Update when logged in
 
           // if (response.role === "trainer") {
