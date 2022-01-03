@@ -91,7 +91,7 @@ export default {
     return {
       suggestions: [],
       showOverlay: false,
-      currentUser: JSON.parse(localStorage.getItem("userInfo")),
+      currentUser: JSON.parse(localStorage.getItem("userInfo")).id
     };
   },
 
