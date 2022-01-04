@@ -144,7 +144,7 @@ import { Icon } from "@iconify/vue2";
 import Ripple from "vue-ripple-directive";
 import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 import gql from "graphql-tag";
-import { GET_SUBSCRIPTION_BY_ID } from "@/queries/";
+import { GET_SUBSCRIPTION_BY_ID, GET_UPGRADE_HISTORY  } from "@/queries/";
 export default {
   components: {
     BCard,
