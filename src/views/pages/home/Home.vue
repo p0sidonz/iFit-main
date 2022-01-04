@@ -22,7 +22,7 @@
             <div class="text-center">
               <b-alert variant="primary" show>
                 <div class="alert-body">
-                  <span>No posts to show! Follow someone and make gainz!</span>
+                  <span>No posts to show!</span>
                 </div>
               </b-alert>
             </div>

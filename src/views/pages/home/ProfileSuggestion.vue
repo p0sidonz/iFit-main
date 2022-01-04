@@ -30,29 +30,29 @@
           </h6>
         </div>
         <div v-if="data.username !== currentUser.id">
-        <b-button
-          v-if="!data.is_follow"
-          v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-          variant="flat-primary"
-          class="btn-icon ml-auto"
-          size="sm"
-          @click="followUser(data.id, index)"
-        >
-          Follow
-          <feather-icon icon="UserPlusIcon" />
-        </b-button>
+          <b-button
+            v-if="!data.is_follow"
+            v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+            variant="flat-primary"
+            class="btn-icon ml-auto"
+            size="sm"
+            @click="followUser(data.id, index)"
+          >
+            Follow
+            <feather-icon icon="UserPlusIcon" />
+          </b-button>
 
-        <b-button
-          v-else
-          v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-          variant="flat-danger"
-          class="btn-icon ml-auto"
-          size="sm"
-          @click="unFollowUser(data.id, index)"
-        >
-          Unfollow
-          <feather-icon icon="UserPlusIcon" />
-        </b-button>
+          <b-button
+            v-else
+            v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+            variant="flat-danger"
+            class="btn-icon ml-auto"
+            size="sm"
+            @click="unFollowUser(data.id, index)"
+          >
+            Unfollow
+            <feather-icon icon="UserPlusIcon" />
+          </b-button>
         </div>
       </div>
     </b-overlay>
@@ -96,7 +96,7 @@ export default {
     return {
       suggestions: [],
       showOverlay: false,
-      currentUser: JSON.parse(localStorage.getItem("userInfo")).id
+      currentUser: JSON.parse(localStorage.getItem("userInfo")).id,
     };
   },
 

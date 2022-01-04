@@ -61,8 +61,20 @@
                   of 30 Days
                 </h5>
               </div>
-              <b-progress :value="calculate_days(curr_plan.start_date, curr_plan.end_date) / 30 * 100" max="100" />
-              <p class="mt-50"> {{calc_remaming(curr_plan.start_date, curr_plan.end_date)}} days remaining until your plan requires update</p>
+              <b-progress
+                :value="
+                  (calculate_days(curr_plan.start_date, curr_plan.end_date) /
+                    30) *
+                  100
+                "
+                max="100"
+              />
+              <p class="mt-50">
+                {{
+                  calc_remaming(curr_plan.start_date, curr_plan.end_date)
+                }}
+                days remaining until your plan requires update
+              </p>
             </div>
           </b-col>
         </b-row>
@@ -116,14 +128,14 @@ export default {
     calculate_days(start) {
       var a = this.$moment();
       var b = this.$moment(start);
-      return a.diff(b, "days")+1; // 1
+      return a.diff(b, "days") + 1; // 1
     },
     calc_remaming(start, end) {
       var a = this.$moment();
       var b = this.$moment(end);
-      return b.diff(a, "days")
-     
-    //   return a.diff(b, "days") // 1
+      return b.diff(a, "days");
+
+      //   return a.diff(b, "days") // 1
     },
   },
   async created() {
