@@ -70,9 +70,7 @@
                 max="100"
               />
               <p class="mt-50">
-                {{
-                  calc_remaming(curr_plan.start_date, curr_plan.end_date)
-                }}
+                {{ calc_remaming(curr_plan.start_date, curr_plan.end_date) }}
                 days remaining until your plan requires update
               </p>
             </div>
@@ -81,7 +79,41 @@
       </b-card-body>
     </b-card>
 
-    <!-- <b-card title="Plan History"> </b-card> -->
+    <b-card title="Upgrade Payment History">
+      <b-table :fields="fields" :items="items" responsive="sm" show-empty>
+        <template #empty="scope">
+          <div class="text-center">
+            <p>{{ scope.emptyText }}</p>
+          </div>
+        </template>
+        <!-- A virtual column -->
+        <template #cell(index)="data">
+          {{ data.index + 1 }}
+        </template>
+
+        <!-- A custom formatted column -->
+        <template #cell(Package)="data">
+          {{ data.value.title }}
+        </template>
+
+        <template #cell(status)="data">
+          <b-badge
+            pill
+            :variant="data.value === 'captured' ? 'success' : 'danger'"
+          >
+            {{ data.value === "captured" ? "success" : "failed" }}
+          </b-badge>
+        </template>
+
+        <template #cell(amount)="data">
+          {{ data.value === "INR" ? "$" : "₹" + data.value / 100 + "/-" }}
+        </template>
+
+        <template #cell(created_at)="data">
+          {{ data.value | moment("MMMM Do YYYY") }}
+        </template>
+      </b-table>
+    </b-card>
   </div>
 </template>
 
@@ -96,6 +128,7 @@ import {
   BButton,
   BTable,
   BProgress,
+  BBadge,
 } from "bootstrap-vue";
 import { Icon } from "@iconify/vue2";
 import Ripple from "vue-ripple-directive";
@@ -115,6 +148,7 @@ export default {
     BRow,
     BCol,
     BProgress,
+    BBadge,
   },
   directives: {
     Ripple,
@@ -122,6 +156,17 @@ export default {
   data() {
     return {
       curr_plan: null,
+      items: null,
+      fields: [
+        // A virtual column that doesn't exist in items
+        "index",
+        // A column that needs custom formatting
+        { key: "Package", label: "Package Name" },
+        { key: "order_id", label: "Order Id" },
+        { key: "status", label: "Status" },
+        { key: "created_at", label: "date" },
+        { key: "amount", label: "Amount" },
+      ],
     };
   },
   methods: {
@@ -148,6 +193,18 @@ export default {
       });
       this.curr_plan = data.data.Fitness_upgrade_current_package[0];
       console.log(this.curr_plan);
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      const data = await this.$apollo.query({
+        query: GET_UPGRADE_HISTORY,
+        variables: {
+          userId: JSON.parse(localStorage.getItem("userInfo")).id,
+        },
+      });
+      this.items = data.data.Fitness_upgrade_order_history;
     } catch (error) {
       console.log(error);
     }
