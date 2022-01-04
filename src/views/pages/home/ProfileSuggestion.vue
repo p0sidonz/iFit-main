@@ -80,9 +80,14 @@ export default {
   apollo: {
     Fitness_User: {
       query: GET_NEW_USERS,
-      result(data) {
-        this.suggestions = data.data.Fitness_User;
+      variables: {
+        not: JSON.parse(localStorage.getItem("userInfo")).id
       },
+      result(data) {
+        this.suggestions = data.data.FitnesFs_User;
+
+      },
+      
     },
     // Result hook
   },

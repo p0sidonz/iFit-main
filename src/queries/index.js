@@ -1,5 +1,27 @@
 import gql from "graphql-tag";
 
+export const GET_SUBSCRIPTION_BY_ID = gql`
+  query getUpgradeDetail($id: Int!) {
+    Fitness_upgrade_current_package(
+      where: { user_id: { _eq: $id } }
+      order_by: { created_at: desc }
+    ) {
+      id
+      end_date
+      start_date
+      package_detail {
+        id
+        title
+        subtitle
+        monthlyPrice
+        yearlyPrice
+        subscription_days
+      }
+      created_at
+    }
+  }
+`;
+
 export const DELETE_USERRELATION_BY_ID = gql`
   mutation MyMuxtation($id: Int!) {
     delete_Fitness_UserRelation_by_pk(id: $id) {
