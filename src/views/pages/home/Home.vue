@@ -16,6 +16,7 @@
               v-bind:key="item.id"
               :posts="item"
             />
+            <feed-bottom @feedcount="loadMore" />
           </div>
           <div v-else>
             <div class="text-center">
@@ -26,7 +27,6 @@
               </b-alert>
             </div>
           </div>
-          <feed-bottom @feedcount="loadMore" />
         </b-col>
 
         <!-- <b-col lg="6" order="2" >
