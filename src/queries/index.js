@@ -1,5 +1,22 @@
 import gql from "graphql-tag";
 
+export const GET_UPGRADE_HISTORY = gql`
+  query get_order_history($userId: Int!) {
+    Fitness_upgrade_order_history(
+      where: { user_id: { _eq: $userId } }
+      order_by: { created_at: desc }
+    ) {
+      Package {
+        title
+      }
+      order_id
+      status
+      created_at
+      amount
+    }
+  }
+`;
+
 export const GET_SUBSCRIPTION_BY_ID = gql`
   query getUpgradeDetail($id: Int!) {
     Fitness_upgrade_current_package(

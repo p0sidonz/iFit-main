@@ -45,11 +45,21 @@
                     ? curr_plan.package_detail.monthlyPrice
                     : curr_plan.package_detail.yearlyPrice
                 }}/- Per Month
-                <span class="badge badge-light-primary ms-50"
+                <span
+                  v-if="curr_plan.package_detail.title === 'Basic'"
+                  class="badge badge-light-primary ms-50"
                   >Less Popular</span
                 >
+                <span
+                  v-if="curr_plan.package_detail.title === 'Basic'"
+                  class="badge badge-light-primary ms-50"
+                  >Popular</span
+                >
               </h5>
-              <span> Basic plan for small client base </span>
+              <span v-if="curr_plan.package_detail.title === 'Basic'">
+                Basic plan for small client base
+              </span>
+              <span v-else> Standard plan for higher client base</span>
             </div>
           </b-col>
           <b-col>
@@ -58,7 +68,7 @@
                 <h5 class="fw-bolder">Days</h5>
                 <h5 class="fw-bolder">
                   {{ calculate_days(curr_plan.start_date, curr_plan.end_date) }}
-                  of 30 Days
+                  of {{ curr_plan.package_detail.subscription_days }} Days
                 </h5>
               </div>
               <b-progress
