@@ -14,7 +14,7 @@
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             variant="primary"
             class="mt-2 mt-lg-3"
-            :to="{ name: trainer-pricing }"
+            :to="{ name: 'trainer-pricing' }"
           >
             Upgrade now
           </b-button>
