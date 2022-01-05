@@ -27,10 +27,6 @@
           </b-badge>
         </template>
 
-        <template #cell(amount)="data">
-          {{ data.value === "INR" ? "$" : "₹" + data.value / 100 + "/-" }}
-        </template>
-
         <template #cell(created_at)="data">
           {{ data.value | moment("MMMM Do YYYY") }}
         </template>
