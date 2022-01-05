@@ -3,9 +3,9 @@
     <b-alert variant="danger" :show="!programs">
       <h4 class="alert-heading">Error fetching Programs</h4>
       <div class="alert-body">
-        Pleae hit back
-        <b-link class="alert-link" :to="{ name: 'program-list' }">
-          Programs List
+        Pleae hit back to
+        <b-link class="alert-link" :to="{ name: 'apps-trainers-list' }">
+          Dashboard
         </b-link>
       </div>
     </b-alert>

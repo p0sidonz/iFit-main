@@ -4,11 +4,10 @@
     <b-alert variant="danger" :show="tasks === undefined">
       <h4 class="alert-heading">Error fetching Diet</h4>
       <div class="alert-body">
-        Pleae hit back
-        <b-link class="alert-link" :to="{ name: 'apps-users-list' }">
-          User List
+        Pleae hit back to
+        <b-link class="alert-link" :to="{ name: 'apps-trainers-list' }">
+          Dashboard
         </b-link>
-        for other users.
       </div>
     </b-alert>
 
@@ -281,7 +280,6 @@ export default {
         "fat",
         "fiber",
         "calories",
-        "action",
       ],
       visibleRows: [],
     };
