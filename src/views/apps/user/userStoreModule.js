@@ -235,7 +235,7 @@ export default {
           .post(
             process.env.VUE_APP_GRAPHQL_HTTP,
             {
-              query: `mutation MyMutation ($phonenumber: String!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String!, $is_offline: Boolean!, $endDate: date!, $startDate: date! ){
+              query: `mutation MyMutation ($phonenumber: String!, $email: String!, $firstName: String!,$password : String!, $username:  String!, $lastName: String!, $is_offline: Boolean, $endDate: date!, $startDate: date! ){
                 addUserToTrainer(phonenumber: $phonenumber, email: $email, firstName:  $firstName, password: $password , username: $username, lastName: $lastName, is_offline: $is_offline, startDate: $startDate, endDate: $endDate) {
                   ok
                   error
