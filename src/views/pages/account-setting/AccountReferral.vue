@@ -216,7 +216,7 @@ export default {
   },
   methods: {
     doCopy() {
-      this.$copyText(this.username).then(
+      this.$copyText(`https://dashboard.fetch.fit/register?rid=${this.username}`).then(
         () => {
           this.$toast({
             component: ToastificationContent,
