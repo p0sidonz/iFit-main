@@ -35,9 +35,10 @@
                   {{ tasks.diet_description }}
                 </b-card-text>
               </b-card-body>
-                            <template #footer>
+              <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ tasks.updated_at | moment("from", "now")}}</b-badge
+                  >Last Updated:
+                  {{ tasks.updated_at | moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -275,11 +276,11 @@ export default {
     return {
       fields: [
         "food_name",
+        "calories",
         "carbohydrate",
         "protein",
         "fat",
         "fiber",
-        "calories",
       ],
       visibleRows: [],
     };
@@ -308,11 +309,10 @@ export default {
           return MealsTotal;
         });
         return MealsTotal;
-      }
-      else {
-          let MealsTotal = {}
+      } else {
+        let MealsTotal = {};
 
-          return MealsTotal
+        return MealsTotal;
       }
     },
   },

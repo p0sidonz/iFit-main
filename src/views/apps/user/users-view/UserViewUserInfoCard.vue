@@ -60,8 +60,7 @@
                 variant="outline-success"
                 class="ml-1"
                 :to="{
-                  name: 'apps-users-edit',
-                  params: { id: userData.User.id },
+                  name: 'apps-chat',
                 }"
               >
                 Chat
@@ -158,7 +157,6 @@
         <b-row>
           <b-col cols="12" class="mb-2">
             <h5 class="mb-0">Medical Issues</h5>
-
           </b-col>
           <b-col md="6">
             <b-form-group
@@ -190,9 +188,12 @@
               label="Do you feel dizzy or have symptoms of Vertigo?"
               label-for="Vertigo"
             >
-              <b-form-radio 
-              disabled
-              v-model="healthData.additional_profile_detail.have_vertigo" name="Vertigo" value="false">
+              <b-form-radio
+                disabled
+                v-model="healthData.additional_profile_detail.have_vertigo"
+                name="Vertigo"
+                value="false"
+              >
                 No
               </b-form-radio>
 
@@ -281,9 +282,12 @@
               label="Are you suffering from any injury?"
               label-for="injury"
             >
-              <b-form-radio 
-              disabled
-              v-model="healthData.additional_profile_detail.is_injured" name="injury" value="false">
+              <b-form-radio
+                disabled
+                v-model="healthData.additional_profile_detail.is_injured"
+                name="injury"
+                value="false"
+              >
                 No
               </b-form-radio>
 
@@ -329,8 +333,11 @@
               label-for="Alchol"
             >
               <b-form-radio
-              disabled
-               v-model="healthData.additional_profile_detail.giveup_alchol" name="Alchol" value="false">
+                disabled
+                v-model="healthData.additional_profile_detail.giveup_alchol"
+                name="Alchol"
+                value="false"
+              >
                 No
               </b-form-radio>
 
@@ -370,7 +377,6 @@
                 v-model="healthData.additional_profile_detail.have_epilepsy"
                 name="have_epilepsy"
                 value="false"
-
                 disabled
               >
                 No

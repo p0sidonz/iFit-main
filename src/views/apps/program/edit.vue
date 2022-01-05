@@ -85,7 +85,7 @@
                         </b-badge>
                       </div>
                     </div>
-                    <div v-else-if="!days.workout">
+                    <div v-else-if="!days.workout && !days.rest_day">
                       <div class="text-center">
                         <b-badge pill variant="light-secondary">
                           No workout
@@ -111,7 +111,7 @@
                       >
                         Rest Day
                       </b-dropdown-item>
-                      <b-dropdown-item> Assign Diet </b-dropdown-item>
+                      <!-- <b-dropdown-item> Assign Diet </b-dropdown-item> -->
                       <b-dropdown-item
                         @click="showAddWorkoutModal(week_index, day_index)"
                       >
@@ -355,13 +355,12 @@ export default {
       let res = this.weeks_days.map((xxx, index) => {
         let deep = xxx.program_days.map((item2, index2) => {
           delete item2.completed;
-          delete item2.rest_day;
           delete item2.workout;
           return item2;
         });
         let constrain = {
           constraint: "program_days_pkey",
-          update_columns: "workout_id",
+          update_columns: ["workout_id", "rest_day"],
         };
         delete xxx.program_days;
         xxx.program_days = {};
@@ -376,7 +375,6 @@ export default {
         })
         .then((response) => {
           if (response.data.data.insert_Fitness_program_weeks.affected_rows) {
-            this.fetchExcercise();
             this.$toast({
               component: ToastificationContent,
               props: {

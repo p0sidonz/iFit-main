@@ -38,8 +38,7 @@
                 variant="outline-success"
                 class="ml-1"
                 :to="{
-                  name: 'apps-users-edit',
-                  params: { id: userData.User.id },
+                  name: 'apps-chat',
                 }"
               >
                 Chat
