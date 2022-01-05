@@ -137,7 +137,7 @@ export default {
           id: JSON.parse(localStorage.getItem("userInfo")).id,
         },
       });
-      this.items = data.data.Fitness_upgrade_order_history;
+      this.items = data.data.Fitness_user_subscription;
     } catch (error) {
       console.log(error);
     }
