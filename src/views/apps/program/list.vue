@@ -199,10 +199,6 @@
                 class="align-middle text-body"
               />
             </template>
-            <b-dropdown-item>
-              <feather-icon icon="DownloadIcon" />
-              <span class="align-middle ml-50">Download</span>
-            </b-dropdown-item>
             <b-dropdown-item
               :to="{ name: 'program-edit', params: { id: data.item.id } }"
             >

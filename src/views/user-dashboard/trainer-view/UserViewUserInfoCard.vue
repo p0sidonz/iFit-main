@@ -23,10 +23,13 @@
               </h4>
               <span class="card-text">{{ userData.email }}</span>
             </div>
-            <br>
+            <br />
             <div class="d-flex flex-wrap">
               <b-button
-                :to="{ name: 'profile', params: { username: userData.username } }"
+                :to="{
+                  name: 'profile',
+                  params: { username: userData.username },
+                }"
                 variant="primary"
               >
                 Visit Profile
@@ -34,7 +37,10 @@
               <b-button
                 variant="outline-success"
                 class="ml-1"
-                :to="{ name: 'apps-users-edit', params: { id: userData.id } }"
+                :to="{
+                  name: 'apps-users-edit',
+                  params: { id: userData.User.id },
+                }"
               >
                 Chat
               </b-button>
@@ -84,7 +90,7 @@
               <span class="font-weight-bold">Status</span>
             </th>
             <td class="pb-50 text-capitalize">
-             {{userData.status}}
+              {{ userData.status }}
             </td>
           </tr>
           <tr>
@@ -93,7 +99,7 @@
               <span class="font-weight-bold">Role</span>
             </th>
             <td class="pb-50 text-capitalize">
-              {{ userData.role || "Not"}}
+              {{ userData.role || "Not" }}
             </td>
           </tr>
           <tr>
@@ -102,7 +108,7 @@
               <span class="font-weight-bold">Country</span>
             </th>
             <td class="pb-50">
-              {{ userData.country || "Not"}}
+              {{ userData.country || "Not" }}
             </td>
           </tr>
           <tr>
@@ -111,7 +117,7 @@
               <span class="font-weight-bold">Contact</span>
             </th>
             <td>
-              {{ userData.phonenumber || "Not"}}
+              {{ userData.phonenumber || "Not" }}
             </td>
           </tr>
         </table>

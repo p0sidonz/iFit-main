@@ -30,7 +30,7 @@
           <small class="text-muted"
             >No program assigned yet
             <b-nav align="center">
-              <b-nav-item :to="{ name: 'nutrition-list' }">
+              <b-nav-item :to="{ name: 'program-list' }">
                 Add program
               </b-nav-item>
             </b-nav>
