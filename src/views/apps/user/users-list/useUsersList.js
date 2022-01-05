@@ -25,7 +25,6 @@ export default function useUsersList() {
     //   formatter: title,
     //   sortable: true,
     // },
-    { key: "status", sortable: true },
     { key: "actions" },
   ];
   const packageDetail = ref(null);
