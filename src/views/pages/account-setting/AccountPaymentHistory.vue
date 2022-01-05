@@ -1,7 +1,7 @@
  
 <template>
   <div>
-    <b-card title="Upgrade Payment History">
+    <b-card title="Training Payment History ">
       <b-table :fields="fields" :items="items" responsive="sm" show-empty>
         <template #empty="scope">
           <div class="text-center">
@@ -18,7 +18,7 @@
           {{ data.value.title }}
         </template>
 
-        <template #cell(status)="data">
+        <template #cell(order_status)="data">
           <b-badge
             pill
             :variant="data.value === 'captured' ? 'success' : 'danger'"
@@ -97,11 +97,13 @@ export default {
         // A virtual column that doesn't exist in items
         "index",
         // A column that needs custom formatting
-        { key: "Package", label: "Package Name" },
         { key: "order_id", label: "Order Id" },
-        { key: "status", label: "Status" },
-        { key: "created_at", label: "date" },
+        { key: "start_date", label: "Start date" },
+        { key: "end_date", label: "Start date" },
         { key: "amount", label: "Amount" },
+        { key: "order_status", label: "Status" },
+        { key: "currency", label: "Currency" },
+        { key: "created_at", label: "date" },
       ],
     };
   },
@@ -115,18 +117,25 @@ export default {
     try {
       const data = await this.$apollo.query({
         query: gql`
-          query get_order_history {
-            Fitness_upgrade_order_history {
-              Package {
-                title
-              }
+          query pkg_history($id: Int) {
+            Fitness_user_subscription(
+              where: { user_paid_id: { _eq: $id } }
+              order_by: { created_at: desc }
+            ) {
+              id
               order_id
-              status
               created_at
               amount
+              currency
+              start_date
+              end_date
+              order_status
             }
           }
         `,
+        variables: {
+          id: JSON.parse(localStorage.getItem("userInfo")).id,
+        },
       });
       this.items = data.data.Fitness_upgrade_order_history;
     } catch (error) {
