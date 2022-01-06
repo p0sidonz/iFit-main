@@ -128,11 +128,11 @@ export default {
     },
   },
   methods: {
-   async validationForm() {
+    async validationForm() {
       this.$refs.simpleRules.validate().then((success) => {
         if (success) {
           try {
-            const data =  this.$apollo.mutate({
+            const data = this.$apollo.mutate({
               mutation: gql`
                 mutation forgot_password($email: String!) {
                   forgot_password(email: $email) {
@@ -152,7 +152,7 @@ export default {
                 title: "Email sent!",
                 icon: "EditIcon",
                 variant: "success",
-                text: "Please check your email address for further instruction"
+                text: "Please check your email address for further instruction",
               },
             });
           } catch (error) {}
