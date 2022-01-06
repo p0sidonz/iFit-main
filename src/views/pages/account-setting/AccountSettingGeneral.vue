@@ -74,7 +74,9 @@
           <b-form-group label="Name" label-for="account-name">
             <b-form-input
               name="name"
-              :placeholder="optionsLocal.firstName + ' ' + optionsLocal.lastName"
+              :placeholder="
+                optionsLocal.firstName + ' ' + optionsLocal.lastName
+              "
               readonly
             />
           </b-form-group>
@@ -186,14 +188,11 @@
         </b-col>
 
         <!-- alert -->
-        <b-col cols="12" class="mt-75">
+        <b-col cols="12" class="mt-75" v-if="!optionsLocal.is_confirmed">
           <b-alert show variant="warning" class="mb-50">
             <h4 class="alert-heading">
               Your email is not confirmed. Please check your inbox.
             </h4>
-            <div class="alert-body">
-              <b-link class="alert-link"> Verify NOW! </b-link>
-            </div>
           </b-alert>
         </b-col>
         <!--/ alert -->
@@ -552,7 +551,7 @@ export default {
         phoneRegionCode: "US",
       },
       genderOption: ["Male", "Female", "Other"],
-      optionsLocal: {...this.generalData},
+      optionsLocal: { ...this.generalData },
       profileFile: null,
       isUploaded: false,
       base64compressed: null,
@@ -658,17 +657,19 @@ export default {
     },
 
     async UpdateGeneralProfile() {
-      console.log("optionslocal",this.generalData);
+      console.log("optionslocal", this.generalData);
       this.isLoading = true;
       let finalSet = null;
-      finalSet = {...this.optionsLocal};
+      finalSet = { ...this.optionsLocal };
       delete finalSet.avatar;
       delete finalSet.fullname;
       delete finalSet.__typename;
       delete finalSet.id;
       delete finalSet.username;
-       delete finalSet.fullname;
-      console.log(this.generalData)
+      delete finalSet.fullname;
+      delete finalSet.is_confirmed;
+
+      console.log(this.generalData);
       let objectx = {
         id: this.generalData.id,
         _set: {

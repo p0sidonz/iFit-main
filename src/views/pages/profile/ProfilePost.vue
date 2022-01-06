@@ -217,7 +217,7 @@
       scrollable:false
       title="Add new post"
     >
-      <create-post @close-post="closeModal" /> 
+      <create-post @close-post="closeModal" />
     </b-modal>
     <div class="btn-new-post">
       <!-- We have wrapper because ripple effect give position relative to this absolute positioned btn -->
@@ -414,7 +414,7 @@ export default {
 
   methods: {
     closeModal() {
-      this.showNewPostModal = false;
+      this.showNewPostModal = !this.showNewPostModal;
     },
     newPostModal() {
       this.showNewPostModal = true;

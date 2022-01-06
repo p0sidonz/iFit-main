@@ -385,6 +385,7 @@ export default {
                 website
                 country
                 phonenumber
+                is_confirmed
               }
             }
           `,

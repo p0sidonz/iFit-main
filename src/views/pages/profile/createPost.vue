@@ -169,8 +169,8 @@ export default {
 
   methods: {
     hideModal() {
-      // this.$bvModal.hide("newpost");
-      this.$emit("close-post");
+     this.$bvModal.hide("newpost");
+      // this.$emit("close-post");
     },
     compressImage(image) {
       return new Promise((resolve, reject) => {
