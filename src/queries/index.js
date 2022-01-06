@@ -1,5 +1,31 @@
 import gql from "graphql-tag";
 
+export const GET_EXCERCISE_DETAIL = gql`
+  query getexcerciseDetail($id: Int!) {
+    Fitness_exercise_by_pk(id: $id) {
+      id
+      title
+      description
+      exercise_type
+      status
+      video_source
+      video_url
+      created_at
+      video_id
+      exercise_category {
+        id
+        title
+      }
+      User {
+        id
+        username
+        avatar
+        fullname
+      }
+    }
+  }
+`;
+
 export const GET_UPGRADE_HISTORY = gql`
   query get_order_history($userId: Int!) {
     Fitness_upgrade_order_history(

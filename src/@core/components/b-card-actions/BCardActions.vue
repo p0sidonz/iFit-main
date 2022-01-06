@@ -17,15 +17,12 @@
       :style="cardStyles"
       v-on="$listeners"
     >
-      <div
-        v-if="showHeader"
-        class="card-header"
-      >
+      <div v-if="showHeader" class="card-header">
         <!-- Title & SubTitle -->
         <div>
-          <b-card-title>{{ $attrs.title }}</b-card-title>
+          <b-card-title class="cursor-pointer" @click="titlefunctionx">{{ $attrs.title }}</b-card-title>
           <b-card-sub-title v-if="$attrs['sub-title']">
-            {{ $attrs['sub-title'] }}
+            {{ $attrs["sub-title"] }}
           </b-card-sub-title>
         </div>
 
@@ -59,9 +56,14 @@
 
 <script>
 import {
-  BCard, BCardTitle, BCardSubTitle, BCardBody, BCollapse, BOverlay,
-} from 'bootstrap-vue'
-import BCardActionsContainer from './BCardActionsContainer.vue'
+  BCard,
+  BCardTitle,
+  BCardSubTitle,
+  BCardBody,
+  BCollapse,
+  BOverlay,
+} from "bootstrap-vue";
+import BCardActionsContainer from "./BCardActionsContainer.vue";
 
 export default {
   components: {
@@ -98,68 +100,77 @@ export default {
   },
   data() {
     return {
-      parentID: '',
+      parentID: "",
       content_visible: !this.collapsed,
       showLoading: false,
       cardClosed: false,
       cardStyles: {},
-    }
+    };
   },
   computed: {
     cardAttrs() {
-      const cardAttrs = JSON.parse(JSON.stringify(this.$attrs))
-      delete cardAttrs.title
-      delete cardAttrs['sub-title']
-      return cardAttrs
+      const cardAttrs = JSON.parse(JSON.stringify(this.$attrs));
+      delete cardAttrs.title;
+      delete cardAttrs["sub-title"];
+      return cardAttrs;
     },
     showHeader() {
-      return this.$attrs.title || this.$attrs['sub-title'] || !this.noActions
+      return this.$attrs.title || this.$attrs["sub-title"] || !this.noActions;
     },
     showActions() {
-      if (this.noActions) return false
-      return true
+      if (this.noActions) return false;
+      return true;
     },
     availableActions() {
-      const actions = []
-      const allFalse = (this.actionCollapse || this.actionRefresh || this.actionClose) === false
+      const actions = [];
+      const allFalse =
+        (this.actionCollapse || this.actionRefresh || this.actionClose) ===
+        false;
 
-      if (this.actionCollapse || allFalse) actions.push('collapse')
-      if (this.actionRefresh || allFalse) actions.push('refresh')
-      if (this.actionClose || allFalse) actions.push('close')
-      return actions
+      if (this.actionCollapse || allFalse) actions.push("collapse");
+      if (this.actionRefresh || allFalse) actions.push("refresh");
+      if (this.actionClose || allFalse) actions.push("close");
+      return actions;
     },
   },
   created() {
-    this.parentID = String(Math.floor(Math.random() * 10) + 1)
+    this.parentID = String(Math.floor(Math.random() * 10) + 1);
   },
   methods: {
     removeCard() {
-      this.$set(this.cardStyles, 'maxHeight', `${this.$refs.bCard.clientHeight}px`)
+      this.$set(
+        this.cardStyles,
+        "maxHeight",
+        `${this.$refs.bCard.clientHeight}px`
+      );
       setTimeout(() => {
-        this.$set(this.cardStyles, 'maxHeight', '0px')
-        this.$set(this.cardStyles, 'overflow', 'hidden')
+        this.$set(this.cardStyles, "maxHeight", "0px");
+        this.$set(this.cardStyles, "overflow", "hidden");
         // this.$set(this.cardStyles, 'marginBottom', '0')
-      }, 10)
+      }, 10);
     },
     triggerCollapse() {
-      this.content_visible = !this.content_visible
-      this.$emit('collapse')
+      this.content_visible = !this.content_visible;
+      this.$emit("collapse");
     },
     triggerRefresh() {
-      this.showLoading = true
-      this.$emit('refresh')
+      this.showLoading = true;
+      this.$emit("refresh");
+    },
+    titlefunctionx() {
+      this.$emit("titlefunction");
     },
     triggerClose() {
-      this.removeCard()
-      this.$emit('close')
+      this.removeCard();
+      this.$emit("close");
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-@import '~@core/scss/base/components/variables-dark';
+@import "~@core/scss/base/bootstrap-extended/include";
+@import "~@core/scss/base/components/variables-dark";
 
 .card {
   ::v-deep .card-header {
