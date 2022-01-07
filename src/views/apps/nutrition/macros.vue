@@ -69,11 +69,11 @@
       size="sm"
       variant="primary"
       class="mr-50"
-      @click="$emit('update-macronutrient', macros)"
+      @click="saveMacros"
     >
       Save
     </b-button>
-    <br/>
+    <br />
 
     <b-alert
       v-model="showDismissibleAlert"
@@ -86,7 +86,7 @@
         Total % Value of Protein + Carbs + Fat must be equal to 100
       </div>
     </b-alert>
-<br/>
+    <br />
     <b-alert v-if="!macros.is_macro_set" variant="warning" show>
       <h4 class="alert-heading">Warning!</h4>
       <div class="alert-body">You haven't set the target calories yet!</div>
@@ -149,7 +149,14 @@ export default {
       showDismissibleAlert: false,
     };
   },
-
+  methods: {
+    saveMacros() {
+      this.$emit("update-macronutrient", {
+        macros: { ...this.macros },
+        id: this.$route.params.id,
+      });
+    },
+  },
   computed: {
     xx() {
       if (this.macros.macro_type === "gram") {
@@ -185,12 +192,10 @@ export default {
       // this.macros.target_fat * 9 +
       // this.macros.target_carbs * 4 +
     },
-    
   },
 
   watch: {
     xx() {},
   },
-
 };
 </script>

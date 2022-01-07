@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ isLoading }}
     <div v-if="isLoading">
       <b-spinner small class="mr-1" variant="primary" />
     </div>
@@ -329,6 +330,8 @@ import TodoLeftSidebar from "./TodoLeftSidebar.vue";
 import todoStoreModule from "./todoStoreModule";
 import TodoTaskHandlerSidebar from "./TodoTaskHandlerSidebar.vue";
 import BCardActions from "@core/components/b-card-actions/BCardActions.vue";
+import { useToast } from "vue-toastification/composition";
+import ToastificationContent from "@core/components/toastification/ToastificationContent.vue";
 
 export default {
   components: {
@@ -365,7 +368,7 @@ export default {
     TodoLeftSidebar,
     TodoTaskHandlerSidebar,
     macros,
-    BSpinner
+    BSpinner,
   },
 
   data() {
@@ -408,8 +411,10 @@ export default {
   },
 
   setup() {
+    const toast = useToast();
+
     const TODO_APP_STORE_MODULE_NAME = "app-todo";
-    const isLoading = ref(false)
+    const isLoading = ref(false);
     // Register module
     if (!store.hasModule(TODO_APP_STORE_MODULE_NAME))
       store.registerModule(TODO_APP_STORE_MODULE_NAME, todoStoreModule);
@@ -489,6 +494,15 @@ export default {
       store
         .dispatch("app-todo/addFoods", { taskData, foodid, foodname })
         .then(() => {
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Food added!",
+              icon: "AlertTriangleIcon",
+              variant: "success",
+            },
+          });
+
           // eslint-disable-next-line no-use-before-define
           fetchTasks();
         });
@@ -502,6 +516,15 @@ export default {
     };
     const removeMeal = (val) => {
       store.dispatch("app-todo/removeMeal", { val }).then(() => {
+        toast({
+          component: ToastificationContent,
+          props: {
+            title: "Meal removed!",
+            icon: "AlertTriangleIcon",
+            variant: "success",
+          },
+        });
+
         // eslint-disable-next-line no-use-before-define
         fetchTasks();
       });
@@ -509,6 +532,15 @@ export default {
 
     const removeSingleFood = (val) => {
       store.dispatch("app-todo/removeSingleFood", { val }).then(() => {
+        toast({
+          component: ToastificationContent,
+          props: {
+            title: "Food removed!",
+            icon: "AlertTriangleIcon",
+            variant: "success",
+          },
+        });
+
         // eslint-disable-next-line no-use-before-define
         fetchTasks();
       });
@@ -522,9 +554,31 @@ export default {
     };
 
     const updateMicronutrient = (val) => {
-      store.dispatch("app-todo/updateMicronutrient", { val }).then(() => {
-        // fetchTasks();
-      });
+      store
+        .dispatch("app-todo/updateMicronutrient", { val })
+        .then((r) => {
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Macros Updated!",
+              icon: "AlertTriangleIcon",
+              variant: "success",
+            },
+          });
+
+          // fetchTasks();
+        })
+        .catch((error) => {
+          toast({
+            component: ToastificationContent,
+            props: {
+              title: "Sorry!",
+              icon: "AlertTriangleIcon",
+              variant: "danger",
+              text: `${error}`,
+            },
+          });
+        });
     };
 
     const perfectScrollbarSettings = {
@@ -597,11 +651,11 @@ export default {
     };
 
     const fetchTasks = () => {
-      isLoading.value = true
+      isLoading.value = true;
       store
         .dispatch("app-todo/fetchTasks", { id: router.currentRoute.params.id })
         .then((response) => {
-          isLoading.value = false
+          isLoading.value = false;
           tasks.value = response.data.data.Fitness_Diet_by_pk;
         });
     };
@@ -662,7 +716,7 @@ export default {
       mealid,
       totalCounter,
       updateMicronutrient,
-      isLoading
+      isLoading,
     };
   },
 };

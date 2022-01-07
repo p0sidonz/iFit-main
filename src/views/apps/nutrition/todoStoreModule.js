@@ -62,7 +62,7 @@ export default {
               variables: {
                 diet_id: payload.meal_id,
                 user_id: payload.userId,
-                relationship_id: payload.relationship_id
+                relationship_id: payload.relationship_id,
               },
             },
             {
@@ -318,20 +318,15 @@ export default {
     },
 
     updateMicronutrient(ctx, macros) {
+      let MAC = macros.val.macros;
+      delete MAC.meals;
+      delete MAC.diet_description;
+      delete MAC.diet_name;
+      delete MAC.id;
+      MAC.is_macro_set = true;
+
       const token = localStorage.getItem("apollo-token");
       const freshTocken = token.replace(/['"]+/g, "");
-      const PreMacros = {
-        target_calories: macros.val.target_calories,
-        target_protein: macros.val.target_protein,
-        target_carbs: macros.val.target_carbs,
-        target_sodium: macros.val.target_sodium,
-        target_fat: macros.val.target_fat,
-        target_fiber: macros.val.target_fibre,
-        target_sugar: macros.val.target_sugar,
-        target_type: macros.val.macro_type,
-      };
-
-      console.log("PRE", PreMacros);
 
       return new Promise((resolve, reject) => {
         axios
