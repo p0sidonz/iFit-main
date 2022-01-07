@@ -32,7 +32,8 @@
 
               <template #footer>
                 <b-badge pill variant="light-primary"
-                  >Last Updated: {{ programs.updated_at | moment("from", "now") }}</b-badge
+                  >Last Updated:
+                  {{ programs.updated_at | moment("from", "now") }}</b-badge
                 >
               </template>
             </b-card>
@@ -58,27 +59,34 @@
       >
         <b-card-body>
           <div class="container">
-                          <div class="meetup-day">
-                <h6 class="mb-0">WEEK</h6>
-                <h3 class="mb-0">{{ week_index + 1 }}</h3>
-              </div>
+            <div class="meetup-day">
+              <h6 class="mb-0">WEEK</h6>
+              <h3 class="mb-0">{{ week_index + 1 }}</h3>
+            </div>
             <div class="row">
-
-
               <div
                 v-for="(days, day_index) in week.program_days"
                 :key="day_index"
                 class="col-sm"
               >
                 <div class="justify-content-around">
-                  <div class="bg-light-secondary position-relative  p-1">
+                  <div class="bg-light-secondary position-relative p-1">
                     <h4 class="mb-1 me-1">Day {{ day_index + 1 }}</h4>
 
                     <div v-if="days.workout">
                       <div class="text-center">
-                        <b-badge href="#" class="d-block" variant="primary">
-                          {{ days.workout.title }}
-                        </b-badge>
+                        <b-link>
+                          <b-badge
+                            :to="{
+                              name: 'trainer-workout-view',
+                              params: { id: days.workout.id },
+                            }"
+                            class="d-block"
+                            variant="primary"
+                          >
+                            {{ days.workout.title }}
+                          </b-badge>
+                        </b-link>
                       </div>
                     </div>
                     <div v-else-if="!days.workout">
@@ -97,19 +105,14 @@
                       </div>
                     </div>
                     <br />
-
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </b-card-body>
-
-
       </b-card>
       <!-- add workout modal -->
-
-
 
       <!-- end of add workout modal -->
 
@@ -158,15 +161,14 @@
       </b-modal>
 
       <b-row align-h="center">
-
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            variant="outline-success"
-            @click="oops"
-          >
-            <feather-icon icon="SaveIcon" class="mr-50" />
-            Add Program to calendar
-          </b-button>
+        <b-button
+          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+          variant="outline-success"
+          @click="oops"
+        >
+          <feather-icon icon="SaveIcon" class="mr-50" />
+          Add Program to calendar
+        </b-button>
       </b-row>
     </template>
   </div>
@@ -283,11 +285,11 @@ export default {
         chip = item.pg_days_obj;
         chip.allDay = false;
         chip.relation_id = this.rid;
-        chip.type = "program"
-        delete chip.id
+        chip.type = "program";
+        delete chip.id;
         delete chip.rest_day;
         delete chip.workout_id;
-        chip.workout_id = 10
+        chip.workout_id = 10;
         return chip;
       });
       let days = [];

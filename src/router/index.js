@@ -266,6 +266,18 @@ const router = new VueRouter({
       },
     },
 
+    {
+      path: "/apps/trainers/view/workout/:id",
+      name: "trainer-workout-view",
+      component: () =>
+        import("@/views/user-dashboard/workout-view/workoutView.vue"),
+      meta: {
+        role: ["user"],
+
+        requiresAuth: true,
+      },
+    },
+
     // *===============================================---*
     // *--------- NUTRITION ---- ---------------------------------------*
     // // *===============================================---*
