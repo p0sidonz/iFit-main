@@ -48,15 +48,17 @@
         >
           <b-card
             class="text-center cursor-pointer"
-            :img-src="item.img"
-            :img-alt="item.img.slice(5)"
-            img-top
             @click="$router.push({ name: item.category })"
           >
+            <Icon
+              v-if="item.icon"
+              :icon="item.icon"
+              color="#7367f0"
+              width="170"
+              height="200"
+            />
+
             <h4>{{ item.title }}</h4>
-            <!-- <b-card-text class="mt-1">
-              {{ item.desc }}
-            </b-card-text> -->
           </b-card>
         </b-col>
         <b-col v-show="!filteredKB.length" cols="12" class="text-center">
@@ -79,6 +81,7 @@ import {
   BCardText,
   BInputGroupPrepend,
 } from "bootstrap-vue";
+import { Icon } from "@iconify/vue2";
 
 export default {
   components: {
@@ -91,6 +94,7 @@ export default {
     BInputGroup,
     BInputGroupPrepend,
     BFormInput,
+    Icon,
   },
   data() {
     return {
@@ -99,27 +103,32 @@ export default {
         {
           id: 1,
           category: "apps-users-list",
+          icon: "uim:user-arrows",
           img: require("@/assets/images/illustration/sales.svg"),
           title: "Client Dashboard",
-          desc: "List of all the clients",
+          desc: "There is perhaps no better demonstration of the folly of image of our tiny world.",
         },
         {
           id: 2,
           category: "nutrition-list",
+          icon: "whh:foodtray",
           img: require("@/assets/images/illustration/marketing.svg"),
           title: "Diet Dashboard",
-          desc: "Manage all your diet in one place",
+          desc: "Look again at that dot. That’s here. That’s home. That’s us. On it everyone you love.",
         },
         {
           id: 3,
           category: "workout-list",
+          icon: "maki:fitness-centre",
           img: require("@/assets/images/illustration/api.svg"),
           title: "Workout Dashboard",
-          desc: "Create your ",
+          desc: "every hero and coward, every creator and destroyer of civilization.",
         },
         {
           id: 4,
           category: "program-list",
+
+          icon: "whh:programok",
           img: require("@/assets/images/illustration/personalization.svg"),
           title: "Programs",
           desc: "It has been said that astronomy is a humbling and character experience.",
@@ -127,6 +136,7 @@ export default {
         {
           id: 5,
           category: "apps-chat",
+          icon: "whh:chat",
           img: require("@/assets/images/illustration/email.svg"),
           title: "Chat",
           desc: "There is perhaps no better demonstration of the folly of human conceits.",
@@ -134,6 +144,7 @@ export default {
         {
           id: 6,
           category: "trainer-packages",
+          icon:"whh:dotlist",
           img: require("@/assets/images/illustration/demand.svg"),
           title: "Packages",
           desc: "Competent means we will never take anything for granted.",
@@ -141,6 +152,8 @@ export default {
         {
           id: 7,
           category: "add-exercises",
+          icon: "healthicons:exercise-weights",
+
           img: require("@/assets/images/illustration/api.svg"),
           title: "Exercises",
           desc: "Competent means we will never take anything for granted.",
@@ -168,7 +181,7 @@ export default {
   },
 };
 </script>
-
+ 
 <style lang="scss">
 @import "@core/scss/vue/pages/page-knowledge-base.scss";
 </style>
