@@ -340,7 +340,8 @@ export default {
               }
             `,
               variables: {
-                PreMacros,
+                id: macros.val.id,
+                _set: { ...MAC },
               },
             },
             {
