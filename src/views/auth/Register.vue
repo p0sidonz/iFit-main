@@ -50,7 +50,7 @@
                       v-model="register.firstName"
                       name="register-firstname"
                       :state="errors.length > 0 ? false : null"
-                      placeholder="Ankit"
+                      placeholder="John"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -69,7 +69,7 @@
                       v-model="register.lastName"
                       name="register-lastname"
                       :state="errors.length > 0 ? false : null"
-                      placeholder="Singh"
+                      placeholder="Doe"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>

@@ -881,16 +881,16 @@ export default {
     const disableButton = ref(false);
     const success_order_id = ref();
     const billingData = ref({
-      email: "sdfhj@gjhds.com",
-      firstName: "ankit",
-      lastName: "singh",
-      address_line_1: "123 fdjfjhdj",
+      email: "",
+      firstName: "",
+      lastName: "",
+      address_line_1: "",
       address_line_2: "null",
-      city: "bhopal",
-      state: "MP",
-      zip: "462021",
-      country: "India",
-      contact: "8989004426",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+      contact: "",
     });
     const doSometing = () => {
       console.log("oops i am closed");
