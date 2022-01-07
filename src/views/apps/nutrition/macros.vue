@@ -151,6 +151,7 @@ export default {
   },
   methods: {
     saveMacros() {
+        console.log(this.macronutrients)
       this.$emit("update-macronutrient", {
         macros: { ...this.macros },
         id: this.$route.params.id,
