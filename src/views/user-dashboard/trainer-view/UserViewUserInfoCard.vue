@@ -36,7 +36,7 @@
               </b-button>
               <b-button
                 variant="outline-success"
-                class="ml-1"
+                class="ml-1 d-none d-sm-block"
                 :to="{
                   name: 'apps-chat',
                 }"
