@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ isLoading }}
     <div v-if="isLoading">
       <b-spinner small class="mr-1" variant="primary" />
     </div>
@@ -40,7 +39,6 @@
                         class="text-body cursor-pointer"
                       />
                     </template>
-
                     <b-dropdown-item href="#" @click="addTask(tasks.id)">
                       <feather-icon
                         icon="PlusIcon"
@@ -167,6 +165,17 @@
           <user-view-user-permissions-card :user-data="dietData" />
         </b-col>
       </b-row> -->
+        <div class="text-center">
+          <b-button
+            @click="addTask(tasks.id)"
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            variant="outline-primary"
+          >
+            <feather-icon icon="PlusIcon" class="mr-50" />
+            Add New Meal
+          </b-button>
+        </div>
+        <hr />
       </template>
 
       <b-card>
@@ -274,7 +283,6 @@
           </div>
         </div>
       </b-card>
-
       <!-- append and pepend -->
 
       <!-- Task Handler -->
@@ -476,7 +484,20 @@ export default {
 
     const addTask = (val) => {
       store.dispatch("app-todo/addTask", val).then(() => {
-        console.log("ADD TASK");
+        toast(
+          {
+            component: ToastificationContent,
+            props: {
+              title: "New Meal added!",
+              icon: "AlertTriangleIcon",
+              variant: "success",
+            },
+          },
+          {
+            position: "top-center",
+          }
+        );
+
         // eslint-disable-next-line no-use-before-define
         fetchTasks();
       });
@@ -494,14 +515,19 @@ export default {
       store
         .dispatch("app-todo/addFoods", { taskData, foodid, foodname })
         .then(() => {
-          toast({
-            component: ToastificationContent,
-            props: {
-              title: "Food added!",
-              icon: "AlertTriangleIcon",
-              variant: "success",
+          toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: "Food added!",
+                icon: "AlertTriangleIcon",
+                variant: "success",
+              },
             },
-          });
+            {
+              position: "top-center",
+            }
+          );
 
           // eslint-disable-next-line no-use-before-define
           fetchTasks();
@@ -516,14 +542,19 @@ export default {
     };
     const removeMeal = (val) => {
       store.dispatch("app-todo/removeMeal", { val }).then(() => {
-        toast({
-          component: ToastificationContent,
-          props: {
-            title: "Meal removed!",
-            icon: "AlertTriangleIcon",
-            variant: "success",
+        toast(
+          {
+            component: ToastificationContent,
+            props: {
+              title: "Meal removed!",
+              icon: "AlertTriangleIcon",
+              variant: "success",
+            },
           },
-        });
+          {
+            position: "top-center",
+          }
+        );
 
         // eslint-disable-next-line no-use-before-define
         fetchTasks();
@@ -532,14 +563,19 @@ export default {
 
     const removeSingleFood = (val) => {
       store.dispatch("app-todo/removeSingleFood", { val }).then(() => {
-        toast({
-          component: ToastificationContent,
-          props: {
-            title: "Food removed!",
-            icon: "AlertTriangleIcon",
-            variant: "success",
+        toast(
+          {
+            component: ToastificationContent,
+            props: {
+              title: "Food removed!",
+              icon: "AlertTriangleIcon",
+              variant: "success",
+            },
           },
-        });
+          {
+            position: "top-center",
+          }
+        );
 
         // eslint-disable-next-line no-use-before-define
         fetchTasks();
@@ -557,27 +593,37 @@ export default {
       store
         .dispatch("app-todo/updateMicronutrient", { val })
         .then((r) => {
-          toast({
-            component: ToastificationContent,
-            props: {
-              title: "Macros Updated!",
-              icon: "AlertTriangleIcon",
-              variant: "success",
+          toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: "Macros Updated!",
+                icon: "AlertTriangleIcon",
+                variant: "success",
+              },
             },
-          });
+            {
+              position: "top-center",
+            }
+          );
 
           // fetchTasks();
         })
         .catch((error) => {
-          toast({
-            component: ToastificationContent,
-            props: {
-              title: "Sorry!",
-              icon: "AlertTriangleIcon",
-              variant: "danger",
-              text: `${error}`,
+          toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: "Sorry!",
+                icon: "AlertTriangleIcon",
+                variant: "danger",
+                text: `${error}`,
+              },
             },
-          });
+            {
+              position: "top-center",
+            }
+          );
         });
     };
 
