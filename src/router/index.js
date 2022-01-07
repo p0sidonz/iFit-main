@@ -1,8 +1,8 @@
 import { t } from "@/@core/libs/i18n/utils";
 import Vue from "vue";
-import Vuex from 'vuex'
+import Vuex from "vuex";
 import VueRouter from "vue-router";
-import store from "../store"
+import store from "../store";
 // Routes
 import { canNavigate } from "@/libs/acl/routeProtection";
 import {
@@ -79,7 +79,6 @@ const router = new VueRouter({
         redirectIfLoggedIn: true,
       },
     },
-
 
     {
       path: "/verify_email/:token",
@@ -355,6 +354,17 @@ const router = new VueRouter({
         role: ["trainer"],
       },
     },
+
+    {
+      path: "/exercises",
+      name: "add-exercises",
+      component: () => import("@/views/pages/exercises/addExercises.vue"),
+      meta: {
+        requiresAuth: true,
+        role: ["trainer", "user"],
+      },
+    },
+
     // *===============================================---*
     // *--------- CREATE PACKAGES ---- ---------------------------------------*
     // // *===============================================---*
@@ -387,7 +397,6 @@ const router = new VueRouter({
         requiresAuth: true,
         role: ["trainer", "user"],
       },
-
     },
 
     {
@@ -397,7 +406,6 @@ const router = new VueRouter({
       meta: {
         layout: "full",
         requiresAuth: false,
-
       },
     },
 
@@ -455,8 +463,8 @@ router.beforeEach((to, _, next) => {
     appLoading.style.display = "boxed";
   }
 
-  let chkState = store.getters.appLoading
-  console.log(chkState)
+  let chkState = store.getters.appLoading;
+  console.log(chkState);
   const userData = getUserData();
   let lacksRole = null;
   const isLoggedIn = isUserLoggedIn();

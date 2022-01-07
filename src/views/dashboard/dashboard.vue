@@ -5,14 +5,16 @@
       <b-card
         no-body
         class="knowledge-base-bg text-center"
-        :style="{backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`}"
+        :style="{
+          backgroundImage: `url(${require('@/assets/images/banner/banner.png')})`,
+        }"
       >
         <b-card-body class="card-body">
-          <h2 class="text-primary">
-             Welcome back {{userInfo.username}}!
-          </h2>
+          <h2 class="text-primary">Welcome back {{ userInfo.username }}!</h2>
           <b-card-text class="mb-2">
-            <span class="font-weight-bolder">Diet, Workout, Live Sessions and much more...</span>
+            <span class="font-weight-bolder"
+              >Diet, Workout, Live Sessions and much more...</span
+            >
           </b-card-text>
 
           <!-- form -->
@@ -35,7 +37,6 @@
     <!--/ search input -->
 
     <section id="knowledge-base-content">
-
       <!-- content -->
       <b-row class="kb-search-content-info match-height">
         <b-col
@@ -50,7 +51,7 @@
             :img-src="item.img"
             :img-alt="item.img.slice(5)"
             img-top
-            @click="$router.push({ name: item.category})"
+            @click="$router.push({ name: item.category })"
           >
             <h4>{{ item.title }}</h4>
             <!-- <b-card-text class="mt-1">
@@ -58,14 +59,8 @@
             </b-card-text> -->
           </b-card>
         </b-col>
-        <b-col
-          v-show="!filteredKB.length"
-          cols="12"
-          class="text-center"
-        >
-          <h4 class="mt-4">
-            Search result not found!!
-          </h4>
+        <b-col v-show="!filteredKB.length" cols="12" class="text-center">
+          <h4 class="mt-4">Search result not found!!</h4>
         </b-col>
       </b-row>
     </section>
@@ -74,8 +69,16 @@
 
 <script>
 import {
-  BRow, BCol, BCard, BCardBody, BForm, BInputGroup, BFormInput, BCardText, BInputGroupPrepend,
-} from 'bootstrap-vue'
+  BRow,
+  BCol,
+  BCard,
+  BCardBody,
+  BForm,
+  BInputGroup,
+  BFormInput,
+  BCardText,
+  BInputGroupPrepend,
+} from "bootstrap-vue";
 
 export default {
   components: {
@@ -91,71 +94,81 @@ export default {
   },
   data() {
     return {
-      knowledgeBaseSearchQuery: '',
+      knowledgeBaseSearchQuery: "",
       kb: [
-    {
-      id: 1,
-      category: 'apps-users-list',
-      img: require('@/assets/images/illustration/sales.svg'),
-      title: 'Client Dashboard',
-      desc: 'List of all the clients',
-    },
-    {
-      id: 2,
-      category: 'nutrition-list',
-      img: require('@/assets/images/illustration/marketing.svg'),
-      title: 'Diet Dashboard',
-      desc: 'Manage all your diet in one place',
-    },
-    {
-      id: 3,
-      category: 'workout-list',
-      img: require('@/assets/images/illustration/api.svg'),
-      title: 'Workout Dashboard',
-      desc: 'Create your ',
-    },
-    {
-      id: 4,
-      category: 'program-list',
-      img: require('@/assets/images/illustration/personalization.svg'),
-      title: 'Programs',
-      desc: 'It has been said that astronomy is a humbling and character experience.',
-    },
-    {
-      id: 5,
-      category: 'apps-chat',
-      img: require('@/assets/images/illustration/email.svg'),
-      title: 'Chat',
-      desc: 'There is perhaps no better demonstration of the folly of human conceits.',
-    },
-    {
-      id: 6,
-      category: 'trainer-packages',
-      img: require('@/assets/images/illustration/demand.svg'),
-      title: 'Packages', 
-      desc: 'Competent means we will never take anything for granted.',
-    },
-  ],
-
-    }
+        {
+          id: 1,
+          category: "apps-users-list",
+          img: require("@/assets/images/illustration/sales.svg"),
+          title: "Client Dashboard",
+          desc: "List of all the clients",
+        },
+        {
+          id: 2,
+          category: "nutrition-list",
+          img: require("@/assets/images/illustration/marketing.svg"),
+          title: "Diet Dashboard",
+          desc: "Manage all your diet in one place",
+        },
+        {
+          id: 3,
+          category: "workout-list",
+          img: require("@/assets/images/illustration/api.svg"),
+          title: "Workout Dashboard",
+          desc: "Create your ",
+        },
+        {
+          id: 4,
+          category: "program-list",
+          img: require("@/assets/images/illustration/personalization.svg"),
+          title: "Programs",
+          desc: "It has been said that astronomy is a humbling and character experience.",
+        },
+        {
+          id: 5,
+          category: "apps-chat",
+          img: require("@/assets/images/illustration/email.svg"),
+          title: "Chat",
+          desc: "There is perhaps no better demonstration of the folly of human conceits.",
+        },
+        {
+          id: 6,
+          category: "trainer-packages",
+          img: require("@/assets/images/illustration/demand.svg"),
+          title: "Packages",
+          desc: "Competent means we will never take anything for granted.",
+        },
+        {
+          id: 7,
+          category: "add-exercises",
+          img: require("@/assets/images/illustration/api.svg"),
+          title: "Exercises",
+          desc: "Competent means we will never take anything for granted.",
+        },
+      ],
+    };
   },
   computed: {
     filteredKB() {
-      const knowledgeBaseSearchQueryLower = this.knowledgeBaseSearchQuery.toLowerCase()
-      return this.kb.filter(item => item.title.toLowerCase().includes(knowledgeBaseSearchQueryLower) || item.desc.toLowerCase().includes(knowledgeBaseSearchQueryLower))
+      const knowledgeBaseSearchQueryLower =
+        this.knowledgeBaseSearchQuery.toLowerCase();
+      return this.kb.filter(
+        (item) =>
+          item.title.toLowerCase().includes(knowledgeBaseSearchQueryLower) ||
+          item.desc.toLowerCase().includes(knowledgeBaseSearchQueryLower)
+      );
     },
 
-      userInfo () {
-    return this.$store.getters.userInfo
-    
-  }
+    userInfo() {
+      return this.$store.getters.userInfo;
+    },
   },
   created() {
     // this.$http.get('/kb/data/knowledge_base').then(res => { this.kb = res.data })
   },
-}
+};
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/pages/page-knowledge-base.scss';
+@import "@core/scss/vue/pages/page-knowledge-base.scss";
 </style>

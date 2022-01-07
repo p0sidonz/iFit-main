@@ -310,24 +310,68 @@
             </b-media-body>
           </b-media>
 
-          <div class="my-1 py-25">
-            <b-link>
+          <b-row>
+            <b-col md="3" v-if="singleExcerciseDetail.exercise_category">
+              <div class="my-1">
+                <span> Category:</span>
+              </div>
+
+              <b-link>
+                <b-badge
+                  pill
+                  class="mr-75"
+                  :variant="tagsColor(singleExcerciseDetail.exercise_category)"
+                >
+                  {{ singleExcerciseDetail.exercise_category }}
+                </b-badge>
+              </b-link>
+            </b-col>
+            <b-col md="3" v-if="singleExcerciseDetail.level">
+              <div class="my-1">
+                <span> Level:</span>
+              </div>
+
+              <b-badge pill class="mr-75" :variant="tagsColor(m)">
+                {{ singleExcerciseDetail.level }}
+              </b-badge>
+            </b-col>
+            <b-col md="3" v-if="singleExcerciseDetail.muscle_worked">
+              <div class="my-1"><span> Muscle worked:</span></div>
               <b-badge
+                v-for="m in singleExcerciseDetail.muscle_worked"
+                :key="m"
                 pill
                 class="mr-75"
-                :variant="
-                  tagsColor(singleExcerciseDetail.exercise_category.title)
-                "
+                :variant="tagsColor(m)"
               >
-                {{ singleExcerciseDetail.exercise_category.title }}
+                {{ m }}
               </b-badge>
-            </b-link>
-          </div>
+            </b-col>
+            <b-col md="3" v-if="singleExcerciseDetail.mechanics_type">
+              <div class="my-1">
+                <span> Mechanics type: </span>
+              </div>
 
-          <div
-            class="blog-content"
-            v-html="singleExcerciseDetail.description"
-          />
+              <b-link>
+                <b-badge
+                  pill
+                  class="mr-75"
+                  :variant="tagsColor(singleExcerciseDetail.mechanics_type)"
+                >
+                  {{ singleExcerciseDetail.mechanics_type }}
+                </b-badge>
+              </b-link>
+            </b-col>
+          </b-row>
+          <div v-if="singleExcerciseDetail.description">
+            <div class="my-1">
+              <span> Description:</span>
+            </div>
+            <div
+              class="blog-content"
+              v-html="singleExcerciseDetail.description"
+            />
+          </div>
         </div>
       </b-modal>
 

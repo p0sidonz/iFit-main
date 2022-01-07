@@ -1,4 +1,28 @@
 import gql from "graphql-tag";
+export const ADD_EXCERCISE_TO_DB = gql`
+  mutation add_Excercise_ToDb($object: Fitness_exercise_insert_input = {}) {
+    insert_Fitness_exercise_one(object: $object) {
+      id
+    }
+  }
+`;
+
+export const SEARCH_EXCERCISE_LIST = gql`
+  query searchExcercise($where: Fitness_exercise_bool_exp = {}) {
+    Fitness_exercise(where: $where, limit: 10) {
+      id
+      title
+      description
+      video_id
+      User {
+        id
+        username
+        fullname
+      }
+      id
+    }
+  }
+`;
 
 export const GET_EXCERCISE_DETAIL = gql`
   query getexcerciseDetail($id: Int!) {
@@ -12,55 +36,18 @@ export const GET_EXCERCISE_DETAIL = gql`
       video_url
       created_at
       video_id
-      exercise_category {
-        id
-        title
-      }
+      exercise_type
+      muscle_worked
+      exercise_category
+      mechanics_type
+      level
+      type
       User {
         id
         username
         avatar
         fullname
       }
-    }
-  }
-`;
-
-export const GET_UPGRADE_HISTORY = gql`
-  query get_order_history($userId: Int!) {
-    Fitness_upgrade_order_history(
-      where: { user_id: { _eq: $userId } }
-      order_by: { created_at: desc }
-    ) {
-      Package {
-        title
-      }
-      order_id
-      status
-      created_at
-      amount
-    }
-  }
-`;
-
-export const GET_SUBSCRIPTION_BY_ID = gql`
-  query getUpgradeDetail($id: Int!) {
-    Fitness_upgrade_current_package(
-      where: { user_id: { _eq: $id } }
-      order_by: { created_at: desc }
-    ) {
-      id
-      end_date
-      start_date
-      package_detail {
-        id
-        title
-        subtitle
-        monthlyPrice
-        yearlyPrice
-        subscription_days
-      }
-      created_at
     }
   }
 `;
