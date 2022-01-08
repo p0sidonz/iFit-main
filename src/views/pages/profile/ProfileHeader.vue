@@ -945,7 +945,7 @@ export default {
           console.log(response);
 
           var options = {
-            key: "rzp_test_HpykQ62iu1zvDf",
+            key: process.env.VUE_APP_RZR_KEY,
             amount: response.data.data.rzrCreateOrderPackage.amount,
             currency: response.data.data.rzrCreateOrderPackage.currency,
             name: `Plan type: ${current_package_name.value}`,
