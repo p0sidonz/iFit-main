@@ -725,6 +725,7 @@ export default {
               yearlyPrice
               planBenefits
               popular
+              dollar_price
             }
           }
         `,
