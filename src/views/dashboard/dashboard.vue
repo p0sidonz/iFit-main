@@ -144,7 +144,7 @@ export default {
         {
           id: 6,
           category: "trainer-packages",
-          icon:"whh:dotlist",
+          icon: "whh:dotlist",
           img: require("@/assets/images/illustration/demand.svg"),
           title: "Packages",
           desc: "Competent means we will never take anything for granted.",
@@ -156,6 +156,15 @@ export default {
 
           img: require("@/assets/images/illustration/api.svg"),
           title: "Exercises",
+          desc: "Competent means we will never take anything for granted.",
+        },
+        {
+          id: 8,
+          category: "apps-calendar",
+          icon: "whh:calendarthree",
+
+          img: require("@/assets/images/illustration/api.svg"),
+          title: "Calendar",
           desc: "Competent means we will never take anything for granted.",
         },
       ],
