@@ -4,9 +4,10 @@
       <!-- title text and switch button -->
       <div class="text-center">
         <h1 class="mt-5">Pricing Plans</h1>
-      <b-badge variant="primary" class="badge-glow">
-      🤑 Launching OFFER <br> 50% FLAT OFF ON ALL THE PLANS 🤑
-      </b-badge>
+        <b-badge variant="primary" class="badge-glow">
+          🤑 Launching OFFER <br />
+          50% FLAT OFF ON ALL THE PLANS 🤑
+        </b-badge>
         <br />
         <br />
         <br />
@@ -15,9 +16,27 @@
           are simple and straightforward, Select the package and serve your
           clients.
         </p>
+
+        <div
+          class="d-flex align-items-center justify-content-center mb-5 pb-50"
+        >
+          <h6 class="mr-1 mb-0">₹INR</h6>
+
+          <b-form-checkbox
+            :checked="showDollarPrice"
+            name="check-button"
+            switch
+            inline
+            @input="toggleCurrency"
+          >
+          </b-form-checkbox>
+
+          <h6 class="ml-50 mb-0">$USD</h6>
+        </div>
       </div>
       <!--/ title text and switch button -->
       <!-- pricing plan cards -->
+
       <b-row class="pricing-card">
         <b-col
           offset-sm-2
@@ -48,10 +67,11 @@
                 <!-- annual plan -->
                 <div class="annual-plan">
                   <div class="plan-price mt-2">
-                    <sup class="font-medium-1 font-weight-bold text-primary"
-                      >₹</sup
+                    <sup class="font-medium-1 font-weight-bold text-primary">
+                      {{ showDollarPrice ? "$" : "₹" }}</sup
                     >
                     <span
+                      v-if="!showDollarPrice"
                       class="
                         pricing-basic-value
                         font-weight-bolder
@@ -63,6 +83,16 @@
                           : pricing.basicPlan.yearlyPlan.perMonth
                       }}</span
                     >
+                    <span
+                      v-else
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{ pricing.basicPlan.dollar_price }}</span
+                    >
+
                     <sub
                       class="
                         pricing-duration
@@ -79,10 +109,13 @@
                       text-muted text-decoration-line-through
                     "
                   >
-                    <del>
+                    <del v-if="!showDollarPrice">
                       ₹ {{ pricing.basicPlan.monthlyPrice * 2 }} / month</del
-                    ></small
-                  >
+                    >
+                    <del v-else>
+                      ₹ {{ pricing.basicPlan.dollar_price * 2 }} / month</del
+                    >
+                  </small>
                 </div>
                 <!--/ annual plan -->
 
@@ -137,10 +170,11 @@
                 <!-- annual plan -->
                 <div class="annual-plan">
                   <div class="plan-price mt-2">
-                    <sup class="font-medium-1 font-weight-bold text-primary"
-                      >₹</sup
-                    >
+                    <sup class="font-medium-1 font-weight-bold text-primary">{{
+                      showDollarPrice ? "$" : "₹"
+                    }}</sup>
                     <span
+                      v-if="!showDollarPrice"
                       class="
                         pricing-basic-value
                         font-weight-bolder
@@ -152,13 +186,25 @@
                           : "NaN"
                       }}</span
                     >
+
+                    <span
+                      v-else
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{ pricing.enterprisePlan.dollar_price }}</span
+                    >
+
                     <sub
                       class="
                         pricing-duration
                         text-body
                         font-medium-1 font-weight-bold
                       "
-                      >/month</sub
+                      >/month<br />
+                      (Billed Annually)</sub
                     >
                   </div>
                   <small
@@ -167,11 +213,15 @@
                       text-muted text-decoration-line-through
                     "
                   >
-                    <del>
+                    <del v-if="!showDollarPrice">
                       ₹ {{ pricing.enterprisePlan.yearlyPrice * 2 }} /
                       month</del
-                    ></small
-                  >
+                    >
+                    <del v-else>
+                      $ {{ pricing.enterprisePlan.dollar_price * 2 }} /
+                      month</del
+                    >
+                  </small>
                 </div>
                 <!--/ annual plan -->
 
@@ -230,10 +280,11 @@
                 <!-- annual plan -->
                 <div class="annual-plan">
                   <div class="plan-price mt-2">
-                    <sup class="font-medium-1 font-weight-bold text-primary"
-                      >₹</sup
-                    >
+                    <sup class="font-medium-1 font-weight-bold text-primary">{{
+                      showDollarPrice ? "$" : "₹"
+                    }}</sup>
                     <span
+                      v-if="!showDollarPrice"
                       class="
                         pricing-basic-value
                         font-weight-bolder
@@ -245,6 +296,17 @@
                           : pricing.standardPlan.yearlyPlan.perMonth
                       }}</span
                     >
+
+                    <span
+                      v-else
+                      class="
+                        pricing-basic-value
+                        font-weight-bolder
+                        text-primary
+                      "
+                      >{{ pricing.standardPlan.dollar_price }}</span
+                    >
+
                     <sub
                       class="
                         pricing-duration
@@ -260,10 +322,14 @@
                       text-muted text-decoration-line-through
                     "
                   >
-                    <del>
+                    <del v-if="!showDollarPrice">
                       ₹ {{ pricing.standardPlan.monthlyPrice * 2 }} / month</del
-                    ></small
-                  >
+                    >
+
+                    <del v-else>
+                      $ {{ pricing.standardPlan.dollar_price * 2 }} / month</del
+                    >
+                  </small>
                 </div>
                 <!--/ annual plan -->
 
@@ -299,6 +365,7 @@
           </b-row>
         </b-col>
       </b-row>
+
       <b-modal
         v-model="showModal"
         size="lg"
@@ -693,6 +760,10 @@ export default {
   },
 
   methods: {
+    toggleCurrency() {
+      this.showDollarPrice = !this.showDollarPrice;
+    },
+
     tooglePlan() {
       if (this.status === "monthly") {
         this.monthlyPlanShow = true;
@@ -712,6 +783,7 @@ export default {
     const success_order_id = ref(123456);
     const showModal = ref(false);
     let elements = null;
+    const showDollarPrice = ref(false);
 
     const displayRazorPay = async () => {
       const token = localStorage.getItem("apollo-token");
@@ -723,10 +795,12 @@ export default {
             query: `
           mutation MyMutation(
             $package_id: Int!
+            $is_dollar: Boolean!
 
           ) {
             rzrCreateOrder(
               package_id: $package_id
+              is_dollar: $is_dollar
 
             ) {
               amount
@@ -736,6 +810,7 @@ export default {
               error
             }
           }
+              
               
               `,
             variables: {
@@ -965,6 +1040,7 @@ export default {
       current_package_id,
       current_package_name,
       success_order_id,
+      showDollarPrice,
     };
   },
 };
