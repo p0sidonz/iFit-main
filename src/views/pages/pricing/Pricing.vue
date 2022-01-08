@@ -815,6 +815,7 @@ export default {
               `,
             variables: {
               package_id: current_package_id.value,
+              is_dollar: showDollarPrice.value,
             },
           },
           {

@@ -123,7 +123,7 @@
                       <!-- Cost -->
                       <b-col md="2" class="p-1">
                         <b-form-group
-                          label="Repetitions (i.e. 8-12)"
+                          label="Repetitions"
                           label-for="cost"
                         >
                           <cleave
@@ -140,7 +140,7 @@
                       <!-- Quantity -->
                       <b-col md="2" class="p-1">
                         <b-form-group
-                          label="Tempo (1-2-3)"
+                          label="Tempo"
                           label-for="quantity"
                         >
                           <cleave
