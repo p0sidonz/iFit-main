@@ -52,10 +52,10 @@ import { getMainDefinition } from "@apollo/client/utilities";
 const getAuth = JSON.parse(localStorage.getItem("apollo-token"));
 
 const httpLink = new HttpLink({
-  uri: "https://docker84779-fetch.cloudjiffy.net/v1/graphql",
+  uri: process.env.VUE_APP_GRAPHQL_HTTP,
 });
 const wsLink = new WebSocketLink({
-  uri: "wss://docker84779-fetch.cloudjiffy.net/v1/graphql",
+  uri: process.env.VUE_APP_GRAPHQL_HTTP_WS,
   options: {
     reconnect: true,
 
