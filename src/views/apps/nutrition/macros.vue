@@ -3,7 +3,7 @@
     <b-row>
       <br />
       <!-- alert -->
-      <b-col md="6" xl="3" class="mb-2">
+      <b-col sm="12" md="6" xl="3" class="mb-2">
         <b-input-group prepend="Total Calories">
           <b-form-input readonly v-model="macros.target_calories" />
         </b-input-group>
@@ -152,7 +152,7 @@ export default {
   methods: {
     saveMacros() {
         console.log(this.macronutrients)
-      this.$emit("update-macronutrient", {
+        this.$emit("update-macronutrient", {
         macros: { ...this.macros },
         id: this.$route.params.id,
       });

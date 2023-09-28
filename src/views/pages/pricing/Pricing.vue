@@ -628,6 +628,7 @@
     </section>
     <section v-else>
       <b-spinner small class="mr-1" variant="primary" />
+      can't fetch
     </section>
   </div>
 </template>
